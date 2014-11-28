@@ -1,0 +1,267 @@
+package org.monroe.team.android.box.ui.animation.apperrance;
+
+import android.animation.TimeInterpolator;
+import android.view.View;
+import android.view.animation.AnticipateOvershootInterpolator;
+import android.view.animation.OvershootInterpolator;
+
+import org.monroe.team.android.box.ui.animation.ViewAnimatorFactory;
+import org.monroe.team.android.box.ui.animation.ViewAnimatorFactorySupport;
+import org.monroe.team.android.box.ui.animation.ViewObjectAnimatorFactories;
+
+public final class AppearanceControllerBuilder<TypeValue> {
+
+    private final View animationView;
+    private int visibilityOnHide = View.VISIBLE;
+
+    private final TypeBuilder<TypeValue> typeBuilder;
+    private ViewAnimatorFactory<TypeValue> showAnimationFactory;
+    private ViewAnimatorFactory<TypeValue>  hideAnimationFactory;
+
+    private AppearanceControllerBuilder(View animationView, TypeBuilder<TypeValue> typeBuilder) {
+        this.animationView = animationView;
+        this.typeBuilder = typeBuilder;
+    }
+
+    public static <PropertyType> AppearanceControllerBuilder<PropertyType> animateAppearance(View view, TypeBuilder<PropertyType> property){
+        return new AppearanceControllerBuilder<PropertyType>(view, property);
+    }
+
+    public AppearanceControllerBuilder<TypeValue> hideAndGone(){
+        visibilityOnHide = View.GONE;
+        return this;
+    }
+
+    public AppearanceControllerBuilder<TypeValue> hideAndInvisible(){
+        visibilityOnHide = View.INVISIBLE;
+        return this;
+    }
+
+    public AppearanceControllerBuilder<TypeValue> showAnimation(ViewAnimatorFactorySupport.DurationProvider<? super TypeValue> duration){
+        showAnimationFactory = createAnimator((ViewAnimatorFactorySupport.DurationProvider<Float>) duration, TimeInterpreterBuilder.NO_OP);
+        return this;
+    }
+
+    public AppearanceControllerBuilder<TypeValue> hideAnimation(ViewAnimatorFactorySupport.DurationProvider<? super TypeValue> duration){
+        hideAnimationFactory = createAnimator((ViewAnimatorFactorySupport.DurationProvider<Float>) duration, TimeInterpreterBuilder.NO_OP);
+        return this;
+    }
+
+    public AppearanceControllerBuilder<TypeValue> showAnimation(ViewAnimatorFactorySupport.DurationProvider<? super TypeValue> duration, TimeInterpreterBuilder builder){
+        showAnimationFactory = createAnimator((ViewAnimatorFactorySupport.DurationProvider<Float>) duration, builder);
+        return this;
+    }
+
+    public AppearanceControllerBuilder<TypeValue> hideAnimation(ViewAnimatorFactorySupport.DurationProvider<? super TypeValue> duration, TimeInterpreterBuilder builder){
+        hideAnimationFactory = createAnimator((ViewAnimatorFactorySupport.DurationProvider<Float>) duration, builder);
+        return this;
+    }
+
+    public static <TypeValue> ViewAnimatorFactorySupport.DurationProvider<TypeValue> duration_constant(final long ms){
+        return new ViewAnimatorFactorySupport.DurationProvider<TypeValue>() {
+            @Override
+            public long duration(TypeValue fromValue, TypeValue toValue) {
+                return ms;
+            }
+        };
+    }
+
+    public static ViewAnimatorFactorySupport.DurationProvider<Float> duration_auto_fint(){
+        return new ViewAnimatorFactorySupport.DurationProvider<Float>() {
+            @Override
+            public long duration(Float fromValue, Float toValue) {
+                long ms = (long) Math.abs(fromValue - toValue);
+                ms = msLimitsCheck(ms);
+                return ms;
+            }
+        };
+    }
+
+    public static ViewAnimatorFactorySupport.DurationProvider<Float> autoFloat(){
+        return new ViewAnimatorFactorySupport.DurationProvider<Float>() {
+            @Override
+            public long duration(Float fromValue, Float toValue) {
+                long ms = (long) (Math.abs(fromValue - toValue) * 1000);
+                ms = msLimitsCheck(ms);
+                return ms;
+            }
+        };
+    }
+
+    public static TypeBuilder<Float> xSlide(final float showValue, final float toValue){
+        return new TypeBuilder<Float>() {
+            @Override
+            public DefaultAppearanceController.ValueGetter<Float> buildValueGetter() {
+                return new DefaultAppearanceController.ValueGetter<Float>() {
+                    @Override
+                    public Float getShowValue() {
+                        return showValue;
+                    }
+
+                    @Override
+                    public Float getHideValue() {
+                        return toValue;
+                    }
+
+                    @Override
+                    public Float getCurrentValue(View view) {
+                        return view.getTranslationX();
+                    }
+                };
+            }
+
+            @Override
+            public TypedValueSetter<Float> buildValueSetter() {
+                return new TypedValueSetter<Float>(Float.class) {
+                    @Override
+                    public void setValue(View view, Float value) {
+                        view.setTranslationX(value);
+                    }
+                };
+            }
+        };
+    }
+
+
+
+    public static TypeBuilder<Float> ySlide(final float showValue, final float hideValue){
+        return new TypeBuilder<Float>() {
+            @Override
+            public DefaultAppearanceController.ValueGetter<Float> buildValueGetter() {
+                return new DefaultAppearanceController.ValueGetter<Float>() {
+                    @Override
+                    public Float getShowValue() {
+                        return showValue;
+                    }
+
+                    @Override
+                    public Float getHideValue() {
+                        return hideValue;
+                    }
+
+                    @Override
+                    public Float getCurrentValue(View view) {
+                        return view.getTranslationY();
+                    }
+                };
+            }
+
+            @Override
+            public TypedValueSetter<Float> buildValueSetter() {
+                return new TypedValueSetter<Float>(Float.class) {
+                    @Override
+                    public void setValue(View view, Float value) {
+                        view.setTranslationY(value);
+                    }
+                };
+            }
+        };
+    }
+
+    public static TypeBuilder<Float> alpha(final float showValue, final float hideValue){
+        return new TypeBuilder<Float>() {
+            @Override
+            public DefaultAppearanceController.ValueGetter<Float> buildValueGetter() {
+                return new DefaultAppearanceController.ValueGetter<Float>() {
+                    @Override
+                    public Float getShowValue() {
+                        return showValue;
+                    }
+
+                    @Override
+                    public Float getHideValue() {
+                        return hideValue;
+                    }
+
+                    @Override
+                    public Float getCurrentValue(View view) {
+                        return view.getAlpha();
+                    }
+                };
+            }
+
+            @Override
+            public TypedValueSetter<Float> buildValueSetter() {
+                return new TypedValueSetter<Float>(Float.class) {
+                    @Override
+                    public void setValue(View view, Float value) {
+                        view.setAlpha(value);
+                    }
+                };
+            }
+        };
+    }
+
+    public static TimeInterpreterBuilder interpreter_overshot(){
+        return new TimeInterpreterBuilder() {
+            @Override
+            public TimeInterpolator build() {
+                return new OvershootInterpolator();
+            }
+        };
+    }
+
+    private ViewAnimatorFactory<TypeValue> createAnimator(ViewAnimatorFactorySupport.DurationProvider<Float> duration, TimeInterpreterBuilder builder) {
+        ViewAnimatorFactory<TypeValue> animatorFactory;
+        if (typeBuilder.buildValueSetter().typeClass == Float.class){
+            animatorFactory =
+                    (ViewAnimatorFactory<TypeValue>) new ViewObjectAnimatorFactories.FloatObjectViewAnimator(
+                            duration, builder.build());
+        }else {
+            throw new IllegalStateException("Unsupported yet");
+        }
+        return animatorFactory;
+    }
+
+    private static long msLimitsCheck(long ms) {
+        if (ms > 600){
+            ms = 600;
+        } else if(ms < 200){
+            ms = 200;
+        }
+        return ms;
+    }
+
+
+    public AppearanceController build(){
+
+        if (hideAnimationFactory == null){
+            hideAnimation(duration_constant(400));
+        }
+
+        if (showAnimationFactory == null){
+            showAnimation(duration_constant(400));
+        }
+
+        return new DefaultAppearanceController(
+                animationView,
+                typeBuilder.buildValueGetter(),
+                typeBuilder.buildValueSetter(),
+                showAnimationFactory,
+                hideAnimationFactory,
+                visibilityOnHide);
+    }
+
+
+    public static interface TimeInterpreterBuilder{
+        final static TimeInterpreterBuilder NO_OP = new TimeInterpreterBuilder() {
+            @Override
+            public TimeInterpolator build() {
+                return null;
+            }
+        };
+        TimeInterpolator build();
+    }
+
+    private static interface TypeBuilder<ValueType>{
+        public DefaultAppearanceController.ValueGetter<ValueType> buildValueGetter();
+        public TypedValueSetter<ValueType> buildValueSetter();
+    }
+
+    public static abstract class TypedValueSetter<Type> implements ViewAnimatorFactory.ValueSetter<Type>{
+        private final Class<Type> typeClass;
+        protected TypedValueSetter(Class<Type> typeClass) {
+            this.typeClass = typeClass;
+        }
+    }
+}

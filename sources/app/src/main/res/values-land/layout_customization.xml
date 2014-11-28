@@ -1,0 +1,12 @@
+<resources>
+
+    <dimen name="search_panel_margin_left">400dp</dimen>
+    <dimen name="search_panel_margin">5dp</dimen>
+    <dimen name="search_item_first">0dp</dimen>
+
+    <dimen name="bkg_top_margin">5dp</dimen>
+    <integer name="apps_panel_width">-2</integer>
+    <bool name="apps_panel_place_in_center">false</bool>
+    <dimen name="apps_panel_from_bottom">0dp</dimen>
+
+</resources>
