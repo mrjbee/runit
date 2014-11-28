@@ -10,10 +10,22 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+
+    signingConfigs {
+        release {
+            storeFile file("../../keystore.jks")
+            storePassword "rock7develop"
+            keyAlias "runitkey"
+            keyPassword "runitpass"
+        }
+    }
+
     buildTypes {
         release {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.release
         }
     }
 }
