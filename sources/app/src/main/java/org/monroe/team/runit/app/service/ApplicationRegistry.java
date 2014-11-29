@@ -6,14 +6,17 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 
+import org.monroe.team.android.box.Closure;
+import org.monroe.team.android.box.Lists;
+import org.monroe.team.runit.app.RunItModel;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class ApplicationRegistry {
 
-    private List<ApplicationData> launchApplicationDatas;
     private final PackageManager packageManager;
     private List<ResolveInfo> applicationPackageInfoList;
 
@@ -22,10 +25,7 @@ public class ApplicationRegistry {
     }
 
     public synchronized List<ApplicationData> getApplicationsWithLauncherActivity() {
-        if (launchApplicationDatas == null) {
-            launchApplicationDatas = getApplicationsWithLauncherActivityImpl();
-        }
-        return launchApplicationDatas;
+        return getApplicationsWithLauncherActivityImpl();
     }
 
     public synchronized ResolveInfo getLauncherActivityResolverInfoByPackageName(ApplicationData data) {
@@ -41,8 +41,10 @@ public class ApplicationRegistry {
     private List<ApplicationData> getApplicationsWithLauncherActivityImpl() {
         List<ApplicationData> answer = new ArrayList<ApplicationData>();
         for (ResolveInfo resolveInfo : getLauncherApplicationPackageInfoList()) {
-            String name = resolveInfo.loadLabel(packageManager).toString();
-            answer.add(new ApplicationData(name, resolveInfo.activityInfo.packageName));
+            if (!RunItModel.class.getPackage().getName().equals(resolveInfo.activityInfo.packageName)){
+                String name = resolveInfo.loadLabel(packageManager).toString();
+                answer.add(new ApplicationData(name, resolveInfo.activityInfo.packageName));
+            }
         }
         return answer;
     }
@@ -64,4 +66,19 @@ public class ApplicationRegistry {
         return getLauncherActivityResolverInfoByPackageName(request).loadIcon(packageManager);
     }
 
+    public List<ApplicationData> filterOutNotExists(List<ApplicationData> testList) {
+        final List<ApplicationData> answer =new ArrayList<ApplicationData>();
+        Lists.iterateAndRemove(testList, new Closure<Iterator<ApplicationData>, Void>() {
+            @Override
+            public Void execute(Iterator<ApplicationData> iterator) {
+                ApplicationData data = iterator.next();
+                if (getLauncherActivityResolverInfoByPackageName(data) == null){
+                    answer.add(data);
+                    iterator.remove();
+                }
+                return null;
+            }
+        });
+        return answer;
+    }
 }

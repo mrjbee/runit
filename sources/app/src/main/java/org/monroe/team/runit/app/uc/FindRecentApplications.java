@@ -24,6 +24,7 @@ public class FindRecentApplications extends TransactionUserCase<Void, List<Appli
         for (DAOSupport.Result result : resultList) {
             answer.add(new ApplicationData(result.get(1,String.class), result.get(2,String.class)));
         }
+        using(ApplicationRegistry.class).filterOutNotExists(answer);
         return answer;
     }
 
