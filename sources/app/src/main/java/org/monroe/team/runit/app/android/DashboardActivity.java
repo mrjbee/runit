@@ -2,7 +2,9 @@ package org.monroe.team.runit.app.android;
 
 import android.animation.Animator;
 import android.animation.TimeInterpolator;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -52,6 +54,7 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
 
     private RefreshableListAdapter recentAppsRefreshableListAdapter;
     private RefreshableListAdapter mostUsedAppsRefreshableListAdapter;
+    private boolean requestKeyboardFlag;
 
     @Override
     protected void onCreate (final Bundle savedInstanceState) {
@@ -64,6 +67,13 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
         if (savedInstanceState != null){
             searchActivated = savedInstanceState.getBoolean("search_activated");
         }
+
+        if (getIntent() != null && getIntent().getBooleanExtra("go_search_request",false)){
+            searchActivated = true;
+            requestKeyboardFlag = true;
+            getIntent().removeExtra("go_search_request");
+        }
+
 
         if (searchActivated == null){
             //initial run
@@ -117,10 +127,7 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
                         animator.addListener(new AppearanceControllerOld.AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
-                                EditText yourEditText = view(R.id.dashboard_search_edit, EditText.class);
-                                yourEditText.requestFocus();
-                                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                                imm.showSoftInput(yourEditText, InputMethodManager.SHOW_IMPLICIT);
+                                focusOnEdit();
                             }
                         });
                     }
@@ -160,6 +167,13 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
         });
 
         super.onCreate(savedInstanceState);
+    }
+
+    private void focusOnEdit() {
+        EditText yourEditText = view(R.id.dashboard_search_edit, EditText.class);
+        yourEditText.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(yourEditText, InputMethodManager.SHOW_IMPLICIT);
     }
 
 
@@ -244,6 +258,24 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
     protected void onResume() {
         super.onResume();
         fetchMostRecentApplications();
+        if (requestKeyboardFlag){
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                   runOnUiThread(new Runnable() {
+                       @Override
+                       public void run() {
+                           focusOnEdit();
+                       }
+                   });
+                }
+            }).start();
+        }
     }
 
     private void fetchMostRecentApplications() {
@@ -391,6 +423,13 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
         super.onDestroy();
     }
 
+    public static PendingIntent openDashboardForSearch(Context context) {
+        Intent intent = new Intent(context, DashboardActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT | Intent.FLAG_ACTIVITY_NO_HISTORY);
+        intent.putExtra("go_search_request", true);
+        return PendingIntent.getActivity(context, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+    }
 
 
 }
