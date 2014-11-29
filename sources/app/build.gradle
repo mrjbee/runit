@@ -1,18 +1,19 @@
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "19.1.0"
+    compileSdkVersion 21
+    buildToolsVersion "21.1.1"
 
     defaultConfig {
+        applicationId "org.monroe.team.runit.app"
         minSdkVersion 14
-        targetSdkVersion 17
+        targetSdkVersion 21
         versionCode 1
         versionName "1.0"
     }
 
 
-    signingConfigs {
+  signingConfigs {
         release {
             storeFile file("../../keystore.jks")
             storePassword "rock7develop"
@@ -24,7 +25,7 @@ android {
     buildTypes {
         release {
             runProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
     }
@@ -32,5 +33,4 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:19.+'
 }
