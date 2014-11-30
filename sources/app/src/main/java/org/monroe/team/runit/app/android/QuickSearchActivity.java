@@ -139,7 +139,8 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
     public static PendingIntent open(Context context) {
         Intent intent = new Intent(context, QuickSearchActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                .addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                .addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED)
+                .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         return PendingIntent.getActivity(context, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
