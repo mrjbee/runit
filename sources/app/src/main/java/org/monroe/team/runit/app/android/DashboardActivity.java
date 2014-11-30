@@ -177,7 +177,7 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void updateTrayColor() {
-        getWindow().setStatusBarColor(getResources().getColor(R.color.blue_themed));
+        getWindow().setStatusBarColor(getResources().getColor(R.color.blue_themed_dark));
     }
 
     private void focusOnEdit() {
