@@ -10,6 +10,7 @@
     <dimen name="search_panel_margin_left">15dp</dimen>
     <dimen name="search_panel_margin">15dp</dimen>
     <dimen name="search_item_first">85dp</dimen>
+    <dimen name="search_item_first_qs">25dp</dimen>
 
 
     <color name="white.dark">#fff7f7f7</color>

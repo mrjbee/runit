@@ -1,16 +1,18 @@
-package org.monroe.team.runit.app;
+package org.monroe.team.runit.app.android;
 
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.widget.RemoteViews;
 
+import org.monroe.team.runit.app.R;
 import org.monroe.team.runit.app.android.DashboardActivity;
+
 
 /**
  * Implementation of App Widget functionality.
  */
-public class BluePanelWidget extends AppWidgetProvider {
+public class TransparentPanelWidget extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -35,11 +37,8 @@ public class BluePanelWidget extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
-        // Construct the RemoteViews object
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.blue_panel_widget);
-        views.setOnClickPendingIntent(R.id.bw_root_layout, DashboardActivity.openDashboardForSearch(context));
-        //views.setTextViewText(R.id.appwidget_text, widgetText);
-
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.transperent_panel_widget);
+        views.setOnClickPendingIntent(R.id.bw_root_layout, QuickSearchActivity.open(context));
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }

@@ -2,7 +2,10 @@ package org.monroe.team.android.box.ui.animation.apperrance;
 
 import android.animation.TimeInterpolator;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnticipateOvershootInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
 import org.monroe.team.android.box.ui.animation.ViewAnimatorFactory;
@@ -201,6 +204,36 @@ public final class AppearanceControllerBuilder<TypeValue> {
         };
     }
 
+    public static TimeInterpreterBuilder interpreter_accelerate_decelerate(){
+        return new TimeInterpreterBuilder() {
+            @Override
+            public TimeInterpolator build() {
+                return new AccelerateDecelerateInterpolator();
+            }
+        };
+    }
+
+
+    public static TimeInterpreterBuilder interpreter_decelerate(final Float factor){
+        return new TimeInterpreterBuilder() {
+            @Override
+            public TimeInterpolator build() {
+                if (factor == null) return new AccelerateInterpolator();
+                return new DecelerateInterpolator(factor);
+            }
+        };
+    }
+
+    public static TimeInterpreterBuilder interpreter_accelerate(final Float factor){
+        return new TimeInterpreterBuilder() {
+            @Override
+            public TimeInterpolator build() {
+                if (factor == null) return new AccelerateInterpolator();
+                return new AccelerateInterpolator(factor);
+            }
+        };
+    }
+
     private ViewAnimatorFactory<TypeValue> createAnimator(ViewAnimatorFactorySupport.DurationProvider<Float> duration, TimeInterpreterBuilder builder) {
         ViewAnimatorFactory<TypeValue> animatorFactory;
         if (typeBuilder.buildValueSetter().typeClass == Float.class){
@@ -214,8 +247,8 @@ public final class AppearanceControllerBuilder<TypeValue> {
     }
 
     private static long msLimitsCheck(long ms) {
-        if (ms > 600){
-            ms = 600;
+        if (ms > 500){
+            ms = 500;
         } else if(ms < 200){
             ms = 200;
         }

@@ -4,7 +4,6 @@
     android:layout_margin="@dimen/widget_margin"
     android:paddingRight="10dp"
     android:paddingLeft="20dp"
-    android:background="@drawable/search_panel"
     android:id="@+id/bw_root_layout">
 
     <TextView
@@ -37,10 +36,18 @@
         />
 
     <ImageView
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_centerVertical="true"
-        android:src="@drawable/search_image_small"
+        android:src="@drawable/search_image_small_white"
         android:layout_alignParentRight="true"/>
+
+    <ImageView
+        android:layout_below="@+id/bw_caption_label"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/line_in"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="40dp"/>
 
 </RelativeLayout>

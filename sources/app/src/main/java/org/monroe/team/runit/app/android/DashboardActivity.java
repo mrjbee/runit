@@ -46,6 +46,7 @@ import java.util.Set;
 public class DashboardActivity extends ActivitySupport <RunitApp> {
 
     private ArrayAdapter<RunitApp.AppSearchResult> searchResultAdapter;
+
     private AppearanceController recentAppsPanelAppearanceController;
     private AppearanceController mostUsedAppsPanelAppearanceController;
     private AppearanceController searchButtonAppearanceController;

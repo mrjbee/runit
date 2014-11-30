@@ -1,0 +1,55 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/qs_root"
+    tools:context="org.monroe.team.runit.app.android.QuickSearchActivity">
+
+    <RelativeLayout
+        android:id="@+id/qs_search_result_panel"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:background="@drawable/panel">
+    <ListView
+        android:id="@+id/qs_search_result_list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@android:color/transparent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:listSelector="@android:color/transparent">
+
+    </ListView>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/qs_search_panel"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:layout_marginLeft="@dimen/search_panel_margin_left"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:background="@drawable/search_panel">
+        <EditText
+            android:id="@+id/qs_search_edit"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:textColor="@color/white.dark"
+            android:background="@android:color/transparent"
+            android:hint="Application name ..."
+            android:focusableInTouchMode="true"
+            android:singleLine="true"
+            android:textColorHint="@color/blue.themed.light"
+            android:editable="true"
+            android:textSize="18sp"
+            android:imeOptions="flagNoExtractUi"
+            />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
