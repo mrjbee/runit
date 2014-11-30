@@ -2,11 +2,13 @@ package org.monroe.team.runit.app.android;
 
 import android.animation.Animator;
 import android.animation.TimeInterpolator;
+import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.SpannableString;
@@ -61,6 +63,9 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
     protected void onCreate (final Bundle savedInstanceState) {
         setContentView(R.layout.activity_dashboard);
         view(R.id.dashboard_bkg_image_scroll_crunch).setEnabled(false);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            updateTrayColor();
+        }
         setupSearchResultListAdapter();
         setupAnimations();
         setupApplicationPanels();
@@ -168,6 +173,11 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
         });
 
         super.onCreate(savedInstanceState);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void updateTrayColor() {
+        getWindow().setStatusBarColor(getResources().getColor(R.color.blue_themed));
     }
 
     private void focusOnEdit() {
