@@ -22,7 +22,7 @@ public class Dao  extends DAOSupport{
     public List<Result> getMostUsedApplications() {
         Cursor cursor = db.query(table(RunitSchema.Application.class).TABLE_NAME,
                 allApplicationFields(),
-                null,
+                table(RunitSchema.Application.class)._LAUNCH_TIMES +" not null",
                 null,
                 null,
                 null,
@@ -40,7 +40,7 @@ public class Dao  extends DAOSupport{
     public List<Result> getLastLaunchedApplications() {
         Cursor cursor = db.query(table(RunitSchema.Application.class).TABLE_NAME,
                 allApplicationFields(),
-                null,
+                table(RunitSchema.Application.class)._LAUNCH_TIMES +" not null",
                 null,
                 null,
                 null,
@@ -78,7 +78,8 @@ public class Dao  extends DAOSupport{
                 table(RunitSchema.Application.class)._TITLE,
                 table(RunitSchema.Application.class)._PACKAGE,
                 table(RunitSchema.Application.class)._LAST_LAUNCH_DATE,
-                table(RunitSchema.Application.class)._LAUNCH_TIMES);
+                table(RunitSchema.Application.class)._LAUNCH_TIMES,
+                table(RunitSchema.Application.class)._CATEGORY);
     }
 
     private Result extractAppResult(Cursor cursor) {
@@ -87,7 +88,8 @@ public class Dao  extends DAOSupport{
                         cursor.getString(1),
                         cursor.getString(2),
                         cursor.getLong(3),
-                        cursor.getLong(4));
+                        cursor.getLong(4),
+                        cursor.getLong(5));
     }
 
     public Result getAppByName(String packageName, String title) {
@@ -127,6 +129,19 @@ public class Dao  extends DAOSupport{
         appContentValue.put(table(RunitSchema.Application.class)._PACKAGE, packageName);
         appContentValue.put(table(RunitSchema.Application.class)._TITLE, title);
         appContentValue.put(table(RunitSchema.Application.class)._LAUNCH_TIMES, launchTimes);
+
+        return -1 != db.insert(table(RunitSchema.Application.class).TABLE_NAME,
+                null,
+                appContentValue);
+    }
+
+    public boolean insertApplicationWithCategory(String packageName, String title, int category) {
+
+        ContentValues appContentValue = new ContentValues(5);
+        appContentValue.put(table(RunitSchema.Application.class)._ID, generateAppId(packageName, title));
+        appContentValue.put(table(RunitSchema.Application.class)._PACKAGE, packageName);
+        appContentValue.put(table(RunitSchema.Application.class)._TITLE, title);
+        appContentValue.put(table(RunitSchema.Application.class)._CATEGORY, category);
 
         return -1 != db.insert(table(RunitSchema.Application.class).TABLE_NAME,
                 null,

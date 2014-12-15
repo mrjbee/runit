@@ -81,4 +81,8 @@ public class ApplicationRegistry {
         });
         return answer;
     }
+
+    public int getCategoryIndex(PlayMarketDetailsProvider.PlayMarketCategory category) {
+        return category.ordinal();
+    }
 }

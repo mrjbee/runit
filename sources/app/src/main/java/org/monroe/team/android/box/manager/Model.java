@@ -37,6 +37,7 @@ public abstract class Model {
     public <RequestType,ResponseType> BackgroundTaskManager.BackgroundTask<ResponseType> execute(
             Class<? extends UserCase<RequestType,ResponseType>> ucId,
             final RequestType request, final BackgroundResultCallback<ResponseType> callback){
+
         final UserCase<RequestType,ResponseType> uc = getUserCase(ucId);
 
         return backgroundTaskManager.execute(new Callable<ResponseType>() {

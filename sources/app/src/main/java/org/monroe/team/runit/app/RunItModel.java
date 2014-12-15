@@ -9,11 +9,13 @@ import org.monroe.team.android.box.db.DAOSupport;
 import org.monroe.team.android.box.db.DBHelper;
 import org.monroe.team.android.box.db.Schema;
 import org.monroe.team.android.box.db.TransactionManager;
+import org.monroe.team.android.box.manager.NetworkManager;
 import org.monroe.team.android.box.manager.ServiceRegistry;
 import org.monroe.team.android.box.manager.Model;
 import org.monroe.team.runit.app.db.Dao;
 import org.monroe.team.runit.app.db.RunitSchema;
 import org.monroe.team.runit.app.service.ApplicationRegistry;
+import org.monroe.team.runit.app.service.PlayMarketDetailsProvider;
 
 public class RunItModel extends Model {
 
@@ -25,6 +27,9 @@ public class RunItModel extends Model {
     protected void constructor(String appName, Context context, ServiceRegistry serviceRegistry) {
         serviceRegistry.registrate(PackageManager.class, context.getPackageManager());
         serviceRegistry.registrate(ApplicationRegistry.class, new ApplicationRegistry(usingService(PackageManager.class)));
+        serviceRegistry.registrate(NetworkManager.class, new NetworkManager(context));
+        serviceRegistry.registrate(PlayMarketDetailsProvider.class, new PlayMarketDetailsProvider());
+
         final RunitSchema schema = new RunitSchema();
         DBHelper helper = new DBHelper(context, schema);
         TransactionManager transactionManager = new TransactionManager(helper, new DAOFactory() {
@@ -35,4 +40,5 @@ public class RunItModel extends Model {
         });
         serviceRegistry.registrate(TransactionManager.class, transactionManager);
     }
+
 }

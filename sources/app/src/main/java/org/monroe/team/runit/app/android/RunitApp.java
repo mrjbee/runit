@@ -1,11 +1,14 @@
 package org.monroe.team.runit.app.android;
 
+import android.app.Service;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.util.LruCache;
 
 import org.monroe.team.android.box.manager.BackgroundTaskManager;
 import org.monroe.team.android.box.manager.Model;
 import org.monroe.team.android.box.support.ApplicationSupport;
+import org.monroe.team.runit.app.CategoryRefreshService;
 import org.monroe.team.runit.app.RunItModel;
 import org.monroe.team.runit.app.service.ApplicationRegistry;
 import org.monroe.team.runit.app.uc.FindAppsByText;
@@ -36,6 +39,7 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
                 return null;
             }
         });
+        startService(new Intent(this, CategoryRefreshService.class));
     }
 
     @Override

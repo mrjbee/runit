@@ -2,17 +2,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.monroe.team.runit.app" >
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
-        android:name="org.monroe.team.runit.app.android.RunitApp"
+        android:name=".android.RunitApp"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="org.monroe.team.runit.app.android.DashboardActivity"
+            android:name=".android.DashboardActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="stateHidden"
-            >
+            android:windowSoftInputMode="stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -45,14 +47,18 @@
 
         <activity
             android:name=".android.QuickSearchActivity"
-            android:label="@string/title_activity_quick_search"
             android:excludeFromRecents="true"
+            android:label="@string/title_activity_quick_search"
             android:noHistory="true"
             android:taskAffinity=""
-            android:theme="@style/NoAnimation">
-
+            android:theme="@style/NoAnimation" >
         </activity>
 
+        <service
+            android:name=".CategoryRefreshService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
     </application>
 
 </manifest>
