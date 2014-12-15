@@ -3,8 +3,11 @@
     <color name="white.dark">#fff7f7f7</color>
     <color name="white.darkest">#ffededed</color>
     <color name="white.most.darkest">#ffd3d3d3</color>
+    <color name="gray">#ffbababa</color>
+    <color name="blue.themed.lightest">#ff4dd4ff</color>
     <color name="blue.themed.light">#4cccf6</color>
     <color name="blue.themed">#109bc7</color>
+    <color name="blue.themed.darken">#ff0e84a9</color>
     <color name="blue.themed.dark">#ff0d4d6b</color>
     <color name="black.almost">#ff2c2c2c</color>
     <color name="black.dark">#ff444444</color>

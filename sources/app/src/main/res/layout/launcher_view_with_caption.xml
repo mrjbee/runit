@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:padding="5dp">
+
+    <org.monroe.team.runit.app.views.ShadowedImageView
+        android:id="@+id/icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="5dp">
+    </org.monroe.team.runit.app.views.ShadowedImageView>
+
+    <TextView
+        android:layout_gravity="center"
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Most used applications"
+        android:textColor="@color/black.dark"
+        android:shadowColor="@android:color/white"
+        android:shadowRadius="1"
+        android:shadowDy="1"
+        android:shadowDx="1"
+        android:textSize="15sp"
+        android:paddingLeft="10dp"
+        />
+
+</LinearLayout>

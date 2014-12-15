@@ -42,27 +42,24 @@ import org.monroe.team.runit.app.uc.entity.ApplicationData;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.*;
 
 import java.util.List;
-import java.util.Set;
 
 
 public class DashboardActivity extends ActivitySupport <RunitApp> {
 
     private ArrayAdapter<RunitApp.AppSearchResult> searchResultAdapter;
 
-    private AppearanceController recentAppsPanelAppearanceController;
-    private AppearanceController mostUsedAppsPanelAppearanceController;
+    private AppearanceController hotAppsPanelAppearanceController;
     private AppearanceController searchButtonAppearanceController;
     private AppearanceController searchPanelAppearanceController;
-    private AppearanceController backgroundAppearanceController;
+    private AppearanceController searchResultPanelAppearanceController;
 
-    private RefreshableListAdapter recentAppsRefreshableListAdapter;
     private RefreshableListAdapter mostUsedAppsRefreshableListAdapter;
+    private RefreshableListAdapter recentAppsRefreshableListAdapter;
     private boolean requestKeyboardFlag;
 
     @Override
     protected void onCreate (final Bundle savedInstanceState) {
-        setContentView(R.layout.activity_dashboard);
-        view(R.id.dashboard_bkg_image_scroll_crunch).setEnabled(false);
+        setContentView(R.layout.activity_dash);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             updateTrayColor();
         }
@@ -83,34 +80,20 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
 
         if (searchActivated == null){
             //initial run
-            recentAppsPanelAppearanceController.hideWithoutAnimation();
-            recentAppsPanelAppearanceController.showAndCustomize(new AppearanceController.AnimatorCustomization() {
-                @Override
-                public void customize(Animator animator) {
-                    animator.setStartDelay(600);
-                }
-            });
-            mostUsedAppsPanelAppearanceController.hideWithoutAnimation();
-            mostUsedAppsPanelAppearanceController.showAndCustomize(new AppearanceController.AnimatorCustomization() {
-                @Override
-                public void customize(Animator animator) {
-                    animator.setStartDelay(400);
-                }
-            });
+            hotAppsPanelAppearanceController.showWithoutAnimation();
             searchButtonAppearanceController.showWithoutAnimation();
             searchPanelAppearanceController.hideWithoutAnimation();
+            searchResultPanelAppearanceController.hideWithoutAnimation();
         }else if (searchActivated){
-            recentAppsPanelAppearanceController.hideWithoutAnimation();
-            mostUsedAppsPanelAppearanceController.hideWithoutAnimation();
+            hotAppsPanelAppearanceController.hideWithoutAnimation();
             searchButtonAppearanceController.hideWithoutAnimation();
             searchPanelAppearanceController.showWithoutAnimation();
-            backgroundAppearanceController.hideWithoutAnimation();
+            searchResultPanelAppearanceController.showWithoutAnimation();
         } else {
-            recentAppsPanelAppearanceController.showWithoutAnimation();
-            mostUsedAppsPanelAppearanceController.showWithoutAnimation();
+            hotAppsPanelAppearanceController.showWithoutAnimation();
             searchButtonAppearanceController.showWithoutAnimation();
             searchPanelAppearanceController.hideWithoutAnimation();
-            backgroundAppearanceController.showWithoutAnimation();
+            searchResultPanelAppearanceController.hideWithoutAnimation();
             searchResultAdapter.clear();
             searchResultAdapter.notifyDataSetChanged();
         }
@@ -124,12 +107,10 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
                         animator.setStartDelay(100);
                     }
                 });
-                mostUsedAppsPanelAppearanceController.hide();
-                recentAppsPanelAppearanceController.hide();
+                hotAppsPanelAppearanceController.hide();
                 searchPanelAppearanceController.showAndCustomize(new AppearanceController.AnimatorCustomization() {
                     @Override
                     public void customize(Animator animator) {
-                        animator.setStartDelay(400);
                         animator.addListener(new AppearanceControllerOld.AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
@@ -138,7 +119,7 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
                         });
                     }
                 });
-                backgroundAppearanceController.hide();
+                searchResultPanelAppearanceController.show();
             }
         });
         view(R.id.dashboard_search_result_list, ListView.class).setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -146,10 +127,10 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 view(R.id.dashboard_search_edit, EditText.class).setText("");
                 searchPanelAppearanceController.hideWithoutAnimation();
-                recentAppsPanelAppearanceController.show();
-                mostUsedAppsPanelAppearanceController.show();
+                hotAppsPanelAppearanceController.show();
+                hotAppsPanelAppearanceController.show();
                 searchButtonAppearanceController.showWithoutAnimation();
-                backgroundAppearanceController.showWithoutAnimation();
+                searchResultPanelAppearanceController.hide();
                 application().launchApplication(searchResultAdapter.getItem(position).applicationData);
                 searchResultAdapter.clear();
                 searchResultAdapter.notifyDataSetChanged();
@@ -196,38 +177,30 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
     }
 
     private void setupApplicationPanels() {
-        recentAppsRefreshableListAdapter = new RefreshableListAdapter(application(),
-                view(R.id.dashboard_recent_container, ViewGroup.class),
-                R.layout.launcher_view,
-                5);
         mostUsedAppsRefreshableListAdapter = new RefreshableListAdapter(application(),
+                view(R.id.dashboard_resent_used_container, ViewGroup.class),
+                15,
+                new ImageWithCaptionViewRenderer());
+        recentAppsRefreshableListAdapter = new RefreshableListAdapter(application(),
                 view(R.id.dashboard_most_used_container, ViewGroup.class),
-                R.layout.launcher_view,
-                5);
+                5, new ImageOnlyViewRenderer());
     }
 
     private void setupAnimations() {
-        backgroundAppearanceController = animateAppearance(
-                view(R.id.dashboard_bkg_image_scroll_crunch),
-                alpha(1f, 0.1f))
-                .showAnimation(duration_constant(1500), interpreter_accelerate())
-                .hideAnimation(duration_constant(500), interpreter_decelerate())
-                .build();
 
-        //Involve alpha too
-        recentAppsPanelAppearanceController = animateAppearance(
-                view(R.id.dashboard_recent_apps_panel),
-                ySlide(0f, getResources().getDisplayMetrics().heightPixels))
-                .showAnimation(duration_auto_fint(), interpreter_overshot())
-                .hideAnimation(duration_auto_fint(), interpreter_overshot())
+        searchResultPanelAppearanceController = animateAppearance(
+                view(R.id.dashboard_search_result_container),
+                ySlide(0f, -getResources().getDisplayMetrics().heightPixels))
+                .showAnimation(duration_constant(200))
+                .hideAnimation(duration_constant(300),interpreter_overshot())
                 .hideAndGone()
                 .build();
 
-        mostUsedAppsPanelAppearanceController = animateAppearance(
-                view(R.id.dashboard_most_used_apps_panel),
+        hotAppsPanelAppearanceController = animateAppearance(
+                view(R.id.dashboard_hot_app_container),
                 ySlide(0f, getResources().getDisplayMetrics().heightPixels))
-                .showAnimation(duration_auto_fint(), interpreter_overshot())
-                .hideAnimation(duration_auto_fint())
+                .showAnimation(duration_constant(200))
+                .hideAnimation(duration_constant(300),interpreter_overshot())
                 .hideAndGone()
                 .build();
 
@@ -239,12 +212,15 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
                 .hideAndGone()
                 .build();
 
+
         searchPanelAppearanceController = animateAppearance(
                 view(R.id.dashboard_search_panel),
-                ySlide(0f, -SizeUtils.dpToPx(70, getResources())))
+                xSlide(0f, SizeUtils.dpToPx(300, getResources())))
                 .showAnimation(duration_auto_fint(), interpreter_overshot())
                 .hideAnimation(duration_auto_fint(), interpreter_overshot())
+                .hideAndInvisible()
                 .build();
+
     }
 
     private TimeInterpreterBuilder interpreter_accelerate() {
@@ -294,9 +270,9 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
             @Override
             public void fetched(List<ApplicationData> applicationDataList) {
                 if (applicationDataList.isEmpty()){
-                    view(R.id.dashboard_recent_no_data_text).setVisibility(View.VISIBLE);
+                    view(R.id.dashboard_resent_used_no_data_text).setVisibility(View.VISIBLE);
                 } else {
-                    view(R.id.dashboard_recent_no_data_text).setVisibility(View.GONE);
+                    view(R.id.dashboard_resent_used_no_data_text).setVisibility(View.GONE);
                 }
                 recentAppsRefreshableListAdapter.refreshList(applicationDataList);
                 fetchMostUsedApplications();
@@ -308,10 +284,6 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
         application().fetchMostUsedApplication(new RunitApp.OnApplicationFetchedCallback() {
             @Override
             public void fetched(List<ApplicationData> applicationDataList) {
-                Set<ApplicationData> visibleApplicationsSet = recentAppsRefreshableListAdapter.getVisibleApplications();
-                for (ApplicationData visibleData : visibleApplicationsSet) {
-                    applicationDataList.remove(visibleData);
-                }
                 if (applicationDataList.isEmpty()){
                     view(R.id.dashboard_most_used_no_data_text).setVisibility(View.VISIBLE);
                 } else {
@@ -404,11 +376,10 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
     public void onBackPressed() {
         if (view(R.id.dashboard_search_button).getVisibility() != View.VISIBLE){
             searchButtonAppearanceController.show();
-            backgroundAppearanceController.show();
             view(R.id.dashboard_search_edit, EditText.class).setText("");
             searchPanelAppearanceController.hide();
-            mostUsedAppsPanelAppearanceController.show();
-            recentAppsPanelAppearanceController.show();
+            searchResultPanelAppearanceController.hide();
+            hotAppsPanelAppearanceController.show();
         } else {
             super.onBackPressed();
         }
@@ -442,5 +413,37 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
+    private class ImageOnlyViewRenderer implements RefreshableListAdapter.ViewRender{
 
+        @Override
+        public View renderData(final ApplicationData data, Drawable icon, ViewGroup viewGroup, LayoutInflater inflater) {
+            ImageView imageView = (ImageView) inflater.inflate(R.layout.launcher_view,viewGroup,false);
+            imageView.setImageDrawable(icon);
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DashboardActivity.this.application().launchApplication(data);
+                }
+            });
+            return imageView;
+        }
+    }
+
+    private class ImageWithCaptionViewRenderer implements RefreshableListAdapter.ViewRender{
+
+        @Override
+        public View renderData(final ApplicationData data, Drawable icon, ViewGroup viewGroup, LayoutInflater inflater) {
+            View answer = inflater.inflate(R.layout.launcher_view_with_caption,viewGroup,false);
+            ImageView imageView = (ImageView) answer.findViewById(R.id.icon);
+            imageView.setImageDrawable(icon);
+            answer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DashboardActivity.this.application().launchApplication(data);
+                }
+            });
+            ((TextView)answer.findViewById(R.id.name)).setText(data.name);
+            return answer;
+        }
+    }
 }

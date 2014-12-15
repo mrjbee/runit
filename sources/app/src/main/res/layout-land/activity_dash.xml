@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white.darkest">
+
+    <ScrollView
+        android:layout_toRightOf="@+id/dashboard_left_panel"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/dashboard_hot_app_container">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:layout_marginLeft="15dp"
+                android:text="Most Used Applications"
+                android:textColor="@color/black.light"
+                android:shadowColor="@android:color/white"
+                android:shadowRadius="1"
+                android:shadowDy="1"
+                android:shadowDx="1"
+                android:textSize="14sp"
+                />
+
+                <LinearLayout
+                    android:id="@+id/dashboard_resent_used_apps_panel"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/panel_round_whitest_2"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/dashboard_resent_used_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:animateLayoutChanges="true"
+                        android:padding="5dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp">
+
+                        <TextView
+                            android:id="@+id/dashboard_resent_used_no_data_text"
+                            android:layout_gravity="center"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="5dp"
+                            android:text="No data yet"
+                            android:textStyle="bold"
+                            android:textSize="16sp"
+                            android:textColor="@color/black.light"
+                            android:visibility="gone"
+                            />
+                    </LinearLayout>
+                </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/dashboard_search_result_container"
+        android:layout_toRightOf="@+id/dashboard_left_panel"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:scrollbars="none">
+                <ImageView
+                    android:layout_marginTop="10dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/bkg_image"
+                    android:alpha="0.3"
+                    />
+        </ScrollView>
+
+        <ListView
+            android:id="@+id/dashboard_search_result_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:listSelector="@android:color/transparent">
+        </ListView>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/dashboard_search_panel"
+        android:layout_alignParentRight="true"
+        android:layout_width="200dp"
+        android:layout_height="45dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/panel_round_white"
+        android:paddingLeft="20dp">
+        <EditText
+            android:id="@+id/dashboard_search_edit"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:textColor="@color/blue.themed.dark"
+            android:background="@android:color/transparent"
+            android:hint="What To Run ..."
+            android:focusableInTouchMode="true"
+            android:singleLine="true"
+            android:textColorHint="@color/white.most.darkest"
+            android:editable="true"
+            android:textSize="16sp"
+            android:imeOptions="flagNoExtractUi"
+        />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/dashboard_left_panel"
+        android:layout_width="90dp"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:background="@color/blue.themed"
+        android:paddingLeft="7dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            android:text="Resent Used"
+            android:textColor="@color/white.dark"
+            android:shadowColor="@color/black.dark"
+            android:shadowRadius="1"
+            android:shadowDy="-1"
+            android:shadowDx="-1"
+            android:textSize="12sp"
+            />
+            <LinearLayout
+                android:id="@+id/dashboard_most_used_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="vertical"
+                android:animateLayoutChanges="true"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal">
+                <TextView
+                    android:id="@+id/dashboard_most_used_no_data_text"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:text="No data"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="@color/white.dark"
+                    android:visibility="gone"
+                    />
+            </LinearLayout>
+
+    </LinearLayout>
+
+
+
+    <Button
+        android:id="@+id/dashboard_search_button"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:background="@drawable/search_button"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"/>
+
+
+
+
+</RelativeLayout>

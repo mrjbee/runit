@@ -27,16 +27,16 @@ public class RefreshableListAdapter {
     private final List<Pair<View,ListDataItem>> visibleItemList;
     private final List<AddItemRequest> addRequestList;
     private final LayoutInflater inflater;
-    private final int layoutId;
+    private final ViewRender render;
 
-    public RefreshableListAdapter(RunitApp app, ViewGroup viewGroup, int layoutId,  int itemCountToShow) {
+    public RefreshableListAdapter(RunitApp app, ViewGroup viewGroup, int itemCountToShow, ViewRender render) {
         this.app = app;
         this.viewGroup = viewGroup;
         this.itemCountToShow = itemCountToShow;
+        this.render = render;
         visibleItemList = new ArrayList<Pair<View, ListDataItem>>(itemCountToShow);
         addRequestList = new ArrayList<AddItemRequest>(itemCountToShow);
         inflater = LayoutInflater.from(app.getApplicationContext());
-        this.layoutId = layoutId;
     }
 
     public synchronized void refreshList(List<ApplicationData> applicationDataList){
@@ -114,16 +114,9 @@ public class RefreshableListAdapter {
     }
 
     private void addNewView(final AddItemRequest request) {
-        ImageView imageView = (ImageView) inflater.inflate(layoutId,viewGroup,false);
-        imageView.setImageDrawable(request.newItem.icon);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                app.launchApplication(request.newItem.data);
-            }
-        });
-        viewGroup.addView(imageView);
-        visibleItemList.add(new Pair<View, ListDataItem>(imageView,request.newItem));
+        View renderedView = render.renderData(request.newItem.data,request.newItem.icon,viewGroup,inflater);
+        viewGroup.addView(renderedView);
+        visibleItemList.add(new Pair<View, ListDataItem>(renderedView,request.newItem));
     }
 
     private boolean checkIfRequestActual(AddItemRequest request) {
@@ -151,6 +144,12 @@ public class RefreshableListAdapter {
 
         return answer;
     }
+
+
+    public static interface ViewRender {
+        View renderData(ApplicationData data, Drawable icon, ViewGroup viewGroup, LayoutInflater inflater);
+    }
+
 
     private final static class AddItemRequest{
 
