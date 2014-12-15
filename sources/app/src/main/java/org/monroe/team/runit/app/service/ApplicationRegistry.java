@@ -68,15 +68,15 @@ public class ApplicationRegistry {
 
     public List<ApplicationData> filterOutNotExists(List<ApplicationData> testList) {
         final List<ApplicationData> answer =new ArrayList<ApplicationData>();
-        Lists.iterateAndRemove(testList, new Closure<Iterator<ApplicationData>, Void>() {
+        Lists.iterateAndRemove(testList, new Closure<Iterator<ApplicationData>, Boolean>() {
             @Override
-            public Void execute(Iterator<ApplicationData> iterator) {
+            public Boolean execute(Iterator<ApplicationData> iterator) {
                 ApplicationData data = iterator.next();
                 if (getLauncherActivityResolverInfoByPackageName(data) == null){
                     answer.add(data);
                     iterator.remove();
                 }
-                return null;
+                return false;
             }
         });
         return answer;

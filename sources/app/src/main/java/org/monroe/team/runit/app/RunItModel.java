@@ -25,11 +25,12 @@ public class RunItModel extends Model {
     protected void constructor(String appName, Context context, ServiceRegistry serviceRegistry) {
         serviceRegistry.registrate(PackageManager.class, context.getPackageManager());
         serviceRegistry.registrate(ApplicationRegistry.class, new ApplicationRegistry(usingService(PackageManager.class)));
-        DBHelper helper = new DBHelper(context, new RunitSchema());
+        final RunitSchema schema = new RunitSchema();
+        DBHelper helper = new DBHelper(context, schema);
         TransactionManager transactionManager = new TransactionManager(helper, new DAOFactory() {
             @Override
             public DAOSupport createInstanceFor(SQLiteDatabase database) {
-                return new Dao(database);
+                return new Dao(database, schema);
             }
         });
         serviceRegistry.registrate(TransactionManager.class, transactionManager);

@@ -25,11 +25,26 @@ public class DBHelper extends SQLiteOpenHelper {
         });
     }
 
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        onCreate(db);
+    public void onUpgrade(final SQLiteDatabase db, int oldVersion, int newVersion) {
+        for (int version = oldVersion+1; version <= newVersion; version++ ) {
+            final int finalVersion = version;
+            schema.withEachTable(new Closure<Schema.Table, Void>() {
+                @Override
+                public Void execute(Schema.Table table) {
+                    table.alterColumns(finalVersion, new Closure<String,Void>() {
+                        @Override
+                        public Void execute(String sql) {
+                            db.execSQL(sql);
+                            return null;
+                        }
+                    });
+                    return null;
+                }
+            });
+        }
     }
 
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        onUpgrade(db, oldVersion, newVersion);
+        throw new IllegalStateException("Not supported");
     }
 }

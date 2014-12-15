@@ -13,12 +13,18 @@ import java.util.List;
 public class DAOSupport {
 
     protected final SQLiteDatabase db;
+    private final Schema schema;
 
-    public DAOSupport(SQLiteDatabase db) {
+    public DAOSupport(SQLiteDatabase db, Schema schema) {
         this.db = db;
+        this.schema = schema;
     }
 
-    protected static String[] strs(Object... vals) {
+    final protected <Table extends Schema.Table> Table table(Class<Table> tableClass){
+        return schema.table(tableClass);
+    }
+
+    final protected static String[] strs(Object... vals) {
         String[] strings = new String[vals.length];
         for (int i = 0; i < vals.length; i++) {
             strings[i]=String.valueOf(vals[i]);

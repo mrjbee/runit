@@ -25,10 +25,12 @@ public class Lists {
         return answerList;
     }
 
-    public static <DataType> void iterateAndRemove(Collection<DataType> list, Closure<Iterator<DataType>, Void> closure) {
+    public static <DataType> void iterateAndRemove(Collection<DataType> list, Closure<Iterator<DataType>, Boolean> closure) {
         Iterator<DataType> iterator = list.iterator();
         while (iterator.hasNext()){
-            closure.execute(iterator);
+            if(closure.execute(iterator)){
+                return;
+            }
         }
     }
 }
