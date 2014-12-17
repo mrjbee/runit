@@ -37,7 +37,7 @@ public final class ViewObjectAnimatorFactories {
 
     public static final class IntObjectViewAnimator extends ViewAnimatorFactorySupport<Integer> {
 
-        protected IntObjectViewAnimator(DurationProvider<Integer> durationProvider, TimeInterpolator interpolator) {
+        public IntObjectViewAnimator(DurationProvider<Integer> durationProvider, TimeInterpolator interpolator) {
             super(durationProvider, interpolator);
         }
 

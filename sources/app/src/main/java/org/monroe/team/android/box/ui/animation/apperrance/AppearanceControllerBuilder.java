@@ -41,22 +41,22 @@ public final class AppearanceControllerBuilder<TypeValue> {
     }
 
     public AppearanceControllerBuilder<TypeValue> showAnimation(ViewAnimatorFactorySupport.DurationProvider<? super TypeValue> duration){
-        showAnimationFactory = createAnimator((ViewAnimatorFactorySupport.DurationProvider<Float>) duration, TimeInterpreterBuilder.NO_OP);
+        showAnimationFactory = createAnimator( duration, TimeInterpreterBuilder.NO_OP);
         return this;
     }
 
     public AppearanceControllerBuilder<TypeValue> hideAnimation(ViewAnimatorFactorySupport.DurationProvider<? super TypeValue> duration){
-        hideAnimationFactory = createAnimator((ViewAnimatorFactorySupport.DurationProvider<Float>) duration, TimeInterpreterBuilder.NO_OP);
+        hideAnimationFactory = createAnimator(duration, TimeInterpreterBuilder.NO_OP);
         return this;
     }
 
     public AppearanceControllerBuilder<TypeValue> showAnimation(ViewAnimatorFactorySupport.DurationProvider<? super TypeValue> duration, TimeInterpreterBuilder builder){
-        showAnimationFactory = createAnimator((ViewAnimatorFactorySupport.DurationProvider<Float>) duration, builder);
+        showAnimationFactory = createAnimator(duration, builder);
         return this;
     }
 
     public AppearanceControllerBuilder<TypeValue> hideAnimation(ViewAnimatorFactorySupport.DurationProvider<? super TypeValue> duration, TimeInterpreterBuilder builder){
-        hideAnimationFactory = createAnimator((ViewAnimatorFactorySupport.DurationProvider<Float>) duration, builder);
+        hideAnimationFactory = createAnimator(duration, builder);
         return this;
     }
 
@@ -126,6 +126,40 @@ public final class AppearanceControllerBuilder<TypeValue> {
     }
 
 
+    public static TypeBuilder<Integer> heightSlide(final int showValue, final int hideValue){
+        return new TypeBuilder<Integer>() {
+            @Override
+            public DefaultAppearanceController.ValueGetter<Integer> buildValueGetter() {
+                return new DefaultAppearanceController.ValueGetter<Integer>() {
+                    @Override
+                    public Integer getShowValue() {
+                        return showValue;
+                    }
+
+                    @Override
+                    public Integer getHideValue() {
+                        return hideValue;
+                    }
+
+                    @Override
+                    public Integer getCurrentValue(View view) {
+                        return view.getLayoutParams().height;
+                    }
+                };
+            }
+
+            @Override
+            public TypedValueSetter<Integer> buildValueSetter() {
+                return new TypedValueSetter<Integer>(Integer.class) {
+                    @Override
+                    public void setValue(View view, Integer value) {
+                        view.getLayoutParams().height = value;
+                        view.requestLayout();
+                    }
+                };
+            }
+        };
+    }
 
     public static TypeBuilder<Float> ySlide(final float showValue, final float hideValue){
         return new TypeBuilder<Float>() {
@@ -234,12 +268,16 @@ public final class AppearanceControllerBuilder<TypeValue> {
         };
     }
 
-    private ViewAnimatorFactory<TypeValue> createAnimator(ViewAnimatorFactorySupport.DurationProvider<Float> duration, TimeInterpreterBuilder builder) {
+    private ViewAnimatorFactory<TypeValue> createAnimator(ViewAnimatorFactorySupport.DurationProvider<? super TypeValue> duration, TimeInterpreterBuilder builder) {
         ViewAnimatorFactory<TypeValue> animatorFactory;
         if (typeBuilder.buildValueSetter().typeClass == Float.class){
             animatorFactory =
                     (ViewAnimatorFactory<TypeValue>) new ViewObjectAnimatorFactories.FloatObjectViewAnimator(
-                            duration, builder.build());
+                            (ViewAnimatorFactorySupport.DurationProvider<Float>) duration, builder.build());
+        }else  if (typeBuilder.buildValueSetter().typeClass == Integer.class){
+            animatorFactory =
+                    (ViewAnimatorFactory<TypeValue>) new ViewObjectAnimatorFactories.IntObjectViewAnimator(
+                            (ViewAnimatorFactorySupport.DurationProvider<Integer>) duration, builder.build());
         }else {
             throw new IllegalStateException("Unsupported yet");
         }

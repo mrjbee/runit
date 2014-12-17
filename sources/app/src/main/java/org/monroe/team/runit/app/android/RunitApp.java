@@ -3,6 +3,7 @@ package org.monroe.team.runit.app.android;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.util.LruCache;
+import android.view.View;
 
 import org.monroe.team.android.box.manager.BackgroundTaskManager;
 import org.monroe.team.android.box.manager.Model;
@@ -11,6 +12,7 @@ import org.monroe.team.runit.app.ApplicationRefreshService;
 import org.monroe.team.runit.app.RunItModel;
 import org.monroe.team.runit.app.service.ApplicationRegistry;
 import org.monroe.team.runit.app.service.CategoryNameResolver;
+import org.monroe.team.runit.app.uc.FindAppsByCategory;
 import org.monroe.team.runit.app.uc.FindAppsByText;
 import org.monroe.team.runit.app.uc.FindMostUsedApplications;
 import org.monroe.team.runit.app.uc.FindRecentApplications;
@@ -26,6 +28,7 @@ import java.util.concurrent.Callable;
 public class RunitApp extends ApplicationSupport<RunItModel> {
 
     private BackgroundTaskManager.BackgroundTask<FindAppsByText.SearchResult> searchAppBackgroundTask;
+    private BackgroundTaskManager.BackgroundTask<FindAppsByText.SearchResult> appCategoryBackgroundTask;
     private LruCache<String, Drawable> launcherIconCache = new LruCache<String, Drawable>(20);
     private BackgroundTaskManager.BackgroundTask<List<ApplicationData>> mostResentAppFetchTask;
     private BackgroundTaskManager.BackgroundTask<List<ApplicationData>> mostUsedAppFetchTask;
@@ -63,6 +66,25 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
                         appSearchResultList.add(new AppSearchResult(applicationData,highlightStartIndex,highlightEndIndex));
                 }
                 callback.found(searchQuery, appSearchResultList);
+            }
+
+            @Override
+            public void onDone() {
+                callback.done();
+            }
+        });
+    }
+
+    public void searchApplicationByCategory(View v, Category item, final OnAppSearchCallback callback) {
+        if (appCategoryBackgroundTask != null) appCategoryBackgroundTask.cancel();
+        appCategoryBackgroundTask = model().execute(FindAppsByCategory.class, item.categoryId, new Model.BackgroundResultCallback<FindAppsByText.SearchResult>() {
+            @Override
+            public void onResult(FindAppsByText.SearchResult response) {
+                List<AppSearchResult> appSearchResultList = new ArrayList<AppSearchResult>(response.applicationDataList.size());
+                for (ApplicationData applicationData : response.applicationDataList) {
+                    appSearchResultList.add(new AppSearchResult(applicationData,0,0));
+                }
+                callback.found(null, appSearchResultList);
             }
 
             @Override
@@ -150,12 +172,14 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
                     categoryList.add(new Category(
                             model().usingService(CategoryNameResolver.class)
                                    .categoryNameById(applicationCategory.categoryId),
-                            applicationCategory.appsCount));
+                            applicationCategory.appsCount, applicationCategory.categoryId));
                 }
                 categoriesCallback.fetched(categoryList);
             }
         });
     }
+
+
 
     public interface OnAppCategoriesCallback {
         public void fetched(List<Category> fetchData);
@@ -182,10 +206,12 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
 
         public final String name;
         public final long appsCount;
+        private final Long categoryId;
 
-        public Category(String name, long appsCount) {
+        public Category(String name, long appsCount, Long categoryId) {
             this.name = name;
             this.appsCount = appsCount;
+            this.categoryId = categoryId;
         }
     }
 

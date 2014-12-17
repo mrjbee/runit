@@ -74,6 +74,23 @@ public class Dao  extends DAOSupport{
         });
     }
 
+    public List<Result> getAppsByCategory(Long category) {
+        final Cursor cursor = db.query(table(RunitSchema.Application.class).TABLE_NAME,
+                allApplicationFields(),
+                table(RunitSchema.Application.class)._CATEGORY +" == ?",
+                strs(category),
+                null,
+                null,
+                null);
+
+        return bakeMany(cursor, new Closure<Cursor, Result>() {
+            @Override
+            public Result execute(Cursor arg) {
+                return extractAppResult(cursor);
+            }
+        });
+    }
+
     private String[] allApplicationFields() {
         return strs(table(RunitSchema.Application.class)._ID,
                 table(RunitSchema.Application.class)._TITLE,
@@ -182,4 +199,6 @@ public class Dao  extends DAOSupport{
                 table(RunitSchema.Application.class)._ID +" NOT IN ("+builder.toString()+")",
                 null);
     }
+
+
 }
