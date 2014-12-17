@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import org.monroe.team.android.box.Closure;
 import org.monroe.team.android.box.db.DAOSupport;
 import org.monroe.team.android.box.db.Schema;
+import org.monroe.team.runit.app.uc.entity.ApplicationData;
 
 import java.util.Date;
 import java.util.List;
@@ -96,7 +97,7 @@ public class Dao  extends DAOSupport{
         return getAppById(generateAppId(packageName, title));
     }
 
-    private int generateAppId(String packageName, String title) {
+    public int generateAppId(String packageName, String title) {
         return (packageName+"."+title).hashCode();
     }
 
@@ -148,4 +149,37 @@ public class Dao  extends DAOSupport{
                 appContentValue);
     }
 
+
+    public List<Result> appsCountPerCategory() {
+        //SELECT strftime('%Y-%m-%d', date / 1000, 'unixepoch'), count(*) FROM smoke GROUP BY strftime('%Y-%m-%d', date / 1000, 'unixepoch');
+        Cursor cursor = db.query(table(RunitSchema.Application.class).TABLE_NAME,
+                strs(table(RunitSchema.Application.class)._CATEGORY, "count(*)"),
+                null,
+                null,
+                table(RunitSchema.Application.class)._CATEGORY,
+                null,
+                null);
+
+        return bakeMany(cursor, new Closure<Cursor, Result>() {
+            @Override
+            public Result execute(Cursor arg) {
+                return new Result().with(arg.isNull(0)? null:arg.getLong(0),
+                        arg.getLong(1));
+            }
+        });
+    }
+
+    public int removeAppsNotInList(List<ApplicationData> appsData) {
+        StringBuilder builder = new StringBuilder();
+        for (ApplicationData applicationData : appsData) {
+            builder
+                .append(generateAppId(applicationData.packageName, applicationData.name))
+                .append(",");
+        }
+        builder.deleteCharAt(builder.length()-1);
+        return db.delete(
+                table(RunitSchema.Application.class).TABLE_NAME,
+                table(RunitSchema.Application.class)._ID +" NOT IN ("+builder.toString()+")",
+                null);
+    }
 }

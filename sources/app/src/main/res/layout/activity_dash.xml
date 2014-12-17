@@ -29,7 +29,7 @@
                 android:shadowDx="1"
                 android:textSize="14sp"
                 />
-                <LinearLayout
+            <LinearLayout
                     android:id="@+id/dashboard_most_used_apps_panel"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -60,6 +60,28 @@
                             />
                     </LinearLayout>
                 </LinearLayout>
+            <RelativeLayout
+                android:id="@+id/dashboard_app_categories_panel"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="15dp"
+                android:layout_width="fill_parent"
+                android:layout_height="60dp"
+                android:background="@drawable/panel_round_gray"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_centerInParent="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="Application Categories"
+                    android:textColor="@color/black.light"
+                    android:shadowColor="@android:color/white"
+                    android:shadowRadius="1"
+                    android:shadowDy="1"
+                    android:shadowDx="1"
+                    android:textSize="16sp"
+                    />
+            </RelativeLayout>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -73,45 +95,46 @@
                 android:shadowDx="1"
                 android:textSize="14sp"
                 />
+            <LinearLayout
+                android:id="@+id/dashboard_resent_used_apps_panel"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/panel_round_whitest_2"
+                android:orientation="vertical"
+                android:layout_marginBottom="20dp">
 
                 <LinearLayout
-                    android:id="@+id/dashboard_resent_used_apps_panel"
-                    android:layout_width="fill_parent"
+                    android:id="@+id/dashboard_resent_used_container"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/panel_round_whitest_2"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:animateLayoutChanges="true"
+                    android:padding="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp">
 
-                    <LinearLayout
-                        android:id="@+id/dashboard_resent_used_container"
+                    <TextView
+                        android:id="@+id/dashboard_resent_used_no_data_text"
+                        android:layout_gravity="center"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:animateLayoutChanges="true"
                         android:padding="5dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp">
-
-                        <TextView
-                            android:id="@+id/dashboard_resent_used_no_data_text"
-                            android:layout_gravity="center"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:padding="5dp"
-                            android:text="No data yet"
-                            android:textStyle="bold"
-                            android:textSize="16sp"
-                            android:textColor="@color/black.light"
-                            android:visibility="gone"
-                            />
-                    </LinearLayout>
+                        android:text="No data yet"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="@color/black.light"
+                        android:visibility="gone"
+                        />
                 </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
     <RelativeLayout
         android:id="@+id/dashboard_search_result_container"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="fill_parent"
+        android:visibility="gone">
 
         <ScrollView
             android:layout_width="fill_parent"

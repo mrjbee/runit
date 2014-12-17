@@ -4,43 +4,56 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import org.monroe.team.android.box.db.DAOSupport;
-import org.monroe.team.android.box.db.TransactionManager;
+import org.monroe.team.android.box.manager.Model;
 import org.monroe.team.android.box.manager.NetworkManager;
 import org.monroe.team.runit.app.android.RunitApp;
 import org.monroe.team.runit.app.service.ApplicationRegistry;
 import org.monroe.team.runit.app.uc.RefreshApplicationCategory;
+import org.monroe.team.runit.app.uc.RemoveUninstalledApplications;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;
 
 import java.util.List;
 
-public class CategoryRefreshService extends Service {
+public class ApplicationRefreshService extends Service {
 
-    public Thread refreshThread;
+    public Thread categoryRefreshThread;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-       if (refreshThread == null){
-           refreshThread = new Thread(){
-               @Override
-               public void run() {
-                   try {
-                       CategoryRefreshService.this.refresh();
-                   }finally {
-                       CategoryRefreshService.this.stopSelf();
-                   }
-               }
-           };
-           refreshThread.start();
-       }
-       super.onStartCommand(intent, flags, startId);
-       return Service.START_NOT_STICKY;
+        startCategoryRefreshThread();
+        RunitApp app = (RunitApp) getApplication();
+        app.model().execute(RemoveUninstalledApplications.class, null, new Model.BackgroundResultCallback<Void>() {
+            @Override
+            public void onResult(Void response) {}
+        });
+        super.onStartCommand(intent, flags, startId);
+        return Service.START_NOT_STICKY;
+    }
+
+    private synchronized void startCategoryRefreshThread() {
+        if (categoryRefreshThread == null){
+            categoryRefreshThread = new Thread(){
+                @Override
+                public void run() {
+                    try {
+                        ApplicationRefreshService.this.refresh();
+                    }finally {
+                        ApplicationRefreshService.this.stopCategoryRefreshThread();
+                    }
+                }
+            };
+            categoryRefreshThread.start();
+        }
+    }
+
+    private synchronized void stopCategoryRefreshThread() {
+        categoryRefreshThread = null;
     }
 
     private void refresh() {
         RunitApp app = (RunitApp) getApplication();
-        if (!app.model().usingService(NetworkManager.class).isUsingWifi()) return;
         List<ApplicationData> appsList = app.model().usingService(ApplicationRegistry.class).getApplicationsWithLauncherActivity();
+        if (!app.model().usingService(NetworkManager.class).isUsingWifi()) return;
         int successTimes = 0;
         for (ApplicationData applicationData : appsList) {
            if (!app.model().usingService(NetworkManager.class).isUsingWifi()) continue;

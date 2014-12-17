@@ -1,0 +1,75 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.monroe.team.runit.app.AppsCategoryActivity">
+
+    <RelativeLayout
+        android:id="@+id/ac_background_panel"
+        android:paddingTop="30dp"
+        android:paddingBottom="30dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/white.transperent">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:background="@drawable/panel_round_whitest_2">
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_marginTop="50dp"
+                android:layout_height="1px"
+                android:background="@color/gray"/>
+            <ListView
+                android:layout_weight="2"
+                android:id="@+id/ac_category_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="#00000000"
+                android:dividerHeight="0px"
+                android:background="@android:color/transparent"
+                android:listSelector="@android:color/transparent">
+            </ListView>
+            <RelativeLayout
+                android:layout_weight="1"
+                android:layout_width="fill_parent"
+                android:layout_height="400dp"
+                android:background="@drawable/panel_round_bottom_black">
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shadow_vert"/>
+            </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
+
+
+        <LinearLayout
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:id="@+id/ac_header_panel"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="Application Categories"
+                android:textColor="@color/black.light"
+                android:shadowColor="@android:color/white"
+                android:shadowRadius="1"
+                android:shadowDy="1"
+                android:shadowDx="1"
+                android:textSize="16sp"
+                />
+        </LinearLayout>
+
+</RelativeLayout>

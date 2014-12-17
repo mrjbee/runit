@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="not_fetched_yet">Under processing</string>
+    <string name="play_market_category_UNDEFINED">Unknown Category</string>
+    <string name="play_market_category_NONE">Branded &amp; Native</string>
+    <string name="play_market_category_GAME">Games</string>
+    <string name="play_market_category_BOOKS_AND_REFERENCE">Books &amp; Reference</string>
+    <string name="play_market_category_BUSINESS">Business</string>
+</resources>

@@ -15,6 +15,7 @@ import org.monroe.team.android.box.manager.Model;
 import org.monroe.team.runit.app.db.Dao;
 import org.monroe.team.runit.app.db.RunitSchema;
 import org.monroe.team.runit.app.service.ApplicationRegistry;
+import org.monroe.team.runit.app.service.CategoryNameResolver;
 import org.monroe.team.runit.app.service.PlayMarketDetailsProvider;
 
 public class RunItModel extends Model {
@@ -25,10 +26,12 @@ public class RunItModel extends Model {
 
     @Override
     protected void constructor(String appName, Context context, ServiceRegistry serviceRegistry) {
+
         serviceRegistry.registrate(PackageManager.class, context.getPackageManager());
         serviceRegistry.registrate(ApplicationRegistry.class, new ApplicationRegistry(usingService(PackageManager.class)));
         serviceRegistry.registrate(NetworkManager.class, new NetworkManager(context));
         serviceRegistry.registrate(PlayMarketDetailsProvider.class, new PlayMarketDetailsProvider());
+        serviceRegistry.registrate(CategoryNameResolver.class, new CategoryNameResolver(context));
 
         final RunitSchema schema = new RunitSchema();
         DBHelper helper = new DBHelper(context, schema);

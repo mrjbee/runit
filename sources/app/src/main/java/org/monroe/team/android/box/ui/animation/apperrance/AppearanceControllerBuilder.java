@@ -218,7 +218,7 @@ public final class AppearanceControllerBuilder<TypeValue> {
         return new TimeInterpreterBuilder() {
             @Override
             public TimeInterpolator build() {
-                if (factor == null) return new AccelerateInterpolator();
+                if (factor == null) return new DecelerateInterpolator();
                 return new DecelerateInterpolator(factor);
             }
         };

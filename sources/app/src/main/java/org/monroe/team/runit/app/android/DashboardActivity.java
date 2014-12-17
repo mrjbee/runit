@@ -35,6 +35,7 @@ import org.monroe.team.android.box.manager.BackgroundTaskManager;
 import org.monroe.team.android.box.support.ActivitySupport;
 import org.monroe.team.android.box.ui.AppearanceControllerOld;
 import org.monroe.team.android.box.ui.animation.apperrance.AppearanceController;
+import org.monroe.team.runit.app.AppsCategoryActivity;
 import org.monroe.team.runit.app.R;
 import org.monroe.team.runit.app.android.preneter.RefreshableListAdapter;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;
@@ -153,6 +154,22 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
             }
         });
 
+        view(R.id.dashboard_app_categories_panel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DashboardActivity.this, AppsCategoryActivity.class);
+                int[] location = new int[2];
+                v.getLocationInWindow(location);
+                intent.putExtra("button_bounds", new float[]{
+                        location[0],
+                        location[1],
+                        v.getWidth(),
+                        v.getHeight()
+                });
+                startActivity(intent);
+            }
+        });
+
         super.onCreate(savedInstanceState);
     }
 
@@ -263,6 +280,11 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
                 }
             }).start();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     private void fetchMostRecentApplications() {

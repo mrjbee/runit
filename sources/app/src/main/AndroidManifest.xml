@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.monroe.team.runit.app" >
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".android.RunitApp"
@@ -54,11 +54,19 @@
             android:theme="@style/NoAnimation" >
         </activity>
 
+        <activity
+            android:name=".AppsCategoryActivity"
+            android:label="@string/title_activity_apps_category"
+            android:theme="@style/NoAnimation">
+        </activity>
+
         <service
-            android:name=".CategoryRefreshService"
+            android:name=".ApplicationRefreshService"
             android:enabled="true"
             android:exported="true" >
         </service>
+
+
     </application>
 
 </manifest>

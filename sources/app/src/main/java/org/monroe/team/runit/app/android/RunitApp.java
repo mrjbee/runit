@@ -1,6 +1,5 @@
 package org.monroe.team.runit.app.android;
 
-import android.app.Service;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.util.LruCache;
@@ -8,12 +7,14 @@ import android.util.LruCache;
 import org.monroe.team.android.box.manager.BackgroundTaskManager;
 import org.monroe.team.android.box.manager.Model;
 import org.monroe.team.android.box.support.ApplicationSupport;
-import org.monroe.team.runit.app.CategoryRefreshService;
+import org.monroe.team.runit.app.ApplicationRefreshService;
 import org.monroe.team.runit.app.RunItModel;
 import org.monroe.team.runit.app.service.ApplicationRegistry;
+import org.monroe.team.runit.app.service.CategoryNameResolver;
 import org.monroe.team.runit.app.uc.FindAppsByText;
 import org.monroe.team.runit.app.uc.FindMostUsedApplications;
 import org.monroe.team.runit.app.uc.FindRecentApplications;
+import org.monroe.team.runit.app.uc.GetApplicationCategories;
 import org.monroe.team.runit.app.uc.LaunchApplication;
 import org.monroe.team.runit.app.uc.LoadApplicationImage;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;
@@ -39,7 +40,7 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
                 return null;
             }
         });
-        startService(new Intent(this, CategoryRefreshService.class));
+        startService(new Intent(this, ApplicationRefreshService.class));
     }
 
     @Override
@@ -137,6 +138,31 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
         }
     }
 
+    public void fetchApplicationCategories(final OnAppCategoriesCallback categoriesCallback) {
+        model().execute(GetApplicationCategories.class,null, new Model.BackgroundResultCallback<List<GetApplicationCategories.ApplicationCategory>>() {
+            @Override
+            public void onResult(List<GetApplicationCategories.ApplicationCategory> response) {
+                if (response.isEmpty() || (response.size() ==1 && response.get(0).categoryId == null)){
+                    categoriesCallback.noData();
+                }
+                List<Category> categoryList = new ArrayList<Category>();
+                for (GetApplicationCategories.ApplicationCategory applicationCategory : response) {
+                    categoryList.add(new Category(
+                            model().usingService(CategoryNameResolver.class)
+                                   .categoryNameById(applicationCategory.categoryId),
+                            applicationCategory.appsCount));
+                }
+                categoriesCallback.fetched(categoryList);
+            }
+        });
+    }
+
+    public interface OnAppCategoriesCallback {
+        public void fetched(List<Category> fetchData);
+        public void noData();
+    }
+
+
     public abstract static class OnApplicationFetchedCallback {
         public abstract void fetched(List<ApplicationData> applicationDataList);
     }
@@ -150,6 +176,18 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
         public abstract void load(ApplicationData applicationData, Drawable drawable);
     }
 
+
+
+    public static class Category{
+
+        public final String name;
+        public final long appsCount;
+
+        public Category(String name, long appsCount) {
+            this.name = name;
+            this.appsCount = appsCount;
+        }
+    }
 
     public static class AppSearchResult {
 

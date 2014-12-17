@@ -10,11 +10,35 @@
         android:layout_height="fill_parent"
         android:id="@+id/dashboard_hot_app_container">
         <LinearLayout
+            android:layout_marginTop="20dp"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp">
+
+            <RelativeLayout
+                android:id="@+id/dashboard_app_categories_panel"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="15dp"
+                android:layout_width="fill_parent"
+                android:layout_height="60dp"
+                android:background="@drawable/panel_round_gray"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_centerInParent="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="Application Categories"
+                    android:textColor="@color/black.light"
+                    android:shadowColor="@android:color/white"
+                    android:shadowRadius="1"
+                    android:shadowDy="1"
+                    android:shadowDx="1"
+                    android:textSize="16sp"
+                    />
+            </RelativeLayout>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -35,7 +59,8 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/panel_round_whitest_2"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:layout_marginBottom="60dp">        >
 
                     <LinearLayout
                         android:id="@+id/dashboard_resent_used_container"
@@ -68,7 +93,8 @@
         android:id="@+id/dashboard_search_result_container"
         android:layout_toRightOf="@+id/dashboard_left_panel"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="fill_parent"
+        android:visibility="gone">
 
         <ScrollView
             android:layout_width="fill_parent"
@@ -128,6 +154,7 @@
         android:background="@color/blue.themed"
         android:paddingLeft="7dp">
         <TextView
+            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="3dp"
