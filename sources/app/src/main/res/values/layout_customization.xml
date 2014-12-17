@@ -1,5 +1,5 @@
 <resources>
-
+    <bool name="is_landscape">false</bool>
     <integer name="apps_panel_width">-1</integer>
     <bool name="apps_panel_place_in_center">true</bool>
 

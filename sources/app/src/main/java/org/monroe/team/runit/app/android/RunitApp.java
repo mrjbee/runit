@@ -7,6 +7,7 @@ import android.view.View;
 
 import org.monroe.team.android.box.manager.BackgroundTaskManager;
 import org.monroe.team.android.box.manager.Model;
+import org.monroe.team.android.box.manager.SettingManager;
 import org.monroe.team.android.box.support.ApplicationSupport;
 import org.monroe.team.runit.app.ApplicationRefreshService;
 import org.monroe.team.runit.app.RunItModel;
@@ -174,7 +175,8 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
                                    .categoryNameById(applicationCategory.categoryId),
                             applicationCategory.appsCount, applicationCategory.categoryId));
                 }
-                categoriesCallback.fetched(categoryList);
+                categoriesCallback.fetched(categoryList,
+                        model().usingService(SettingManager.class).get(RunItModel.SETTING_SYNC_IN_PROGRESS));
             }
         });
     }
@@ -182,7 +184,7 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
 
 
     public interface OnAppCategoriesCallback {
-        public void fetched(List<Category> fetchData);
+        public void fetched(List<Category> fetchData, boolean syncInProgress);
         public void noData();
     }
 

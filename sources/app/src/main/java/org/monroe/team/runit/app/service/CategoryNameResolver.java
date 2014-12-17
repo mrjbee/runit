@@ -2,7 +2,7 @@ package org.monroe.team.runit.app.service;
 
 import android.content.Context;
 
-import org.monroe.team.android.box.manager.ResourceUtils;
+import org.monroe.team.android.box.utils.ResourceUtils;
 import org.monroe.team.runit.app.R;
 
 public class CategoryNameResolver {

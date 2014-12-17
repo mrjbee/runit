@@ -1,4 +1,4 @@
-package org.monroe.team.android.box;
+package org.monroe.team.android.box.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

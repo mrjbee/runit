@@ -1,4 +1,4 @@
-package org.monroe.team.android.box.manager;
+package org.monroe.team.android.box.utils;
 
 import java.lang.reflect.Field;
 

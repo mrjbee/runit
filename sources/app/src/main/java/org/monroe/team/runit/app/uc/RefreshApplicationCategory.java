@@ -29,6 +29,7 @@ public class RefreshApplicationCategory extends UserCaseSupport<ApplicationData,
         RefreshStatus answer = using(TransactionManager.class).execute(new TransactionManager.TransactionAction<RefreshStatus>() {
             @Override
             public RefreshStatus execute(DAOSupport dao) {
+                dao=dao;
                 DAOSupport.Result result = ((Dao)dao).getAppByName(request.packageName, request.name);
                 if (result != null && result.get(5, Long.class) != null){
                     return RefreshStatus.NO_ACTION_REQUIRED;
@@ -48,7 +49,7 @@ public class RefreshApplicationCategory extends UserCaseSupport<ApplicationData,
             using(TransactionManager.class).execute(new TransactionManager.TransactionAction<Object>() {
                 @Override
                 public Object execute(DAOSupport dao) {
-                    ((Dao)dao).insertApplicationWithCategory(request.packageName, request.name, index);
+                    ((Dao)dao).updateApplicationCategory(request.packageName, request.name, (long) index, true);
                     return null;
                 }
             });

@@ -6,6 +6,7 @@ import android.os.IBinder;
 
 import org.monroe.team.android.box.manager.Model;
 import org.monroe.team.android.box.manager.NetworkManager;
+import org.monroe.team.android.box.manager.SettingManager;
 import org.monroe.team.runit.app.android.RunitApp;
 import org.monroe.team.runit.app.service.ApplicationRegistry;
 import org.monroe.team.runit.app.uc.RefreshApplicationCategory;
@@ -53,10 +54,11 @@ public class ApplicationRefreshService extends Service {
     private void refresh() {
         RunitApp app = (RunitApp) getApplication();
         List<ApplicationData> appsList = app.model().usingService(ApplicationRegistry.class).getApplicationsWithLauncherActivity();
-        if (!app.model().usingService(NetworkManager.class).isUsingWifi()) return;
+        // if (!app.model().usingService(NetworkManager.class).isUsingWifi()) return;
+        boolean syncDone = true;
         int successTimes = 0;
         for (ApplicationData applicationData : appsList) {
-           if (!app.model().usingService(NetworkManager.class).isUsingWifi()) continue;
+         //  if (!app.model().usingService(NetworkManager.class).isUsingWifi()) continue;
            RefreshApplicationCategory.RefreshStatus status = app.model().execute(RefreshApplicationCategory.class,applicationData);
            switch (status){
                case NO_ACTION_REQUIRED:
@@ -67,6 +69,9 @@ public class ApplicationRefreshService extends Service {
                         continue;
                    }
                case FAILED_NO_CONNECTION:
+                   syncDone = false;
+                   ((RunitApp)getApplication()).model()
+                           .usingService(SettingManager.class).set(RunItModel.SETTING_SYNC_IN_PROGRESS, true);
                    try {
                        Thread.sleep(1000);
                        continue;
@@ -74,12 +79,15 @@ public class ApplicationRefreshService extends Service {
                        return;
                    }
                case FAILED_BLOCKED:
-                   //enough fot today :)
+                   //enough fot this time :)
+                   syncDone = false;
+                   ((RunitApp)getApplication()).model()
+                           .usingService(SettingManager.class).set(RunItModel.SETTING_SYNC_IN_PROGRESS, true);
                    return;
            }
-
-
         }
+        ((RunitApp)getApplication()).model()
+                .usingService(SettingManager.class).set(RunItModel.SETTING_SYNC_IN_PROGRESS, !syncDone);
     }
 
     @Override

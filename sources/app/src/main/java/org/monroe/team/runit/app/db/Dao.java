@@ -75,18 +75,28 @@ public class Dao  extends DAOSupport{
     }
 
     public List<Result> getAppsByCategory(Long category) {
-        final Cursor cursor = db.query(table(RunitSchema.Application.class).TABLE_NAME,
-                allApplicationFields(),
-                table(RunitSchema.Application.class)._CATEGORY +" == ?",
-                strs(category),
-                null,
-                null,
-                null);
-
+        Cursor cursor;
+        if (category != null) {
+            cursor = db.query(table(RunitSchema.Application.class).TABLE_NAME,
+                    allApplicationFields(),
+                    table(RunitSchema.Application.class)._CATEGORY + " == ?",
+                    strs(category),
+                    null,
+                    null,
+                    null);
+        } else {
+            cursor = db.query(table(RunitSchema.Application.class).TABLE_NAME,
+                    allApplicationFields(),
+                    table(RunitSchema.Application.class)._CATEGORY + " is NULL",
+                    null,
+                    null,
+                    null,
+                    null);
+        }
         return bakeMany(cursor, new Closure<Cursor, Result>() {
             @Override
             public Result execute(Cursor arg) {
-                return extractAppResult(cursor);
+                return extractAppResult(arg);
             }
         });
     }
@@ -107,7 +117,7 @@ public class Dao  extends DAOSupport{
                         cursor.getString(2),
                         cursor.getLong(3),
                         cursor.getLong(4),
-                        cursor.getLong(5));
+                        (cursor.isNull(5)?null:cursor.getLong(5)));
     }
 
     public Result getAppByName(String packageName, String title) {
@@ -164,6 +174,24 @@ public class Dao  extends DAOSupport{
         return -1 != db.insert(table(RunitSchema.Application.class).TABLE_NAME,
                 null,
                 appContentValue);
+    }
+
+    public boolean updateApplicationCategory(
+            String packageName, String title, Long category, boolean insertIfNotExist) {
+        if (insertIfNotExist && getAppByName(packageName,title) == null){
+            insertApplication(packageName,title, 0);
+        }
+
+        ContentValues appContentValue = new ContentValues(5);
+        appContentValue.put(table(RunitSchema.Application.class)._ID, generateAppId(packageName, title));
+        appContentValue.put(table(RunitSchema.Application.class)._CATEGORY, category);
+
+        return  1 == db.update(
+                table(RunitSchema.Application.class).TABLE_NAME,
+                appContentValue,
+                table(RunitSchema.Application.class)._ID +" == ?",
+                strs(generateAppId(packageName,title))
+        );
     }
 
 

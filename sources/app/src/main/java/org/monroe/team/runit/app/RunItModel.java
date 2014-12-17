@@ -12,6 +12,7 @@ import org.monroe.team.android.box.db.TransactionManager;
 import org.monroe.team.android.box.manager.NetworkManager;
 import org.monroe.team.android.box.manager.ServiceRegistry;
 import org.monroe.team.android.box.manager.Model;
+import org.monroe.team.android.box.manager.SettingManager;
 import org.monroe.team.runit.app.db.Dao;
 import org.monroe.team.runit.app.db.RunitSchema;
 import org.monroe.team.runit.app.service.ApplicationRegistry;
@@ -19,6 +20,9 @@ import org.monroe.team.runit.app.service.CategoryNameResolver;
 import org.monroe.team.runit.app.service.PlayMarketDetailsProvider;
 
 public class RunItModel extends Model {
+
+    public final static SettingManager.SettingItem<Boolean> SETTING_SYNC_IN_PROGRESS = new SettingManager.SettingItem<>("sync_in_progress",Boolean.class, Boolean.TRUE);
+
 
     public RunItModel(String appName, Context context) {
         super(appName, context);

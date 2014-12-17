@@ -1,25 +1,23 @@
 package org.monroe.team.runit.app;
 
+import android.animation.Animator;
 import android.content.Context;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.monroe.team.android.box.SizeUtils;
+import org.monroe.team.android.box.Closure;
+import org.monroe.team.android.box.ui.AppearanceControllerOld;
+import org.monroe.team.android.box.utils.DisplayUtils;
 import org.monroe.team.android.box.manager.BackgroundTaskManager;
 import org.monroe.team.android.box.support.ActivitySupport;
 import org.monroe.team.android.box.ui.animation.apperrance.AppearanceController;
@@ -34,6 +32,7 @@ import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceCont
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.heightSlide;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.interpreter_accelerate_decelerate;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.interpreter_decelerate;
+import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.widthSlide;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.xSlide;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.ySlide;
 
@@ -44,6 +43,9 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
     private ArrayAdapter<RunitApp.AppSearchResult> categoryAppsAdapter;
 
     private AppearanceController appsPanelController;
+    private AppearanceController appsGridController;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,12 +56,12 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
             //40dp
             AppearanceController headerAppearanceController = animateAppearance(
                     view(R.id.ac_header_panel),
-                    ySlide(0f, buttonBounds[1] - SizeUtils.dpToPx(40, getResources())))
+                    ySlide(0f, buttonBounds[1] - DisplayUtils.dpToPx(40, getResources())))
                     .showAnimation(duration_constant(400), interpreter_accelerate_decelerate())
                     .build();
             AppearanceController headerXAppearanceController = animateAppearance(
                     view(R.id.ac_header_panel),
-                    xSlide(0f, buttonBounds[0] - SizeUtils.dpToPx(10, getResources())))
+                    xSlide(0f, buttonBounds[0] - DisplayUtils.dpToPx(10, getResources())))
                     .showAnimation(duration_constant(400), interpreter_accelerate_decelerate())
                     .build();
 
@@ -78,14 +80,44 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
 
         }
 
-        appsPanelController = animateAppearance(
-                view(R.id.ac_apps_panel),
-                heightSlide((int)SizeUtils.dpToPx(400,getResources()),0))
-                .showAnimation(duration_constant(200), interpreter_decelerate(null))
+        DisplayUtils.landscape_portrait(getResources(), R.bool.class, new Closure<Void, Void>() {
+            @Override
+            public Void execute(Void arg) {
+                appsPanelController = animateAppearance(
+                        view(R.id.ac_apps_panel),
+                        widthSlide((int) DisplayUtils.dpToPx(300, getResources()), 0))
+                        .showAnimation(duration_constant(200), interpreter_decelerate(null))
+                        .hideAnimation(duration_constant(200), interpreter_accelerate_decelerate())
+                        .hideAndGone()
+                        .build();
+                return null;
+            }
+        }, new Closure<Void, Void>() {
+            @Override
+            public Void execute(Void arg) {
+                appsPanelController = animateAppearance(
+                        view(R.id.ac_apps_panel),
+                        heightSlide((int) DisplayUtils.dpToPx(400, getResources()), 0))
+                        .showAnimation(duration_constant(200), interpreter_decelerate(null))
+                        .hideAnimation(duration_constant(200), interpreter_accelerate_decelerate())
+                        .hideAndGone()
+                        .build();
+                return null;
+            }
+        });
+
+
+        appsPanelController.hideWithoutAnimation();
+
+        appsGridController = animateAppearance(
+                view(R.id.ac_apps_grid),
+                alpha(1f,0f))
+                .showAnimation(duration_constant(400), interpreter_decelerate(null))
                 .hideAnimation(duration_constant(200), interpreter_accelerate_decelerate())
                 .hideAndGone()
                 .build();
-        appsPanelController.hideWithoutAnimation();
+
+        appsGridController.hideWithoutAnimation();
 
         categoryAdapter = new ArrayAdapter<RunitApp.Category>(getApplicationContext(), R.layout.item_category){
             @Override
@@ -102,9 +134,11 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
                 convertView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        RunitApp.Category category = categoryAdapter.getItem(position);
+                        view(R.id.ac_category_label, TextView.class).setText(category.name);
                         categoryAppsAdapter.clear();
                         categoryAppsAdapter.notifyDataSetChanged();
-                        application().searchApplicationByCategory(v, categoryAdapter.getItem(position), new RunitApp.OnAppSearchCallback() {
+                        application().searchApplicationByCategory(v, category, new RunitApp.OnAppSearchCallback() {
                             @Override
                             public void found(String searchQuery, List<RunitApp.AppSearchResult> searchResultList) {
                                 categoryAppsAdapter.clear();
@@ -112,7 +146,18 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
                                 categoryAppsAdapter.notifyDataSetChanged();
                             }
                         });
-                        appsPanelController.show();
+                        appsGridController.hideWithoutAnimation();
+                        appsPanelController.showAndCustomize(new AppearanceController.AnimatorCustomization() {
+                            @Override
+                            public void customize(Animator animator) {
+                                animator.addListener(new AppearanceControllerOld.AnimatorListenerAdapter() {
+                                    @Override
+                                    public void onAnimationEnd(Animator animation) {
+                                        appsGridController.show();
+                                    }
+                                });
+                            }
+                        });
                     }
                 });
                 return convertView;
@@ -178,7 +223,16 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
             }
         };
 
+        view(R.id.ac_apps_grid, GridView.class).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                appsPanelController.hide();
+                application().launchApplication(categoryAppsAdapter.getItem(position).applicationData);
+            }
+        });
+
         view(R.id.ac_apps_grid, GridView.class).setAdapter(categoryAppsAdapter);
+        view(R.id.ac_synch_panel).setVisibility(View.GONE);
     }
 
     @Override
@@ -186,7 +240,8 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
         super.onResume();
         application().fetchApplicationCategories(new RunitApp.OnAppCategoriesCallback() {
             @Override
-            public void fetched(List<RunitApp.Category> fetchData) {
+            public void fetched(List<RunitApp.Category> fetchData, boolean syncInProgress) {
+                view(R.id.ac_synch_panel).setVisibility(syncInProgress?View.VISIBLE:View.GONE);
                 categoryAdapter.clear();
                 categoryAdapter.addAll(fetchData);
                 categoryAdapter.notifyDataSetChanged();
@@ -194,10 +249,20 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
 
             @Override
             public void noData() {
-                //TODO some explanantion here
+                //TODO should be not happends as button not visible
+                view(R.id.ac_synch_panel).setVisibility(View.VISIBLE);
                 categoryAdapter.clear();
                 categoryAdapter.notifyDataSetChanged();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (view(R.id.ac_apps_panel).getVisibility() != View.GONE){
+            appsPanelController.hide();
+        } else {
+            super.onBackPressed();
+        }
     }
 }

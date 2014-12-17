@@ -30,7 +30,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.monroe.team.android.box.SizeUtils;
+import org.monroe.team.android.box.utils.DisplayUtils;
 import org.monroe.team.android.box.manager.BackgroundTaskManager;
 import org.monroe.team.android.box.support.ActivitySupport;
 import org.monroe.team.android.box.ui.AppearanceControllerOld;
@@ -232,7 +232,7 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
 
         searchPanelAppearanceController = animateAppearance(
                 view(R.id.dashboard_search_panel),
-                xSlide(0f, SizeUtils.dpToPx(300, getResources())))
+                xSlide(0f, DisplayUtils.dpToPx(300, getResources())))
                 .showAnimation(duration_auto_fint(), interpreter_overshot())
                 .hideAnimation(duration_auto_fint(), interpreter_overshot())
                 .hideAndInvisible()
@@ -392,6 +392,18 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
             }
         };
         view(R.id.dashboard_search_result_list, ListView.class).setAdapter(searchResultAdapter);
+        view(R.id.dashboard_app_categories_panel).setVisibility(View.GONE);
+        application().fetchApplicationCategories(new RunitApp.OnAppCategoriesCallback() {
+            @Override
+            public void fetched(List<RunitApp.Category> fetchData, boolean inProgress) {
+                view(R.id.dashboard_app_categories_panel).setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void noData() {
+
+            }
+        });
     }
 
     @Override
