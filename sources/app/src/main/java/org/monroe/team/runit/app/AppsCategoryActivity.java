@@ -34,7 +34,6 @@ import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceCont
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.heightSlide;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.interpreter_accelerate_decelerate;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.interpreter_decelerate;
-import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.interpreter_overshot;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.widthSlide;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.xSlide;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.ySlide;
@@ -104,6 +103,38 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
                         .hideAnimation(duration_constant(200), interpreter_accelerate_decelerate())
                         .hideAndGone()
                         .build();
+                view(R.id.ac_apps_grid, PushToGridView.class).setPushThreshold(100);
+                view(R.id.ac_apps_grid, PushToGridView.class).setPushListener(new PushToActionAdapter(150) {
+
+                    @Override
+                    protected void cancelPushAction(float pushCoefficient, float x, float y) {
+                        appsPanelController.show();
+                    }
+
+                    @Override
+                    protected void applyPushAction(float x, float y) {
+                        appsPanelController.hide();
+                    }
+
+                    private float oldCoff = -1f;
+
+                    @Override
+                    protected void beforePush(float x, float y) {
+                        oldCoff = -1f;
+                    }
+
+                    @Override
+                    protected void pushInProgress(float pushCoefficient, float x, float y) {
+                        View panel = view(R.id.ac_apps_panel);
+                        if (Math.abs(pushCoefficient - oldCoff) > 0.5f) {
+                            int newHeight = (int) (DisplayUtils.dpToPx(400, getResources()) - 200 * pushCoefficient);
+                            panel.getLayoutParams().height = newHeight;
+                            panel.requestLayout();
+                            oldCoff = pushCoefficient;
+                        }
+                    }
+                });
+
                 return null;
             }
         });
@@ -251,24 +282,6 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
                   float alpha = (1 - pushCoefficient*0.9f);
                   view(R.id.ac_root_layout).setAlpha(alpha);
               }
-        });
-
-        view(R.id.ac_apps_grid, PushToGridView.class).setPushListener(new PushToActionAdapter(100) {
-            @Override
-            protected void cancelPushAction(float pushCoefficient, float x, float y) {
-                view(R.id.ac_root_layout).animate().alpha(1f).setInterpolator(interpreter_decelerate(null).build());
-            }
-
-            @Override
-            protected void applyPushAction(float x, float y) {
-                AppsCategoryActivity.this.finish();
-            }
-
-            @Override
-            protected void pushInProgress(float pushCoefficient, float x, float y) {
-                float alpha = (1 - pushCoefficient * 0.9f);
-                view(R.id.ac_root_layout).setAlpha(alpha);
-            }
         });
     }
 

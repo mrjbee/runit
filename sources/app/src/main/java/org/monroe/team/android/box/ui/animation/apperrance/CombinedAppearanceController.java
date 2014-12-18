@@ -53,4 +53,11 @@ final public class CombinedAppearanceController implements AppearanceController{
             controller.hideWithoutAnimation();
         }
     }
+
+    @Override
+    public void cancel() {
+        for (AppearanceController controller : controllers) {
+            controller.cancel();
+        }
+    }
 }

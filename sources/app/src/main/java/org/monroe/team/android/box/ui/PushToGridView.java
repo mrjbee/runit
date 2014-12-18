@@ -36,6 +36,15 @@ public class PushToGridView extends GridView implements PushTouchDelegate.PushDe
         delegate.setPushListener(pushListener);
     }
 
+
+    public float getPushThreshold() {
+        return delegate.getPushThreshold();
+    }
+
+    public void setPushThreshold(float pushThreshold) {
+        this.delegate.setPushThreshold(pushThreshold);
+    }
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
         if (delegate.pushProcessing(event)) return true;

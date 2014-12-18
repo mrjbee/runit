@@ -109,6 +109,11 @@ public class DefaultAppearanceController implements AppearanceController {
         animatedView.setVisibility(visibilityOnHide);
     }
 
+    @Override
+    public void cancel() {
+        cancelCurrentAnimator();
+    }
+
     private void cancelCurrentAnimator() {
         if (currentAnimator != null){
             currentAnimator.cancel();

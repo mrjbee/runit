@@ -11,6 +11,7 @@ public interface AppearanceController {
 
     public void showWithoutAnimation();
     public void hideWithoutAnimation();
+    public void cancel();
 
 
     public static interface AnimatorCustomization {

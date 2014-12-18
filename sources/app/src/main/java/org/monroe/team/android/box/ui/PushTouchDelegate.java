@@ -4,13 +4,22 @@ import android.view.MotionEvent;
 
 public class PushTouchDelegate {
 
-    private final float PUSH_VECTOR_THRESHOLD = 200;
+    private float pushThreshold = 200;
 
     private final PushDelegateOwner owner;
     private float startY = 0;
     private boolean overPushAllowed = false;
     private boolean overPushStarted = false;
     private PushListener pushListener;
+
+
+    public float getPushThreshold() {
+        return pushThreshold;
+    }
+
+    public void setPushThreshold(float pushThreshold) {
+        this.pushThreshold = pushThreshold;
+    }
 
     public PushTouchDelegate(PushDelegateOwner owner) {
         this.owner = owner;
@@ -25,6 +34,9 @@ public class PushTouchDelegate {
     }
 
     boolean pushProcessing(MotionEvent event) {
+
+        if (pushListener == null) return false;
+
         float y = event.getY();
         float overPush = y - startY;
 
@@ -32,13 +44,13 @@ public class PushTouchDelegate {
             case MotionEvent.ACTION_MOVE: {
                 if (overPushAllowed) {
 
-                    if (!overPushStarted && PUSH_VECTOR_THRESHOLD < overPush) {
+                    if (!overPushStarted && pushThreshold < overPush) {
                         overPushStarted = true;
                         pushListener.onOverPushStart(event.getX(), event.getY());
                     }
 
                     if (overPushStarted){
-                        pushListener.onOverPush(event.getX(), event.getY(), overPush - PUSH_VECTOR_THRESHOLD);
+                        pushListener.onOverPush(event.getX(), event.getY(), overPush - pushThreshold);
                     }
                     if (overPushStarted){
                         return true;
@@ -54,7 +66,7 @@ public class PushTouchDelegate {
             }
             case MotionEvent.ACTION_UP: {
                 if (overPushStarted) {
-                    pushListener.onOverPushStop(event.getX(), event.getY(), overPush - PUSH_VECTOR_THRESHOLD);
+                    pushListener.onOverPushStop(event.getX(), event.getY(), overPush - pushThreshold);
                 }
                 overPushAllowed = false;
                 overPushStarted = false;
