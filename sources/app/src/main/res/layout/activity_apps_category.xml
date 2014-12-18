@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:id="@+id/ac_root_layout"
     android:layout_height="match_parent"
     tools:context="org.monroe.team.runit.app.AppsCategoryActivity">
 
@@ -37,37 +38,37 @@
                     android:padding="5dp"
                     android:text="Sync in progress ..."/>
             </LinearLayout>
-            <ListView
-                android:layout_weight="2"
-                android:id="@+id/ac_category_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:divider="#00000000"
-                android:dividerHeight="0px"
-                android:listSelector="@color/blue.themed.light">
-            </ListView>
+                <org.monroe.team.android.box.ui.PushToListView
+                    android:layout_weight="2"
+                    android:id="@+id/ac_category_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:divider="#00000000"
+                    android:dividerHeight="0px"
+                    android:listSelector="@android:color/transparent"/>
             <RelativeLayout
                 android:id="@+id/ac_apps_panel"
                 android:layout_weight="1"
                 android:layout_width="fill_parent"
-                android:layout_height="200dp"
+                android:layout_height="0dp"
                 android:background="@drawable/panel_round_bottom_black">
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:background="@drawable/shadow_vert_darken"/>
-                <GridView
+                <org.monroe.team.android.box.ui.PushToGridView
                     android:id="@+id/ac_apps_grid"
                     android:numColumns="3"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:divider="#00000000"
                     android:dividerHeight="0px"
+                    android:overScrollMode="always"
                     android:background="@android:color/transparent"
-                    android:listSelector="@color/blue.themed.light">
+                    android:listSelector="@android:color/transparent">
 
-                </GridView>
+                </org.monroe.team.android.box.ui.PushToGridView>
 
                 <TextView
                     android:id="@+id/ac_category_label"

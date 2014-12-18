@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -17,12 +16,15 @@ import android.widget.TextView;
 
 import org.monroe.team.android.box.Closure;
 import org.monroe.team.android.box.ui.AppearanceControllerOld;
+import org.monroe.team.android.box.ui.PushToActionAdapter;
+import org.monroe.team.android.box.ui.PushToGridView;
 import org.monroe.team.android.box.utils.DisplayUtils;
 import org.monroe.team.android.box.manager.BackgroundTaskManager;
 import org.monroe.team.android.box.support.ActivitySupport;
 import org.monroe.team.android.box.ui.animation.apperrance.AppearanceController;
 import org.monroe.team.runit.app.android.RunitApp;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;
+import org.monroe.team.android.box.ui.PushToListView;
 
 import java.util.List;
 
@@ -32,6 +34,7 @@ import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceCont
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.heightSlide;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.interpreter_accelerate_decelerate;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.interpreter_decelerate;
+import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.interpreter_overshot;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.widthSlide;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.xSlide;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.ySlide;
@@ -44,7 +47,6 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
 
     private AppearanceController appsPanelController;
     private AppearanceController appsGridController;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -233,6 +235,41 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
 
         view(R.id.ac_apps_grid, GridView.class).setAdapter(categoryAppsAdapter);
         view(R.id.ac_synch_panel).setVisibility(View.GONE);
+        view(R.id.ac_category_list, PushToListView.class).setPushListener(new PushToActionAdapter(150) {
+              @Override
+              protected void cancelPushAction(float pushCoefficient, float x, float y) {
+                  view(R.id.ac_root_layout).animate().alpha(1f).setInterpolator(interpreter_decelerate(null).build());
+              }
+
+              @Override
+              protected void applyPushAction(float x, float y) {
+                  AppsCategoryActivity.this.finish();
+              }
+
+              @Override
+              protected void pushInProgress(float pushCoefficient, float x, float y) {
+                  float alpha = (1 - pushCoefficient*0.9f);
+                  view(R.id.ac_root_layout).setAlpha(alpha);
+              }
+        });
+
+        view(R.id.ac_apps_grid, PushToGridView.class).setPushListener(new PushToActionAdapter(100) {
+            @Override
+            protected void cancelPushAction(float pushCoefficient, float x, float y) {
+                view(R.id.ac_root_layout).animate().alpha(1f).setInterpolator(interpreter_decelerate(null).build());
+            }
+
+            @Override
+            protected void applyPushAction(float x, float y) {
+                AppsCategoryActivity.this.finish();
+            }
+
+            @Override
+            protected void pushInProgress(float pushCoefficient, float x, float y) {
+                float alpha = (1 - pushCoefficient * 0.9f);
+                view(R.id.ac_root_layout).setAlpha(alpha);
+            }
+        });
     }
 
     @Override
