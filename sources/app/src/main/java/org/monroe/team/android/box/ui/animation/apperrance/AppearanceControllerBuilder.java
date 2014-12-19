@@ -26,6 +26,14 @@ public final class AppearanceControllerBuilder<TypeValue> {
         this.typeBuilder = typeBuilder;
     }
 
+    public static AppearanceController combine(AppearanceControllerBuilder<?> ... appearanceControllerBuilders){
+        AppearanceController[] appearanceControllers = new AppearanceController[appearanceControllerBuilders.length];
+        for (int i = 0; i < appearanceControllerBuilders.length; i++) {
+            appearanceControllers[i]=appearanceControllerBuilders[i].build();
+        }
+        return CombinedAppearanceController.combine(appearanceControllers);
+    }
+
     public static <PropertyType> AppearanceControllerBuilder<PropertyType> animateAppearance(View view, TypeBuilder<PropertyType> property){
         return new AppearanceControllerBuilder<PropertyType>(view, property);
     }

@@ -6,4 +6,10 @@
         <!-- Customize your theme here. -->
         <item name="android:windowAnimationStyle">@null</item>
     </style>
+
+    <style name="LinearLayoutOrientation" >
+        <item name="android:orientation">vertical</item>
+    </style>
+
+
 </resources>

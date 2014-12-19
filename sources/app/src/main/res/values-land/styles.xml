@@ -1,0 +1,9 @@
+<resources>
+
+
+    <style name="LinearLayoutOrientation" >
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+
+</resources>

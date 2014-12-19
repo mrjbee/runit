@@ -30,6 +30,7 @@ import java.util.List;
 
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.alpha;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.animateAppearance;
+import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.combine;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.duration_constant;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.heightSlide;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.interpreter_accelerate_decelerate;
@@ -55,26 +56,31 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
         if (getIntent() != null) {
             buttonBounds = getIntent().getFloatArrayExtra("button_bounds");
             //40dp
-            AppearanceController headerAppearanceController = animateAppearance(
-                    view(R.id.ac_header_panel),
-                    ySlide(0f, buttonBounds[1] - DisplayUtils.dpToPx(40, getResources())))
-                    .showAnimation(duration_constant(400), interpreter_accelerate_decelerate())
-                    .build();
-            AppearanceController headerXAppearanceController = animateAppearance(
-                    view(R.id.ac_header_panel),
-                    xSlide(0f, buttonBounds[0] - DisplayUtils.dpToPx(10, getResources())))
-                    .showAnimation(duration_constant(400), interpreter_accelerate_decelerate())
-                    .build();
+            AppearanceController headerAppearanceController = combine(
+                    animateAppearance(
+                            view(R.id.ac_header_panel),
+                            ySlide(0f,
+                                    !DisplayUtils.isLandscape(getResources(),R.bool.class)?
+                                        buttonBounds[1] - DisplayUtils.dpToPx(40, getResources()):
+                                        buttonBounds[1] - DisplayUtils.dpToPx(20, getResources())))
+                            .showAnimation(duration_constant(400), interpreter_accelerate_decelerate()),
+                    animateAppearance(
+                            view(R.id.ac_header_panel),
+                            xSlide(0f, buttonBounds[0] - DisplayUtils.dpToPx(10, getResources())))
+                            .showAnimation(duration_constant(400), interpreter_accelerate_decelerate()));
+
 
             headerAppearanceController.hideWithoutAnimation();
-            headerAppearanceController.show();
-            headerXAppearanceController.hideWithoutAnimation();
-            headerXAppearanceController.show();
-
+            headerAppearanceController.showAndCustomize(new AppearanceController.AnimatorCustomization() {
+                @Override
+                public void customize(Animator animator) {
+                    animator.setStartDelay(400);
+                }
+            });
             AppearanceController backgroundAppearanceController = animateAppearance(
                     view(R.id.ac_background_panel),
                     alpha(1f, 0.2f))
-                    .showAnimation(duration_constant(300), interpreter_decelerate(null))
+                    .showAnimation(duration_constant(700), interpreter_decelerate(null))
                     .build();
             backgroundAppearanceController.hideWithoutAnimation();
             backgroundAppearanceController.show();
@@ -86,7 +92,7 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
             public Void execute(Void arg) {
                 appsPanelController = animateAppearance(
                         view(R.id.ac_apps_panel),
-                        widthSlide((int) DisplayUtils.dpToPx(300, getResources()), 0))
+                        widthSlide((int) DisplayUtils.dpToPx(450, getResources()), 0))
                         .showAnimation(duration_constant(200), interpreter_decelerate(null))
                         .hideAnimation(duration_constant(200), interpreter_accelerate_decelerate())
                         .hideAndGone()
