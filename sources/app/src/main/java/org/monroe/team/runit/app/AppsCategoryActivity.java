@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.monroe.team.android.box.Closure;
 import org.monroe.team.android.box.ui.AppearanceControllerOld;
@@ -25,6 +27,7 @@ import org.monroe.team.android.box.ui.animation.apperrance.AppearanceController;
 import org.monroe.team.runit.app.android.RunitApp;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;
 import org.monroe.team.android.box.ui.PushToListView;
+import org.monroe.team.runit.app.views.PushActionView;
 
 import java.util.List;
 
@@ -55,14 +58,13 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
         float[] buttonBounds = null;
         if (getIntent() != null) {
             buttonBounds = getIntent().getFloatArrayExtra("button_bounds");
-            //40dp
             AppearanceController headerAppearanceController = combine(
                     animateAppearance(
                             view(R.id.ac_header_panel),
                             ySlide(0f,
-                                    !DisplayUtils.isLandscape(getResources(),R.bool.class)?
-                                        buttonBounds[1] - DisplayUtils.dpToPx(40, getResources()):
-                                        buttonBounds[1] - DisplayUtils.dpToPx(20, getResources())))
+                                    !DisplayUtils.isLandscape(getResources(), R.bool.class) ?
+                                            buttonBounds[1] - DisplayUtils.dpToPx(40, getResources()) :
+                                            buttonBounds[1] - DisplayUtils.dpToPx(20, getResources())))
                             .showAnimation(duration_constant(400), interpreter_accelerate_decelerate()),
                     animateAppearance(
                             view(R.id.ac_header_panel),
@@ -70,21 +72,27 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
                             .showAnimation(duration_constant(400), interpreter_accelerate_decelerate()));
 
 
-            headerAppearanceController.hideWithoutAnimation();
-            headerAppearanceController.showAndCustomize(new AppearanceController.AnimatorCustomization() {
-                @Override
-                public void customize(Animator animator) {
-                    animator.setStartDelay(400);
-                }
-            });
             AppearanceController backgroundAppearanceController = animateAppearance(
                     view(R.id.ac_background_panel),
                     alpha(1f, 0.2f))
                     .showAnimation(duration_constant(700), interpreter_decelerate(null))
                     .build();
-            backgroundAppearanceController.hideWithoutAnimation();
-            backgroundAppearanceController.show();
 
+
+            if (savedInstanceState != null && savedInstanceState.getBoolean("animation_off")){
+                headerAppearanceController.showWithoutAnimation();
+                backgroundAppearanceController.showWithoutAnimation();
+            } else {
+                headerAppearanceController.hideWithoutAnimation();
+                backgroundAppearanceController.hideWithoutAnimation();
+                headerAppearanceController.showAndCustomize(new AppearanceController.AnimatorCustomization() {
+                    @Override
+                    public void customize(Animator animator) {
+                        animator.setStartDelay(400);
+                    }
+                });
+                backgroundAppearanceController.show();
+            }
         }
 
         DisplayUtils.landscape_portrait(getResources(), R.bool.class, new Closure<Void, Void>() {
@@ -109,42 +117,40 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
                         .hideAnimation(duration_constant(200), interpreter_accelerate_decelerate())
                         .hideAndGone()
                         .build();
-                view(R.id.ac_apps_grid, PushToGridView.class).setPushThreshold(100);
-                view(R.id.ac_apps_grid, PushToGridView.class).setPushListener(new PushToActionAdapter(150) {
-
-                    @Override
-                    protected void cancelPushAction(float pushCoefficient, float x, float y) {
-                        appsPanelController.show();
-                    }
-
-                    @Override
-                    protected void applyPushAction(float x, float y) {
-                        appsPanelController.hide();
-                    }
-
-                    private float oldCoff = -1f;
-
-                    @Override
-                    protected void beforePush(float x, float y) {
-                        oldCoff = -1f;
-                    }
-
-                    @Override
-                    protected void pushInProgress(float pushCoefficient, float x, float y) {
-                        View panel = view(R.id.ac_apps_panel);
-                        if (Math.abs(pushCoefficient - oldCoff) > 0.5f) {
-                            int newHeight = (int) (DisplayUtils.dpToPx(400, getResources()) - 200 * pushCoefficient);
-                            panel.getLayoutParams().height = newHeight;
-                            panel.requestLayout();
-                            oldCoff = pushCoefficient;
-                        }
-                    }
-                });
-
-                return null;
+                  return null;
             }
         });
 
+
+        view(R.id.ac_apps_grid, PushToGridView.class).setPushThreshold(100);
+        view(R.id.ac_apps_grid, PushToGridView.class).setPushListener(new PushToActionAdapter(150) {
+
+            @Override
+            protected void cancelPushAction(float pushCoefficient, float x, float y) {
+                view(R.id.ac_push_action_view, PushActionView.class)
+                        .stopPush();
+            }
+
+            @Override
+            protected void applyPushAction(float x, float y) {
+                view(R.id.ac_push_action_view, PushActionView.class)
+                        .stopPush();
+                appsPanelController.hide();
+            }
+
+
+            @Override
+            protected void beforePush(float x, float y) {
+                view(R.id.ac_push_action_view, PushActionView.class)
+                        .startPush(x,y,"Pushing ...", "Close Apps Panel");
+            }
+
+            @Override
+            protected void pushInProgress(float pushCoefficient, float x, float y) {
+                view(R.id.ac_push_action_view, PushActionView.class)
+                        .pushing(x,y,pushCoefficient);
+            }
+        });
 
         appsPanelController.hideWithoutAnimation();
 
@@ -270,25 +276,44 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
             }
         });
 
+        view(R.id.ac_apps_grid, GridView.class).setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                 ApplicationData data = categoryAppsAdapter.getItem(position).applicationData;
+                Toast.makeText(getApplicationContext(),"Configurating ... "+data.name, Toast.LENGTH_LONG).show();
+                return true;
+            }
+        });
+
         view(R.id.ac_apps_grid, GridView.class).setAdapter(categoryAppsAdapter);
         view(R.id.ac_synch_panel).setVisibility(View.GONE);
         view(R.id.ac_category_list, PushToListView.class).setPushListener(new PushToActionAdapter(150) {
               @Override
               protected void cancelPushAction(float pushCoefficient, float x, float y) {
                   view(R.id.ac_root_layout).animate().alpha(1f).setInterpolator(interpreter_decelerate(null).build());
+                  view(R.id.ac_push_action_view, PushActionView.class).stopPush();
               }
 
               @Override
               protected void applyPushAction(float x, float y) {
                   AppsCategoryActivity.this.finish();
+                  view(R.id.ac_push_action_view, PushActionView.class).stopPush();
               }
 
-              @Override
+            @Override
+            protected void beforePush(float x, float y) {
+                view(R.id.ac_push_action_view, PushActionView.class)
+                        .startPush(x, y, "Push it ...", "Back to Dash");
+            }
+
+            @Override
               protected void pushInProgress(float pushCoefficient, float x, float y) {
-                  float alpha = (1 - pushCoefficient*0.9f);
+                  float alpha = (1 - pushCoefficient*0.5f);
                   view(R.id.ac_root_layout).setAlpha(alpha);
+                  view(R.id.ac_push_action_view, PushActionView.class).pushing(x,y,pushCoefficient);
               }
         });
+
     }
 
     @Override
@@ -320,5 +345,11 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("animation_off",true);
     }
 }

@@ -46,11 +46,11 @@ public class PushTouchDelegate {
 
                     if (!overPushStarted && pushThreshold < overPush) {
                         overPushStarted = true;
-                        pushListener.onOverPushStart(event.getX(), event.getY());
+                        pushListener.onOverPushStart(event.getRawX(), event.getRawY());
                     }
 
                     if (overPushStarted){
-                        pushListener.onOverPush(event.getX(), event.getY(), overPush - pushThreshold);
+                        pushListener.onOverPush(event.getRawX(), event.getRawY(), overPush - pushThreshold);
                     }
                     if (overPushStarted){
                         return true;
@@ -66,7 +66,7 @@ public class PushTouchDelegate {
             }
             case MotionEvent.ACTION_UP: {
                 if (overPushStarted) {
-                    pushListener.onOverPushStop(event.getX(), event.getY(), overPush - pushThreshold);
+                    pushListener.onOverPushStop(event.getRawX(), event.getRawY(), overPush - pushThreshold);
                 }
                 overPushAllowed = false;
                 overPushStarted = false;

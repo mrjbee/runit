@@ -1,104 +1,115 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:id="@+id/ac_root_layout"
     android:layout_height="match_parent"
     tools:context="org.monroe.team.runit.app.AppsCategoryActivity">
 
     <RelativeLayout
-        android:id="@+id/ac_background_panel"
-        android:paddingTop="58dp"
+        android:id="@+id/ac_root_layout"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@color/white.darkest">
+        android:layout_height="fill_parent">
 
-        <LinearLayout
-            android:id="@+id/ac_synch_panel"
+        <RelativeLayout
+            android:id="@+id/ac_background_panel"
+            android:paddingTop="58dp"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/blue.themed.lightest"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:textColor="@color/black.almost"
-                android:padding="5dp"
-                android:text="Sync in progress ..."/>
-            </LinearLayout>
+            android:layout_height="fill_parent"
+            android:background="@color/white.darkest">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-            <org.monroe.team.android.box.ui.PushToListView
-                android:layout_weight="2"
-                android:id="@+id/ac_category_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:divider="#00000000"
-                android:dividerHeight="0px"
-                android:listSelector="@android:color/transparent"/>
-            <!-- Apps Grid-->
-            <RelativeLayout
-                android:id="@+id/ac_apps_panel"
-                android:layout_weight="1"
+            <LinearLayout
+                android:id="@+id/ac_synch_panel"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:background="@color/black.dark">
-                <org.monroe.team.android.box.ui.PushToGridView
-                    android:id="@+id/ac_apps_grid"
-                    android:numColumns="3"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:divider="#00000000"
-                    android:dividerHeight="0px"
-                    android:overScrollMode="always"
-                    android:background="@android:color/transparent"
-                    android:listSelector="@android:color/transparent">
-                </org.monroe.team.android.box.ui.PushToGridView>
-
+                android:layout_height="wrap_content"
+                android:background="@color/blue.themed.lightest"
+                android:orientation="vertical">
                 <TextView
-                    android:id="@+id/ac_category_label"
-                    android:layout_marginTop="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Category Name"
-                    android:textColor="@color/blue.themed.darken"
-                    android:rotation="90"
-                    android:transformPivotX="0dp"
                     android:textSize="12sp"
-                    android:translationX="18sp"
-                    />
-                <LinearLayout
+                    android:textColor="@color/black.almost"
+                    android:padding="5dp"
+                    android:text="Sync in progress ..."/>
+                </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+                <org.monroe.team.android.box.ui.PushToListView
+                    android:layout_weight="2"
+                    android:id="@+id/ac_category_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:divider="#00000000"
+                    android:dividerHeight="0px"
+                    android:listSelector="@android:color/transparent"/>
+                <!-- Apps Grid-->
+                <RelativeLayout
+                    android:id="@+id/ac_apps_panel"
+                    android:layout_weight="1"
                     android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:background="@color/black.dark">
+                    <org.monroe.team.android.box.ui.PushToGridView
+                        android:id="@+id/ac_apps_grid"
+                        android:numColumns="3"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:divider="#00000000"
+                        android:dividerHeight="0px"
+                        android:overScrollMode="always"
+                        android:background="@android:color/transparent"
+                        android:listSelector="@android:color/transparent">
+                    </org.monroe.team.android.box.ui.PushToGridView>
+
+                    <TextView
+                        android:id="@+id/ac_category_label"
+                        android:layout_marginTop="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Category Name"
+                        android:textColor="@color/blue.themed.darken"
+                        android:rotation="90"
+                        android:transformPivotX="0dp"
+                        android:textSize="12sp"
+                        android:translationX="18sp"
+                        />
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="@drawable/shadow_vert_darken"/>
+                </RelativeLayout>
+            </LinearLayout>
+        </RelativeLayout>
+        <LinearLayout
+                android:id="@+id/ac_header_panel"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="15dp"
+                android:layout_width="fill_parent"
+                android:layout_height="60dp"
+                android:background="@drawable/panel_round_gray"
+                android:orientation="horizontal"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/shadow_vert_darken"/>
-            </RelativeLayout>
-        </LinearLayout>
+                    android:text="Application Categories"
+                    android:textColor="@color/black.light"
+                    android:shadowColor="@android:color/white"
+                    android:shadowRadius="1"
+                    android:shadowDy="1"
+                    android:shadowDx="1"
+                    android:textSize="16sp"
+                    />
+            </LinearLayout>
     </RelativeLayout>
 
 
-        <LinearLayout
-            android:id="@+id/ac_header_panel"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="15dp"
-            android:layout_width="fill_parent"
-            android:layout_height="60dp"
-            android:background="@drawable/panel_round_gray"
-            android:orientation="horizontal"
-            android:gravity="center">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Application Categories"
-                android:textColor="@color/black.light"
-                android:shadowColor="@android:color/white"
-                android:shadowRadius="1"
-                android:shadowDy="1"
-                android:shadowDx="1"
-                android:textSize="16sp"
-                />
-        </LinearLayout>
+    <org.monroe.team.runit.app.views.PushActionView
+        android:id="@+id/ac_push_action_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"/>
+
 
 </RelativeLayout>
