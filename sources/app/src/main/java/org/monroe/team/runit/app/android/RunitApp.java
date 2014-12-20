@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.util.LruCache;
 import android.view.View;
+import android.widget.ListView;
 
 import org.monroe.team.android.box.manager.BackgroundTaskManager;
 import org.monroe.team.android.box.manager.Model;
@@ -13,6 +14,7 @@ import org.monroe.team.runit.app.ApplicationRefreshService;
 import org.monroe.team.runit.app.RunItModel;
 import org.monroe.team.runit.app.service.ApplicationRegistry;
 import org.monroe.team.runit.app.service.CategoryNameResolver;
+import org.monroe.team.runit.app.service.PlayMarketDetailsProvider;
 import org.monroe.team.runit.app.uc.FindAppsByCategory;
 import org.monroe.team.runit.app.uc.FindAppsByText;
 import org.monroe.team.runit.app.uc.FindMostUsedApplications;
@@ -20,9 +22,11 @@ import org.monroe.team.runit.app.uc.FindRecentApplications;
 import org.monroe.team.runit.app.uc.GetApplicationCategories;
 import org.monroe.team.runit.app.uc.LaunchApplication;
 import org.monroe.team.runit.app.uc.LoadApplicationImage;
+import org.monroe.team.runit.app.uc.UpdateApplicationCategory;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -181,6 +185,23 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
         });
     }
 
+    public List<Category> supportedCategories() {
+        List<Category> categories = new ArrayList<>();
+        for (PlayMarketDetailsProvider.PlayMarketCategory category : PlayMarketDetailsProvider.PlayMarketCategory.values()) {
+            if (category != PlayMarketDetailsProvider.PlayMarketCategory.NONE &&
+                    category != PlayMarketDetailsProvider.PlayMarketCategory.UNDEFINED){
+                categories.add(new Category(
+                        model().usingService(CategoryNameResolver.class)
+                                .categoryNameById((long) category.ordinal()),
+                        0, (long) category.ordinal()));
+            }
+        }
+        return categories;
+    }
+
+    public void updateAppCategory(ApplicationData appUnderMod, Category category) {
+        model().execute(UpdateApplicationCategory.class, new UpdateApplicationCategory.Request(category.categoryId, appUnderMod));
+    }
 
 
     public interface OnAppCategoriesCallback {
@@ -214,6 +235,29 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
             this.name = name;
             this.appsCount = appsCount;
             this.categoryId = categoryId;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Category category = (Category) o;
+
+            if (categoryId != null ? !categoryId.equals(category.categoryId) : category.categoryId != null)
+                return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return categoryId != null ? categoryId.hashCode() : 0;
+        }
+
+        @Override
+        public String toString() {
+            return name;
         }
     }
 

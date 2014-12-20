@@ -13,6 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +40,7 @@ import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceCont
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.heightSlide;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.interpreter_accelerate_decelerate;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.interpreter_decelerate;
+import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.interpreter_overshot;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.widthSlide;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.xSlide;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.ySlide;
@@ -49,7 +52,9 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
     private ArrayAdapter<RunitApp.AppSearchResult> categoryAppsAdapter;
 
     private AppearanceController appsPanelController;
+    private AppearanceController appModPanelController;
     private AppearanceController appsGridController;
+    private ApplicationData appUnderMod;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +103,14 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
         DisplayUtils.landscape_portrait(getResources(), R.bool.class, new Closure<Void, Void>() {
             @Override
             public Void execute(Void arg) {
+                appModPanelController = animateAppearance(
+                        view(R.id.ac_app_mod_panel),
+                        ySlide(0, DisplayUtils.screenHeight(getResources())))
+                        .showAnimation(duration_constant(400), interpreter_overshot())
+                        .hideAnimation(duration_constant(200), interpreter_accelerate_decelerate())
+                        .hideAndGone()
+                        .build();
+
                 appsPanelController = animateAppearance(
                         view(R.id.ac_apps_panel),
                         widthSlide((int) DisplayUtils.dpToPx(450, getResources()), 0))
@@ -110,6 +123,14 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
         }, new Closure<Void, Void>() {
             @Override
             public Void execute(Void arg) {
+
+                appModPanelController = animateAppearance(
+                        view(R.id.ac_app_mod_panel),
+                        heightSlide((int) DisplayUtils.dpToPx(200, getResources()), 0))
+                        .showAnimation(duration_constant(200), interpreter_decelerate(null))
+                        .hideAnimation(duration_constant(200), interpreter_accelerate_decelerate())
+                        .hideAndGone()
+                        .build();
                 appsPanelController = animateAppearance(
                         view(R.id.ac_apps_panel),
                         heightSlide((int) DisplayUtils.dpToPx(400, getResources()), 0))
@@ -142,7 +163,7 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
             @Override
             protected void beforePush(float x, float y) {
                 view(R.id.ac_push_action_view, PushActionView.class)
-                        .startPush(x,y,"Pushing ...", "Close Apps Panel");
+                        .startPush(x,y,"Push it ...", "Close Apps Panel");
             }
 
             @Override
@@ -153,6 +174,7 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
         });
 
         appsPanelController.hideWithoutAnimation();
+        appModPanelController.hideWithoutAnimation();
 
         appsGridController = animateAppearance(
                 view(R.id.ac_apps_grid),
@@ -176,10 +198,20 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
                 RunitApp.Category category = this.getItem(position);
                 ((TextView)convertView.findViewById(R.id.name)).setText(category.name);
                 ((TextView)convertView.findViewById(R.id.sub_name)).setText("apps "+category.appsCount);
+                //TODO: Replace with onItemClick
                 convertView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         RunitApp.Category category = categoryAdapter.getItem(position);
+                        Spinner spinner = view(R.id.ac_app_mod_category_spinner, Spinner.class);
+                        ArrayAdapter<RunitApp.Category> spinAdapter = (ArrayAdapter<RunitApp.Category>) spinner.getAdapter();
+                        int position = spinAdapter.getPosition(category);
+                        if (position < 0){
+                            position = 0;
+                        }
+                        appUnderMod = null;
+                        spinner.setSelection(position, false);
+
                         view(R.id.ac_category_label, TextView.class).setText(category.name);
                         categoryAppsAdapter.clear();
                         categoryAppsAdapter.notifyDataSetChanged();
@@ -203,6 +235,7 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
                                 });
                             }
                         });
+                        appModPanelController.hide();
                     }
                 });
                 return convertView;
@@ -278,9 +311,30 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
 
         view(R.id.ac_apps_grid, GridView.class).setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                 ApplicationData data = categoryAppsAdapter.getItem(position).applicationData;
-                Toast.makeText(getApplicationContext(),"Configurating ... "+data.name, Toast.LENGTH_LONG).show();
+            public boolean onItemLongClick(AdapterView<?> parent, final View view, int position, long id) {
+                ApplicationData data = categoryAppsAdapter.getItem(position).applicationData;
+                view(R.id.ac_app_mod_name,TextView.class).setText(data.name);
+                appUnderMod = data;
+                application().loadApplicationIcon(data, new RunitApp.OnLoadApplicationIconCallback() {
+                    @Override
+                    public void load(ApplicationData applicationData, Drawable drawable) {
+                        if (applicationData == appUnderMod){
+                            view(R.id.ac_app_mod_icon, ImageView.class).setImageDrawable(drawable);
+                        }
+                    }
+                });
+                appsPanelController.hideAndCustomize(new AppearanceController.AnimatorCustomization() {
+                    @Override
+                    public void customize(Animator animator) {
+                        animator.addListener(new AppearanceControllerOld.AnimatorListenerAdapter(){
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                               appModPanelController.show();
+                            }
+                        });
+                    }
+                });
+
                 return true;
             }
         });
@@ -288,41 +342,63 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
         view(R.id.ac_apps_grid, GridView.class).setAdapter(categoryAppsAdapter);
         view(R.id.ac_synch_panel).setVisibility(View.GONE);
         view(R.id.ac_category_list, PushToListView.class).setPushListener(new PushToActionAdapter(150) {
-              @Override
-              protected void cancelPushAction(float pushCoefficient, float x, float y) {
-                  view(R.id.ac_root_layout).animate().alpha(1f).setInterpolator(interpreter_decelerate(null).build());
-                  view(R.id.ac_push_action_view, PushActionView.class).stopPush();
-              }
+            @Override
+            protected void cancelPushAction(float pushCoefficient, float x, float y) {
+                view(R.id.ac_root_layout).animate().alpha(1f).setInterpolator(interpreter_decelerate(null).build());
+                view(R.id.ac_push_action_view, PushActionView.class).stopPush();
+            }
 
-              @Override
-              protected void applyPushAction(float x, float y) {
-                  AppsCategoryActivity.this.finish();
-                  view(R.id.ac_push_action_view, PushActionView.class).stopPush();
-              }
+            @Override
+            protected void applyPushAction(float x, float y) {
+                AppsCategoryActivity.this.finish();
+                view(R.id.ac_push_action_view, PushActionView.class).stopPush();
+            }
 
             @Override
             protected void beforePush(float x, float y) {
                 view(R.id.ac_push_action_view, PushActionView.class)
-                        .startPush(x, y, "Push it ...", "Back to Dash");
+                        .startPush(x, y, "Keep pushing ...", "Back to Dash");
             }
 
             @Override
-              protected void pushInProgress(float pushCoefficient, float x, float y) {
-                  float alpha = (1 - pushCoefficient*0.5f);
-                  view(R.id.ac_root_layout).setAlpha(alpha);
-                  view(R.id.ac_push_action_view, PushActionView.class).pushing(x,y,pushCoefficient);
-              }
+            protected void pushInProgress(float pushCoefficient, float x, float y) {
+                float alpha = (1 - pushCoefficient * 0.5f);
+                view(R.id.ac_root_layout).setAlpha(alpha);
+                view(R.id.ac_push_action_view, PushActionView.class).pushing(x, y, pushCoefficient);
+            }
         });
+        ArrayAdapter<RunitApp.Category> categoriesAdapter = new ArrayAdapter<RunitApp.Category>(this,R.layout.item_category_drop);
+        categoriesAdapter.addAll(application().supportedCategories());
+        view(R.id.ac_app_mod_category_spinner, Spinner.class).setAdapter(categoriesAdapter);
+        view(R.id.ac_app_mod_category_spinner, Spinner.class).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+               if (appUnderMod == null) return;
+               RunitApp.Category category = (RunitApp.Category) view(R.id.ac_app_mod_category_spinner, Spinner.class).getAdapter().getItem(position);
+               application().updateAppCategory(appUnderMod, category);
+               appUnderMod = null;
+               appModPanelController.hide();
+               reFetchCategories();
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                appModPanelController.hide();
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        reFetchCategories();
+    }
+
+    private void reFetchCategories() {
         application().fetchApplicationCategories(new RunitApp.OnAppCategoriesCallback() {
             @Override
             public void fetched(List<RunitApp.Category> fetchData, boolean syncInProgress) {
-                view(R.id.ac_synch_panel).setVisibility(syncInProgress?View.VISIBLE:View.GONE);
+                view(R.id.ac_synch_panel).setVisibility(syncInProgress? View.VISIBLE:View.GONE);
                 categoryAdapter.clear();
                 categoryAdapter.addAll(fetchData);
                 categoryAdapter.notifyDataSetChanged();
@@ -340,8 +416,10 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
 
     @Override
     public void onBackPressed() {
-        if (view(R.id.ac_apps_panel).getVisibility() != View.GONE){
+        if (view(R.id.ac_apps_panel).getVisibility() != View.GONE ||
+            view(R.id.ac_app_mod_panel).getVisibility() != View.GONE ){
             appsPanelController.hide();
+            appModPanelController.hide();
         } else {
             super.onBackPressed();
         }

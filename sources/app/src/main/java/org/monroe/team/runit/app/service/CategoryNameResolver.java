@@ -4,6 +4,9 @@ import android.content.Context;
 
 import org.monroe.team.android.box.utils.ResourceUtils;
 import org.monroe.team.runit.app.R;
+import org.monroe.team.runit.app.android.RunitApp;
+
+import java.util.List;
 
 public class CategoryNameResolver {
 
@@ -43,4 +46,5 @@ public class CategoryNameResolver {
         }
         return playMarketCategory;
     }
+
 }
