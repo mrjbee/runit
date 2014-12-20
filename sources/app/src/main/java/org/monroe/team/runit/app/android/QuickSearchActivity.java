@@ -4,31 +4,42 @@ import android.animation.Animator;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import org.monroe.team.android.box.manager.BackgroundTaskManager;
 import org.monroe.team.android.box.support.ActivitySupport;
 import org.monroe.team.android.box.ui.AppearanceControllerOld;
-import org.monroe.team.android.box.ui.AppearanceControllers;
 import org.monroe.team.android.box.ui.animation.apperrance.AppearanceController;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.*;
 import org.monroe.team.runit.app.R;
-import org.monroe.team.runit.app.android.preneter.SearchResultListDelegate;
+import org.monroe.team.runit.app.uc.entity.ApplicationData;
 
 import java.util.List;
 
 
 public class QuickSearchActivity extends ActivitySupport<RunitApp> {
 
-    private SearchResultListDelegate searchListDelegate;
     private AppearanceController searchPanelAppearanceController;
     private AppearanceController searchResultPanelAppearanceController;
+    private ArrayAdapter<RunitApp.AppSearchResult> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +57,103 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
                 }
             }
         });
-        searchListDelegate = new SearchResultListDelegate(this,view(R.id.qs_search_result_list, ListView.class), R.layout.item_search_application_qs) {
+
+        final int layout = R.layout.item_search_application_qs;
+        adapter = new ArrayAdapter<RunitApp.AppSearchResult>(this, layout){
             @Override
-            protected void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                application().launchApplication(searchListDelegate.get(position).applicationData);
+            public View getView(int position, View convertView, ViewGroup parent) {
+                final SearchItemDetails holder;
+                if (convertView == null){
+                    LayoutInflater inflater = (LayoutInflater) getContext()
+                            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    convertView = inflater.inflate(layout, null);
+                    holder = new SearchItemDetails(
+                            convertView.findViewById(R.id.search_first_item_stub),
+                            (TextView) convertView.findViewById(R.id.search_item_text),
+                            (TextView) convertView.findViewById(R.id.search_item_sub_text),
+                            (ImageView) convertView.findViewById(R.id.search_item_image));
+                    convertView.setTag(holder);
+                } else {
+                    holder = (SearchItemDetails) convertView.getTag();
+                }
+                if (holder.drawableLoadingTask != null){
+                    holder.drawableLoadingTask.cancel();
+                }
+                if (holder.categoryLoadingTask != null){
+                    holder.categoryLoadingTask.cancel();
+                }
+                holder.textCategoryView.setText("");
+
+                holder.foundApplicationItem = this.getItem(position);
+                final ApplicationData applicationData = holder.foundApplicationItem.applicationData;
+                SpannableString spannableString = new SpannableString(applicationData.name);
+                if (holder.foundApplicationItem.selectionStartIndex != null){
+                    spannableString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.blue_themed)),
+                            holder.foundApplicationItem.selectionStartIndex,
+                            holder.foundApplicationItem.selectionEndIndex,
+                            Spanned.SPAN_COMPOSING);
+                    spannableString.setSpan(new StyleSpan(Typeface.BOLD),
+                            holder.foundApplicationItem.selectionStartIndex,
+                            holder.foundApplicationItem.selectionEndIndex,
+                            Spanned.SPAN_COMPOSING);
+                }
+                holder.textView.setText(spannableString);
+                holder.imageView.setVisibility(View.INVISIBLE);
+
+                holder.drawableLoadingTask =  application().loadApplicationIcon(applicationData, new RunitApp.OnLoadApplicationIconCallback() {
+
+                    SearchItemDetails forHolder = holder;
+
+                    @Override
+                    public void load(ApplicationData applicationData, Drawable drawable) {
+                        if (forHolder.foundApplicationItem.applicationData == applicationData) {
+                            forHolder.imageView.setImageDrawable(drawable);
+                            forHolder.imageView.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+
+                holder.categoryLoadingTask =  application().loadApplicationCategory(applicationData, new RunitApp.OnLoadCategoryCallback() {
+
+                    SearchItemDetails forHolder = holder;
+
+                    @Override
+                    public void load(ApplicationData applicationData, RunitApp.Category category) {
+                        if (forHolder.foundApplicationItem.applicationData == applicationData) {
+                            forHolder.textCategoryView.setText(category.name);
+                        }
+                    }
+                });
+                return convertView;
+            }
+
+            class SearchItemDetails {
+
+                final View firstItemMarginView;
+                final TextView textView;
+                final TextView textCategoryView;
+                final ImageView imageView;
+
+                RunitApp.AppSearchResult foundApplicationItem;
+
+                BackgroundTaskManager.BackgroundTask<?> drawableLoadingTask;
+                BackgroundTaskManager.BackgroundTask<?> categoryLoadingTask;
+
+                SearchItemDetails(View firstItemMarginView, TextView textView, TextView textCategoryView, ImageView imageView) {
+                    this.firstItemMarginView = firstItemMarginView;
+                    this.textView = textView;
+                    this.textCategoryView = textCategoryView;
+                    this.imageView = imageView;
+                }
             }
         };
+        view(R.id.qs_search_result_list,ListView.class).setAdapter(adapter);
+        view(R.id.qs_search_result_list,ListView.class).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                application().launchApplication(adapter.getItem(position).applicationData);
+            }
+        });
 
         view(R.id.qs_search_edit, EditText.class).addTextChangedListener(new TextWatcher() {
             @Override
@@ -80,18 +182,29 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
             }
 
 
-            searchResultPanelAppearanceController = animateAppearance(view(R.id.qs_search_result_panel),
+            searchResultPanelAppearanceController = animateAppearance(view(R.id.qs_content_panel),
                      alpha(1f,0f))
-                    .showAnimation(duration_constant(600), interpreter_decelerate(0.2f))
+                    .showAnimation(duration_constant(300), interpreter_decelerate(0.3f))
                     .build();
 
 
-            searchPanelAppearanceController = animateAppearance(view(R.id.qs_search_panel), ySlide(0, searchPanelAppearanceStartFrom))
+            searchPanelAppearanceController = animateAppearance(view(R.id.qs_search_panel),
+                    ySlide(0, searchPanelAppearanceStartFrom))
                     .showAnimation(duration_constant(400), interpreter_accelerate(0.8f))
                     .build();
 
             searchPanelAppearanceController.hideWithoutAnimation();
             searchResultPanelAppearanceController.hideWithoutAnimation();
+            application().fetchMostRecentApplication(new RunitApp.OnApplicationFetchedCallback() {
+                @Override
+                public void fetched(List<ApplicationData> applicationDataList) {
+                    adapter.clear();
+                    for (ApplicationData data : applicationDataList) {
+                        adapter.add(new RunitApp.AppSearchResult(data,0,0));
+                    }
+                    adapter.notifyDataSetChanged();
+                }
+            });
         }
 
 
@@ -105,6 +218,7 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
             searchPanelAppearanceController.showAndCustomize(new AppearanceController.AnimatorCustomization() {
                 @Override
                 public void customize(Animator animator) {
+                    animator.setStartDelay(100);
                     animator.addListener(new AppearanceControllerOld.AnimatorListenerAdapter(){
                         @Override
                         public void onAnimationEnd(Animator animation) {
@@ -113,7 +227,12 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
                     });
                 }
             });
-            searchResultPanelAppearanceController.show();
+            searchResultPanelAppearanceController.showAndCustomize(new AppearanceController.AnimatorCustomization() {
+                @Override
+                public void customize(Animator animator) {
+                    animator.setStartDelay(500);
+                }
+            });
         }
     }
 
@@ -130,7 +249,9 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
         application().searchApplicationByName(searchQuery.trim(), new RunitApp.OnAppSearchCallback(){
             @Override
             public void found(String searchQuery, List<RunitApp.AppSearchResult> searchResultList) {
-                searchListDelegate.add(true, searchResultList);
+                adapter.clear();
+                adapter.addAll(searchResultList);
+                adapter.notifyDataSetChanged();
             }
         });
     }

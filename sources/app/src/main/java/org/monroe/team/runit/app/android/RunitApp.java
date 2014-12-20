@@ -21,6 +21,7 @@ import org.monroe.team.runit.app.uc.FindMostUsedApplications;
 import org.monroe.team.runit.app.uc.FindRecentApplications;
 import org.monroe.team.runit.app.uc.GetApplicationCategories;
 import org.monroe.team.runit.app.uc.LaunchApplication;
+import org.monroe.team.runit.app.uc.LoadApplicationCategory;
 import org.monroe.team.runit.app.uc.LoadApplicationImage;
 import org.monroe.team.runit.app.uc.UpdateApplicationCategory;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;
@@ -99,7 +100,7 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
         });
     }
 
-    public BackgroundTaskManager.BackgroundTask<Drawable> loadApplicationIcon(final ApplicationData data, final OnLoadApplicationIconCallback callback){
+    public BackgroundTaskManager.BackgroundTask<?> loadApplicationIcon(final ApplicationData data, final OnLoadApplicationIconCallback callback){
         Drawable drawable = launcherIconCache.get(data.getUniqueName());
         if (drawable != null){
             callback.load(data,drawable);
@@ -114,6 +115,21 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
         });
         return loadTask;
     }
+    public BackgroundTaskManager.BackgroundTask<?> loadApplicationCategory(final ApplicationData data, final OnLoadCategoryCallback callback) {
+
+        BackgroundTaskManager.BackgroundTask<Long> loadTask = model().execute(LoadApplicationCategory.class, data, new Model.BackgroundResultCallback<Long>() {
+            @Override
+            public void onResult(Long response) {
+                callback.load(data,new Category(
+                        model().usingService(CategoryNameResolver.class)
+                                .categoryNameById(response),
+                                0,response));
+            }
+        });
+        return loadTask;
+    }
+
+
 
 
     public void launchApplication(ApplicationData data){
@@ -223,6 +239,9 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
         public abstract void load(ApplicationData applicationData, Drawable drawable);
     }
 
+    public abstract static class OnLoadCategoryCallback {
+        public abstract void load(ApplicationData applicationData, Category category);
+    }
 
 
     public static class Category{

@@ -6,15 +6,6 @@
     android:layout_height="wrap_content"
     android:padding="10dp"
     >
-    <LinearLayout
-        android:id="@+id/search_first_item_stub"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/search_item_first_qs"
-        android:visibility="gone"
-        android:orientation="horizontal">
-     </LinearLayout>
 
     <org.monroe.team.runit.app.views.ShadowedImageView
         android:layout_below="@id/search_first_item_stub"
@@ -29,13 +20,24 @@
         />
     <TextView
         android:layout_toRightOf="@id/search_item_image"
-        android:layout_below="@id/search_first_item_stub"
         android:id="@+id/search_item_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        android:padding="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"
         android:textColor="@color/black.almost"
         android:bufferType="spannable"
         android:text="Application Name"/>
+    <TextView
+        android:layout_below="@id/search_item_text"
+        android:layout_alignLeft="@+id/search_item_text"
+        android:id="@+id/search_item_sub_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="@color/black.light"
+        android:visibility="visible"
+        android:text="category"/>
+
 </RelativeLayout>

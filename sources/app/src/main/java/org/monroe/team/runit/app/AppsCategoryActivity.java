@@ -267,7 +267,7 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
                 holder.textView.setText(applicationData.name);
                 holder.imageView.setVisibility(View.INVISIBLE);
 
-                BackgroundTaskManager.BackgroundTask<Drawable> loadTask = application().loadApplicationIcon(applicationData, new RunitApp.OnLoadApplicationIconCallback() {
+                BackgroundTaskManager.BackgroundTask<?> loadTask = application().loadApplicationIcon(applicationData, new RunitApp.OnLoadApplicationIconCallback() {
                     SearchItemDetails forHolder = holder;
 
                     @Override
@@ -291,7 +291,7 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
 
                 RunitApp.AppSearchResult foundApplicationItem;
 
-                BackgroundTaskManager.BackgroundTask<Drawable> drawableLoadingTask;
+                BackgroundTaskManager.BackgroundTask<?> drawableLoadingTask;
 
                 SearchItemDetails(View firstItemMarginView, TextView textView, ImageView imageView) {
                     this.firstItemMarginView = firstItemMarginView;
