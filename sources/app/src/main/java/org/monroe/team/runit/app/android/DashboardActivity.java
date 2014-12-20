@@ -38,6 +38,7 @@ import org.monroe.team.android.box.ui.animation.apperrance.AppearanceController;
 import org.monroe.team.runit.app.AppsCategoryActivity;
 import org.monroe.team.runit.app.R;
 import org.monroe.team.runit.app.android.preneter.RefreshableListAdapter;
+import org.monroe.team.runit.app.service.ApplicationRegistry;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;
 
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.*;
@@ -60,6 +61,7 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
 
     @Override
     protected void onCreate (final Bundle savedInstanceState) {
+        application().model().usingService(ApplicationRegistry.class).refreshApplicationsWithLauncherActivityList();
         setContentView(R.layout.activity_dash);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             updateTrayColor();

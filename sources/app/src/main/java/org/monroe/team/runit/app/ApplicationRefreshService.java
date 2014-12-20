@@ -54,11 +54,11 @@ public class ApplicationRefreshService extends Service {
     private void refresh() {
         RunitApp app = (RunitApp) getApplication();
         List<ApplicationData> appsList = app.model().usingService(ApplicationRegistry.class).getApplicationsWithLauncherActivity();
-        // if (!app.model().usingService(NetworkManager.class).isUsingWifi()) return;
+        if (!app.model().usingService(NetworkManager.class).isUsingWifi()) return;
         boolean syncDone = true;
         int successTimes = 0;
         for (ApplicationData applicationData : appsList) {
-         //  if (!app.model().usingService(NetworkManager.class).isUsingWifi()) continue;
+           if (!app.model().usingService(NetworkManager.class).isUsingWifi()) continue;
            RefreshApplicationCategory.RefreshStatus status = app.model().execute(RefreshApplicationCategory.class,applicationData);
            switch (status){
                case NO_ACTION_REQUIRED:

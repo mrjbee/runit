@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.widget.RemoteViews;
 
+import org.monroe.team.runit.app.AppsCategoryActivity;
 import org.monroe.team.runit.app.R;
 import org.monroe.team.runit.app.android.DashboardActivity;
 
@@ -39,6 +40,7 @@ public class TransparentPanelWidget extends AppWidgetProvider {
 
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.transperent_panel_widget);
         views.setOnClickPendingIntent(R.id.bw_root_layout, QuickSearchActivity.open(context));
+        views.setOnClickPendingIntent(R.id.bw_category_image, AppsCategoryActivity.open(context));
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }

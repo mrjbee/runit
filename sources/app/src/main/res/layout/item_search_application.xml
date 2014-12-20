@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp"
+    android:padding="5dp"
     >
     <LinearLayout
         android:id="@+id/search_first_item_stub"
@@ -19,8 +19,8 @@
     <org.monroe.team.runit.app.views.ShadowedImageView
         android:layout_below="@id/search_first_item_stub"
         android:id="@+id/search_item_image"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:visibility="invisible"
         android:paddingTop="2px"
         android:paddingLeft="4px"

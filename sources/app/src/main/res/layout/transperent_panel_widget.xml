@@ -2,11 +2,22 @@
     android:layout_width="match_parent"
     android:layout_height="60dp"
     android:layout_margin="@dimen/widget_margin"
-    android:paddingRight="10dp"
-    android:paddingLeft="20dp"
-    android:id="@+id/bw_root_layout">
+    android:paddingRight="0dp"
+    android:paddingLeft="0dp"
+    android:id="@+id/bw_root_layout"
+    android:gravity="bottom">
+
+    <ImageView
+        android:id="@+id/bw_search_image"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_centerVertical="true"
+        android:src="@drawable/search_image_small_white"
+        android:layout_alignParentLeft="true"/>
 
     <TextView
+        android:layout_toRightOf="@+id/bw_search_image"
+        android:paddingLeft="10dp"
         android:layout_centerVertical="true"
         android:id="@+id/bw_caption_label"
         android:layout_width="wrap_content"
@@ -36,18 +47,21 @@
         />
 
     <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:id="@+id/bw_category_image"
+        android:layout_alignParentRight="true"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:padding="7dp"
         android:layout_centerVertical="true"
-        android:src="@drawable/search_image_small_white"
-        android:layout_alignParentRight="true"/>
+        android:src="@drawable/cayegory_image_small_white"/>
 
-    <ImageView
+     <ImageView
         android:layout_below="@+id/bw_caption_label"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/line_in"
         android:layout_marginTop="5dp"
-        android:layout_marginRight="40dp"/>
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="55dp"/>
 
 </RelativeLayout>

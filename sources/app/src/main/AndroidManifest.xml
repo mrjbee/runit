@@ -57,6 +57,8 @@
         <activity
             android:name=".AppsCategoryActivity"
             android:label="@string/title_activity_apps_category"
+            android:noHistory="true"
+            android:taskAffinity=""
             android:theme="@style/NoAnimation">
         </activity>
 

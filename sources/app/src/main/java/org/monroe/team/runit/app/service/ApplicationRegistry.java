@@ -56,7 +56,7 @@ public class ApplicationRegistry {
         return applicationPackageInfoList;
     }
 
-    public synchronized void refreshApplicationsWithLauncherActivityList() {
+    public void refreshApplicationsWithLauncherActivityList() {
         final Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         applicationPackageInfoList = packageManager.queryIntentActivities(mainIntent, 0);

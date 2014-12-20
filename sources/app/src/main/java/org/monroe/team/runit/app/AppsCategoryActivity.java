@@ -1,7 +1,10 @@
 package org.monroe.team.runit.app;
 
 import android.animation.Animator;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -63,6 +66,14 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
         float[] buttonBounds = null;
         if (getIntent() != null) {
             buttonBounds = getIntent().getFloatArrayExtra("button_bounds");
+            if (buttonBounds == null || buttonBounds.length == 0){
+                Rect rect = getIntent().getSourceBounds();
+                if (rect != null) {
+                    buttonBounds = new float[]{rect.left, rect.top, rect.width(), rect.height()};
+                } else {
+                    buttonBounds = new float[]{0,0,0,0};
+                }
+            }
             AppearanceController headerAppearanceController = combine(
                     animateAppearance(
                             view(R.id.ac_header_panel),
@@ -90,12 +101,7 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
             } else {
                 headerAppearanceController.hideWithoutAnimation();
                 backgroundAppearanceController.hideWithoutAnimation();
-                headerAppearanceController.showAndCustomize(new AppearanceController.AnimatorCustomization() {
-                    @Override
-                    public void customize(Animator animator) {
-                        animator.setStartDelay(400);
-                    }
-                });
+                headerAppearanceController.show();
                 backgroundAppearanceController.show();
             }
         }
@@ -357,7 +363,7 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
             @Override
             protected void beforePush(float x, float y) {
                 view(R.id.ac_push_action_view, PushActionView.class)
-                        .startPush(x, y, "Keep pushing ...", "Back to Dash");
+                        .startPush(x, y, "Keep pushing ...", "Close Categories");
             }
 
             @Override
@@ -429,5 +435,15 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean("animation_off",true);
+    }
+
+    public static PendingIntent open(Context context) {
+            Intent intent = new Intent(context, AppsCategoryActivity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    .addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
+                    .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+                    .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            return PendingIntent.getActivity(context, 0, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }

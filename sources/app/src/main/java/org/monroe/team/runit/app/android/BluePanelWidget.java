@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.widget.RemoteViews;
 
+import org.monroe.team.runit.app.AppsCategoryActivity;
 import org.monroe.team.runit.app.R;
 
 /**
@@ -38,6 +39,7 @@ public class BluePanelWidget extends AppWidgetProvider {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.blue_panel_widget);
         views.setOnClickPendingIntent(R.id.bw_root_layout, QuickSearchActivity.open(context));
+        views.setOnClickPendingIntent(R.id.bw_category_image, AppsCategoryActivity.open(context));
         //views.setTextViewText(R.id.appwidget_text, widgetText);
 
         // Instruct the widget manager to update the widget
