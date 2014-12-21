@@ -1,8 +1,10 @@
 package org.monroe.team.runit.app;
 
 import android.animation.Animator;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -396,6 +398,24 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
             @Override
             public void onClick(View v) {
                 appModPanelController.hide();
+            }
+        });
+        view(R.id.ac_synch_panel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(AppsCategoryActivity.this);
+                builder.setMessage("Apps cataloging consist of getting category from Google Play per each installed application. " +
+                        "This process may take some time which depends from your internet connection and count of installed applications." +
+                        "Please also note that in order to safe your mobile traffic, we design it to run only during WI-FI connection.")
+                        .setTitle("About Apps Cataloging")
+                        .setItems(new String[]{"Got It"},new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
     }
