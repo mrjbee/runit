@@ -294,9 +294,9 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
             @Override
             public void fetched(List<ApplicationData> applicationDataList) {
                 if (applicationDataList.isEmpty()){
-                    view(R.id.dashboard_resent_used_no_data_text).setVisibility(View.VISIBLE);
+                    view(R.id.dashboard_most_used_no_data_text).setVisibility(View.VISIBLE);
                 } else {
-                    view(R.id.dashboard_resent_used_no_data_text).setVisibility(View.GONE);
+                    view(R.id.dashboard_most_used_no_data_text).setVisibility(View.GONE);
                 }
                 recentAppsRefreshableListAdapter.refreshList(applicationDataList);
                 fetchMostUsedApplications();
@@ -309,9 +309,9 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
             @Override
             public void fetched(List<ApplicationData> applicationDataList) {
                 if (applicationDataList.isEmpty()){
-                    view(R.id.dashboard_most_used_no_data_text).setVisibility(View.VISIBLE);
+                    view(R.id.dashboard_resent_used_no_data_text).setVisibility(View.VISIBLE);
                 } else {
-                    view(R.id.dashboard_most_used_no_data_text).setVisibility(View.GONE);
+                    view(R.id.dashboard_resent_used_no_data_text).setVisibility(View.GONE);
                 }
                 mostUsedAppsRefreshableListAdapter.refreshList(applicationDataList);
             }

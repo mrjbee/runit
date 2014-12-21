@@ -27,10 +27,11 @@
                     android:textSize="12sp"
                     android:textColor="@color/black.almost"
                     android:padding="5dp"
-                    android:text="Sync in progress ..."/>
+                    android:text="Cataloging is not done yet"/>
                 </LinearLayout>
 
             <LinearLayout
+                android:layout_below="@id/ac_synch_panel"
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
@@ -111,6 +112,15 @@
             android:layout_height="150dp"
             android:padding="10dp"
             android:background="@drawable/search_panel">
+
+            <ImageView
+                android:id="@+id/ac_app_mod_close"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:padding="5dp"
+                android:src="@drawable/close"
+                android:layout_alignParentRight="true"/>
+
             <org.monroe.team.runit.app.views.ShadowedImageView
                 android:id="@+id/ac_app_mod_icon"
                 android:layout_centerVertical="true"

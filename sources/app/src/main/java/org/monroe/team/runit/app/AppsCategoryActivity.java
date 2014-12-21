@@ -6,8 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +17,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.monroe.team.android.box.Closure;
 import org.monroe.team.android.box.ui.AppearanceControllerOld;
@@ -58,6 +56,7 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
     private AppearanceController appModPanelController;
     private AppearanceController appsGridController;
     private ApplicationData appUnderMod;
+    private AsyncTask<Void, Void, Void> reFetchLaterAsyncTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -392,6 +391,13 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
                 appModPanelController.hide();
             }
         });
+
+        view(R.id.ac_app_mod_close).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                appModPanelController.hide();
+            }
+        });
     }
 
     @Override
@@ -408,6 +414,21 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
                 categoryAdapter.clear();
                 categoryAdapter.addAll(fetchData);
                 categoryAdapter.notifyDataSetChanged();
+                if (syncInProgress && (reFetchLaterAsyncTask == null || reFetchLaterAsyncTask.getStatus() == AsyncTask.Status.FINISHED)){
+                    reFetchLaterAsyncTask = new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(Void... params) {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                            }
+                            reFetchLaterAsyncTask = null;
+                            reFetchCategories();
+                             return null;
+                        }
+                    };
+                    reFetchLaterAsyncTask.execute();
+                }
             }
 
             @Override

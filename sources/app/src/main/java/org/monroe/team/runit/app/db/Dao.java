@@ -41,7 +41,7 @@ public class Dao  extends DAOSupport{
     public List<Result> getLastLaunchedApplications() {
         Cursor cursor = db.query(table(RunitSchema.Application.class).TABLE_NAME,
                 allApplicationFields(),
-                table(RunitSchema.Application.class)._LAUNCH_TIMES +" not null",
+                table(RunitSchema.Application.class)._LAST_LAUNCH_DATE +" not null",
                 null,
                 null,
                 null,
@@ -132,7 +132,7 @@ public class Dao  extends DAOSupport{
             String packageName, String title,
             Date lastLaunchDate, long launchTimes, boolean insertIfNotExist) {
         if (insertIfNotExist && getAppByName(packageName,title) == null){
-            insertApplication(packageName,title, launchTimes);
+            insertApplication(packageName,title);
         }
 
         ContentValues appContentValue = new ContentValues(5);
@@ -150,13 +150,12 @@ public class Dao  extends DAOSupport{
         );
     }
 
-    public boolean insertApplication(String packageName, String title, long launchTimes) {
+    public boolean insertApplication(String packageName, String title) {
 
         ContentValues appContentValue = new ContentValues(5);
         appContentValue.put(table(RunitSchema.Application.class)._ID, generateAppId(packageName, title));
         appContentValue.put(table(RunitSchema.Application.class)._PACKAGE, packageName);
         appContentValue.put(table(RunitSchema.Application.class)._TITLE, title);
-        appContentValue.put(table(RunitSchema.Application.class)._LAUNCH_TIMES, launchTimes);
 
         return -1 != db.insert(table(RunitSchema.Application.class).TABLE_NAME,
                 null,
@@ -179,7 +178,7 @@ public class Dao  extends DAOSupport{
     public boolean updateApplicationCategory(
             String packageName, String title, Long category, boolean insertIfNotExist) {
         if (insertIfNotExist && getAppByName(packageName,title) == null){
-            insertApplication(packageName,title, 0);
+            insertApplication(packageName,title);
         }
 
         ContentValues appContentValue = new ContentValues(5);
