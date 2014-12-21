@@ -37,6 +37,13 @@ public class PushToListView extends ListView implements PushTouchDelegate.PushDe
     public void setPushListener(PushTouchDelegate.PushListener pushListener) {
         delegate.setPushListener(pushListener);
     }
+    public float getPushThreshold() {
+        return delegate.getPushThreshold();
+    }
+
+    public void setPushThreshold(float pushThreshold) {
+        this.delegate.setPushThreshold(pushThreshold);
+    }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {

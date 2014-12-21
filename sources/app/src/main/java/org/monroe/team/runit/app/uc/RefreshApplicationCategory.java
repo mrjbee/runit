@@ -44,7 +44,6 @@ public class RefreshApplicationCategory extends UserCaseSupport<ApplicationData,
 
         try {
             PlayMarketDetailsProvider.PlayMarketCategory category = using(PlayMarketDetailsProvider.class).getCategory(request.packageName);
-            Log.i("CATEGORY_RESOLVER",request.getUniqueName()+"="+category.name());
             final int index = using(ApplicationRegistry.class).getCategoryIndex(category);
             using(TransactionManager.class).execute(new TransactionManager.TransactionAction<Object>() {
                 @Override

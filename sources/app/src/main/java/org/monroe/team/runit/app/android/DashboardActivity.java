@@ -30,6 +30,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.monroe.team.android.box.ui.PushToActionAdapter;
+import org.monroe.team.android.box.ui.PushToListView;
 import org.monroe.team.android.box.utils.DisplayUtils;
 import org.monroe.team.android.box.manager.BackgroundTaskManager;
 import org.monroe.team.android.box.support.ActivitySupport;
@@ -40,6 +42,7 @@ import org.monroe.team.runit.app.R;
 import org.monroe.team.runit.app.android.preneter.RefreshableListAdapter;
 import org.monroe.team.runit.app.service.ApplicationRegistry;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;
+import org.monroe.team.runit.app.views.PushActionView;
 
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.*;
 
@@ -139,8 +142,43 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
                 searchResultAdapter.notifyDataSetChanged();
             }
         });
+        view(R.id.dashboard_search_result_list, PushToListView.class).setPushThreshold(150);
+        view(R.id.dashboard_search_result_list, PushToListView.class).setPushListener(new PushToActionAdapter(350) {
 
-        view(R.id.dashboard_search_edit,EditText.class).addTextChangedListener(new TextWatcher() {
+            @Override
+            protected void cancelPushAction(float pushCoefficient, float x, float y) {
+                view(R.id.dashboard_push_action_view, PushActionView.class)
+                        .stopPush();
+            }
+
+            @Override
+            protected void applyPushAction(float x, float y) {
+                view(R.id.dashboard_push_action_view, PushActionView.class)
+                        .stopPush();
+                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                closeSearch();
+            }
+
+
+            @Override
+            protected void beforePush(float x, float y) {
+                view(R.id.dashboard_push_action_view, PushActionView.class)
+                        .startPush(x,y,"Push it ...", "Close Search");
+            }
+
+            @Override
+            protected void pushInProgress(float pushCoefficient, float x, float y) {
+                view(R.id.dashboard_push_action_view, PushActionView.class)
+                        .pushing(x,y,pushCoefficient);
+                if (pushCoefficient > 0.5f){
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                }
+            }
+        });
+
+        view(R.id.dashboard_search_edit, EditText.class).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -235,29 +273,12 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
         searchPanelAppearanceController = animateAppearance(
                 view(R.id.dashboard_search_panel),
                 xSlide(0f, DisplayUtils.dpToPx(300, getResources())))
+                .hideAndGone()
                 .showAnimation(duration_auto_fint(), interpreter_overshot())
                 .hideAnimation(duration_auto_fint(), interpreter_overshot())
                 .hideAndInvisible()
                 .build();
 
-    }
-
-    private TimeInterpreterBuilder interpreter_accelerate() {
-        return new TimeInterpreterBuilder() {
-            @Override
-            public TimeInterpolator build() {
-                return new AccelerateInterpolator();
-            }
-        };
-    }
-
-    private TimeInterpreterBuilder interpreter_decelerate() {
-        return new TimeInterpreterBuilder() {
-            @Override
-            public TimeInterpolator build() {
-                return new DecelerateInterpolator();
-            }
-        };
     }
 
     @Override
@@ -411,15 +432,19 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
     @Override
     public void onBackPressed() {
         if (view(R.id.dashboard_search_button).getVisibility() != View.VISIBLE){
-            searchButtonAppearanceController.show();
-            view(R.id.dashboard_search_edit, EditText.class).setText("");
-            searchPanelAppearanceController.hide();
-            searchResultPanelAppearanceController.hide();
-            hotAppsPanelAppearanceController.show();
+            closeSearch();
         } else {
             super.onBackPressed();
         }
 
+    }
+
+    private void closeSearch() {
+        searchButtonAppearanceController.show();
+        view(R.id.dashboard_search_edit, EditText.class).setText("");
+        searchPanelAppearanceController.hide();
+        searchResultPanelAppearanceController.hide();
+        hotAppsPanelAppearanceController.show();
     }
 
     private void initiateAppsSearch() {

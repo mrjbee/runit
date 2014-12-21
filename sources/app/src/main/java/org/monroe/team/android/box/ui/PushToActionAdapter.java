@@ -30,10 +30,8 @@ public abstract class PushToActionAdapter implements PushTouchDelegate.PushListe
         }
 
         float realValue = overPushValue/pushToActionValue;
-         float answer = (float)(Math.cos((realValue + 1) * Math.PI) / 2.0f) + 0.5f;
-        //float answer = (float)(1.0f - Math.pow((1.0f - realValue), 2 * 0.1f));
+        float answer = (float)(Math.cos((realValue + 1) * Math.PI) / 2.0f) + 0.5f;
 
-        Log.i("PUSH_ADAPTER","Real:"+realValue+" , Modified:"+answer);
         return answer;
     }
 
