@@ -9,9 +9,9 @@
 
     <ImageView
         android:id="@+id/bw_search_image"
+        android:layout_marginTop="23dp"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_centerVertical="true"
         android:src="@drawable/search_image_small_white"
         android:layout_alignParentLeft="true"/>
 

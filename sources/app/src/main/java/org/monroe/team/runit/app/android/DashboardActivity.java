@@ -1,7 +1,6 @@
 package org.monroe.team.runit.app.android;
 
 import android.animation.Animator;
-import android.animation.TimeInterpolator;
 import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -19,8 +18,6 @@ import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -64,7 +61,7 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
 
     @Override
     protected void onCreate (final Bundle savedInstanceState) {
-        application().model().usingService(ApplicationRegistry.class).refreshApplicationsWithLauncherActivityList();
+        application().requestRefreshApps();
         setContentView(R.layout.activity_dash);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             updateTrayColor();
@@ -350,6 +347,7 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
                     holder = new SearchItemDetails(
                             convertView.findViewById(R.id.search_first_item_stub),
                             (TextView) convertView.findViewById(R.id.search_item_text),
+                            (TextView) convertView.findViewById(R.id.search_item_sub_text),
                             (ImageView) convertView.findViewById(R.id.search_item_image));
                     convertView.setTag(holder);
                 } else {
@@ -363,13 +361,16 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
                 if (holder.drawableLoadingTask != null){
                     holder.drawableLoadingTask.cancel();
                 }
+                if (holder.categoryLoadingTask != null){
+                    holder.categoryLoadingTask.cancel();
+                }
+                holder.textCategoryView.setText("");
 
                 holder.foundApplicationItem = this.getItem(position);
                 final ApplicationData applicationData = holder.foundApplicationItem.applicationData;
                 SpannableString spannableString = new SpannableString(applicationData.name);
                 if (holder.foundApplicationItem.selectionStartIndex != null){
-                    spannableString.setSpan(new ForegroundColorSpan(
-                            getResources().getColor(R.color.blue_themed)),
+                    spannableString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.blue_themed)),
                             holder.foundApplicationItem.selectionStartIndex,
                             holder.foundApplicationItem.selectionEndIndex,
                             Spanned.SPAN_COMPOSING);
@@ -381,7 +382,8 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
                 holder.textView.setText(spannableString);
                 holder.imageView.setVisibility(View.INVISIBLE);
 
-                BackgroundTaskManager.BackgroundTask<?> loadTask = application().loadApplicationIcon(applicationData, new RunitApp.OnLoadApplicationIconCallback() {
+                holder.drawableLoadingTask =  application().loadApplicationIcon(applicationData, new RunitApp.OnLoadApplicationIconCallback() {
+
                     SearchItemDetails forHolder = holder;
 
                     @Override
@@ -393,7 +395,17 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
                     }
                 });
 
-                holder.drawableLoadingTask = loadTask;
+                holder.categoryLoadingTask =  application().loadApplicationCategory(applicationData, new RunitApp.OnLoadCategoryCallback() {
+
+                    SearchItemDetails forHolder = holder;
+
+                    @Override
+                    public void load(ApplicationData applicationData, RunitApp.Category category) {
+                        if (forHolder.foundApplicationItem.applicationData == applicationData) {
+                            forHolder.textCategoryView.setText(category.name);
+                        }
+                    }
+                });
                 return convertView;
             }
 
@@ -401,15 +413,19 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
 
                 final View firstItemMarginView;
                 final TextView textView;
+                final TextView textCategoryView;
                 final ImageView imageView;
 
                 RunitApp.AppSearchResult foundApplicationItem;
 
                 BackgroundTaskManager.BackgroundTask<?> drawableLoadingTask;
+                BackgroundTaskManager.BackgroundTask<?> categoryLoadingTask;
 
-                SearchItemDetails(View firstItemMarginView, TextView textView, ImageView imageView) {
+
+                SearchItemDetails(View firstItemMarginView, TextView textView, TextView textCategoryView, ImageView imageView) {
                     this.firstItemMarginView = firstItemMarginView;
                     this.textView = textView;
+                    this.textCategoryView = textCategoryView;
                     this.imageView = imageView;
                 }
             }

@@ -42,13 +42,7 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
     @Override
     public void onCreate() {
         super.onCreate();
-        model().usingService(BackgroundTaskManager.class).execute(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                RunitApp.this.model().usingService(ApplicationRegistry.class).refreshApplicationsWithLauncherActivityList();
-                return null;
-            }
-        });
+        requestRefreshApps();
         startService(new Intent(this, ApplicationRefreshService.class));
     }
 
@@ -217,6 +211,16 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
 
     public void updateAppCategory(ApplicationData appUnderMod, Category category) {
         model().execute(UpdateApplicationCategory.class, new UpdateApplicationCategory.Request(category.categoryId, appUnderMod));
+    }
+
+    public void requestRefreshApps() {
+        model().usingService(BackgroundTaskManager.class).execute(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                model().usingService(ApplicationRegistry.class).refreshApplicationsWithLauncherActivityList();
+                return null;
+            }
+        });
     }
 
 

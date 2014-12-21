@@ -30,6 +30,7 @@ import org.monroe.team.android.box.ui.AppearanceControllerOld;
 import org.monroe.team.android.box.ui.animation.apperrance.AppearanceController;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.*;
 import org.monroe.team.runit.app.R;
+import org.monroe.team.runit.app.service.ApplicationRegistry;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;
 
 import java.util.List;
@@ -43,6 +44,7 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        application().requestRefreshApps();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quick_search);
         view(R.id.qs_root).addOnLayoutChangeListener(new View.OnLayoutChangeListener() {

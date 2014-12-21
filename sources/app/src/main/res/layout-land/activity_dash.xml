@@ -110,7 +110,7 @@
                     />
         </ScrollView>
 
-        <ListView
+        <org.monroe.team.android.box.ui.PushToListView
             android:id="@+id/dashboard_search_result_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -118,7 +118,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:listSelector="@android:color/transparent">
-        </ListView>
+        </org.monroe.team.android.box.ui.PushToListView>
 
     </RelativeLayout>
 
@@ -202,6 +202,12 @@
         android:layout_marginRight="20dp"
         android:layout_marginBottom="20dp"/>
 
+
+    <org.monroe.team.runit.app.views.PushActionView
+        android:id="@+id/dashboard_push_action_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"/>
 
 
 
