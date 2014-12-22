@@ -1,0 +1,3 @@
+[submodule "sources/androidbox"]
+	path = sources/androidbox
+	url = https://github.com/mrjbee/androidbox.git

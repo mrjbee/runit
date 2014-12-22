@@ -32,5 +32,6 @@ android {
 }
 
 dependencies {
+    compile project(':androidbox')
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
