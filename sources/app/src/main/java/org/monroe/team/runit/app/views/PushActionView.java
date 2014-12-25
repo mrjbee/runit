@@ -49,7 +49,7 @@ public class PushActionView extends View {
 
     private void init() {
           textPadding = DisplayUtils.dpToPx(10,getResources());
-          circeSize = DisplayUtils.dpToPx(50, getResources());
+          circeSize = DisplayUtils.dpToPx(30, getResources());
     }
 
     @Override

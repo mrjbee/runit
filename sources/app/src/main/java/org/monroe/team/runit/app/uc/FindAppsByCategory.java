@@ -27,6 +27,14 @@ public class FindAppsByCategory extends TransactionUserCase<Long, FindAppsByText
         for (DAOSupport.Result result : results) {
             answer.applicationDataList.add(new ApplicationData(result.get(1,String.class), result.get(2,String.class)));
         }
+        Collections.sort(answer.applicationDataList,new Comparator<ApplicationData>() {
+            @Override
+            public int compare(ApplicationData lhs, ApplicationData rhs) {
+                if(lhs == null) return -1;
+                if(rhs == null) return 1;
+                return lhs.name.compareTo(rhs.name);
+            }
+        });
         return answer;
     }
 

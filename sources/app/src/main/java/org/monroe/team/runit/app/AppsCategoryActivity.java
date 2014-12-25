@@ -1,6 +1,7 @@
 package org.monroe.team.runit.app;
 
 import android.animation.Animator;
+import android.animation.TimeInterpolator;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -12,8 +13,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Interpolator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -251,6 +254,7 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
                 return convertView;
             }
         };
+
         view(R.id.ac_category_list, ListView.class).setAdapter(categoryAdapter);
 
         categoryAppsAdapter = new ArrayAdapter<RunitApp.AppSearchResult>(getApplicationContext(), R.layout.item_category_app) {
@@ -326,9 +330,14 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
         });
 
         final GridView gridView =  view(R.id.ac_apps_grid, GridView.class);
-        final float headerSize = DisplayUtils.dpToPx(40*2,getResources());
+        final float headerSize = DisplayUtils.dpToPx(40*3,getResources());
         final View header= view(R.id.ac_category_panel);
-
+        header.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
         view(R.id.ac_apps_grid, GridView.class).setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -427,6 +436,16 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
                 appModPanelController.hide();
             }
         });
+
+
+        view(R.id.ac_category_close).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                appsGridController.hide();
+                appsPanelController.hide();
+            }
+        });
+
 
         view(R.id.ac_app_mod_close).setOnClickListener(new View.OnClickListener() {
             @Override
