@@ -10,9 +10,11 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
@@ -29,6 +31,7 @@ import org.monroe.team.android.box.utils.DisplayUtils;
 import org.monroe.team.android.box.manager.BackgroundTaskManager;
 import org.monroe.team.android.box.support.ActivitySupport;
 import org.monroe.team.android.box.ui.animation.apperrance.AppearanceController;
+import org.monroe.team.android.box.utils.ResourceUtils;
 import org.monroe.team.runit.app.android.RunitApp;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;
 import org.monroe.team.android.box.ui.PushToListView;
@@ -133,11 +136,12 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
 
                 appModPanelController = animateAppearance(
                         view(R.id.ac_app_mod_panel),
-                        heightSlide((int) DisplayUtils.dpToPx(200, getResources()), 0))
-                        .showAnimation(duration_constant(200), interpreter_decelerate(null))
+                        ySlide(0, DisplayUtils.screenHeight(getResources())))
+                        .showAnimation(duration_constant(400), interpreter_overshot())
                         .hideAnimation(duration_constant(200), interpreter_accelerate_decelerate())
                         .hideAndGone()
                         .build();
+
                 appsPanelController = animateAppearance(
                         view(R.id.ac_apps_panel),
                         heightSlide((int) DisplayUtils.dpToPx(400, getResources()), 0))
@@ -148,7 +152,6 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
                   return null;
             }
         });
-
 
         view(R.id.ac_apps_grid, PushToGridView.class).setPushThreshold(100);
         view(R.id.ac_apps_grid, PushToGridView.class).setPushListener(new PushToActionAdapter(150) {
@@ -259,7 +262,7 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
                             .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     convertView = inflater.inflate(R.layout.item_category_app, null);
                     holder = new SearchItemDetails(
-                            convertView.findViewById(R.id.search_first_item_stub),
+                            convertView.findViewById(R.id.header_space),
                             (TextView) convertView.findViewById(R.id.search_item_text),
                             (ImageView) convertView.findViewById(R.id.search_item_image));
                     convertView.setTag(holder);
@@ -269,6 +272,12 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
                 if (holder.drawableLoadingTask != null){
                     holder.drawableLoadingTask.cancel();
                 }
+                if(position < 3){
+                    holder.firstItemMarginView.setVisibility(View.VISIBLE);
+                } else {
+                    holder.firstItemMarginView.setVisibility(View.GONE);
+                }
+
                 holder.foundApplicationItem = this.getItem(position);
                 final ApplicationData applicationData = holder.foundApplicationItem.applicationData;
                 holder.textView.setText(applicationData.name);
@@ -313,6 +322,31 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 appsPanelController.hide();
                 application().launchApplication(categoryAppsAdapter.getItem(position).applicationData);
+            }
+        });
+
+        final GridView gridView =  view(R.id.ac_apps_grid, GridView.class);
+        final float headerSize = DisplayUtils.dpToPx(40*2,getResources());
+        final View header= view(R.id.ac_category_panel);
+
+        view(R.id.ac_apps_grid, GridView.class).setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                View c = gridView.getChildAt(0);
+                if (c == null) return;
+                float scrollYPx = -c.getTop() + gridView.getFirstVisiblePosition() * c.getHeight();
+                if (scrollYPx > headerSize){
+                    header.setAlpha(0);
+                } else {
+                    float alpha = 1 - scrollYPx/headerSize;
+                    header.setAlpha(alpha);
+                }
+                header.invalidate();
             }
         });
 
@@ -406,12 +440,11 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(AppsCategoryActivity.this);
                 builder.setMessage("Apps cataloging consist of getting category from Google Play per each installed application. " +
                         "This process may take some time which depends from your internet connection and count of installed applications." +
-                        "Please also note that in order to safe your mobile traffic, we design it to run only during WI-FI connection.")
+                        "\n\n Please also note that in order to safe your mobile traffic, we design it to run only during WI-FI connection.")
                         .setTitle("About Apps Cataloging")
-                        .setItems(new String[]{"Got It"},new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
+                        .setPositiveButton("Got It", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // FIRE ZE MISSILES!
                             }
                         });
                 AlertDialog dialog = builder.create();

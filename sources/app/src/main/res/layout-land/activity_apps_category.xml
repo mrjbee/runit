@@ -62,18 +62,25 @@
                         android:listSelector="@android:color/transparent">
                     </org.monroe.team.android.box.ui.PushToGridView>
 
-                    <TextView
-                        android:id="@+id/ac_category_label"
-                        android:layout_marginTop="10dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Category Name"
-                        android:textColor="@color/blue.themed.darken"
-                        android:rotation="90"
-                        android:transformPivotX="0dp"
-                        android:textSize="12sp"
-                        android:translationX="18sp"
-                        />
+                    <LinearLayout
+                        android:id="@+id/ac_category_panel"
+                        android:layout_width="fill_parent"
+                        android:layout_height="40dp"
+                        android:background="@color/black.almost"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/ac_category_label"
+                            android:layout_marginTop="10dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Category Name"
+                            android:textColor="@color/white.darkest"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:paddingTop="3dp"
+                            android:paddingLeft="15dp"
+                            />
+                    </LinearLayout>
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"

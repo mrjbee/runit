@@ -11,6 +11,7 @@
     <color name="blue.themed.darken">#ff0e84a9</color>
     <color name="blue.themed.dark">#ff0d4d6b</color>
     <color name="black.almost">#ff2c2c2c</color>
+    <color name="black.almost2">#ff3a3a3a</color>
     <color name="black.dark">#ff444444</color>
     <color name="black.light">#ff747474</color>
 </resources>

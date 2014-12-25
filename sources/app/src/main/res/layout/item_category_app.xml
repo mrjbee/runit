@@ -5,6 +5,13 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     >
+    <Space
+        android:id="@+id/header_space"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:background="@color/white.dark"
+        android:orientation="horizontal"
+        android:visibility="visible"/>
     <org.monroe.team.runit.app.views.ShadowedImageView
         android:layout_gravity="center"
         android:id="@+id/search_item_image"
