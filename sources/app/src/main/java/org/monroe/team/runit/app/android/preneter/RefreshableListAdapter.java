@@ -97,6 +97,26 @@ public class RefreshableListAdapter {
         } else {
            replaceView(request);
         }
+
+        int viewWeight = 0;
+        if (viewGroup.getChildCount() == itemCountToShow){
+            viewWeight = 1;
+        }
+
+        for (int i=0;i<viewGroup.getChildCount();i++){
+            updateWeight(viewGroup.getChildAt(i),viewWeight);
+        }
+
+    }
+
+    private void updateWeight(View view, int weightValue) {
+        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+        if (layoutParams instanceof  LinearLayout.LayoutParams){
+            LinearLayout.LayoutParams linearLayoutParams = (LinearLayout.LayoutParams) layoutParams;
+            linearLayoutParams.weight = weightValue;
+            view.setLayoutParams(linearLayoutParams);
+            view.requestLayout();
+        }
     }
 
     private void replaceView(AddItemRequest itemRequest) {
