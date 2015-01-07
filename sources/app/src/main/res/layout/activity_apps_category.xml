@@ -28,7 +28,7 @@
                     android:textColor="@color/black.almost"
                     android:padding="5dp"
                     android:text="Cataloging is not done yet"/>
-                </LinearLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_below="@id/ac_synch_panel"

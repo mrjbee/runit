@@ -3,6 +3,7 @@ package org.monroe.team.runit.app.android;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.util.LruCache;
+import android.util.Pair;
 import android.view.View;
 import android.widget.ListView;
 
@@ -75,7 +76,7 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
         });
     }
 
-    public void searchApplicationByCategory(View v, Category item, final OnAppSearchCallback callback) {
+    public void fetchApplicationByCategory(Category item, final OnAppSearchCallback callback) {
         if (appCategoryBackgroundTask != null) appCategoryBackgroundTask.cancel();
         appCategoryBackgroundTask = model().execute(FindAppsByCategory.class, item.categoryId, new Model.BackgroundResultCallback<FindAppsByText.SearchResult>() {
             @Override
@@ -109,6 +110,8 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
         });
         return loadTask;
     }
+
+
     public BackgroundTaskManager.BackgroundTask<?> loadApplicationCategory(final ApplicationData data, final OnLoadCategoryCallback callback) {
 
         BackgroundTaskManager.BackgroundTask<Long> loadTask = model().execute(LoadApplicationCategory.class, data, new Model.BackgroundResultCallback<Long>() {
@@ -241,6 +244,10 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
 
     public abstract static class OnLoadApplicationIconCallback {
         public abstract void load(ApplicationData applicationData, Drawable drawable);
+    }
+
+    public abstract static class OnLoadApplicationsIconCallback {
+        public abstract void load(List<Pair<ApplicationData,Drawable>> iconsPerData);
     }
 
     public abstract static class OnLoadCategoryCallback {

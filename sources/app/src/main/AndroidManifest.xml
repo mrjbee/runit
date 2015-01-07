@@ -53,13 +53,12 @@
             android:taskAffinity=""
             android:theme="@style/NoAnimation" >
         </activity>
-
         <activity
             android:name=".AppsCategoryActivity"
             android:label="@string/title_activity_apps_category"
             android:noHistory="true"
             android:taskAffinity=""
-            android:theme="@style/NoAnimation">
+            android:theme="@style/NoAnimation" >
         </activity>
 
         <service
@@ -68,7 +67,12 @@
             android:exported="true" >
         </service>
 
-
+        <activity
+            android:name=".ApplicationDrawerActivity"
+            android:label="@string/title_activity_application_drawer"
+            android:theme="@style/AppTheme.Translucent"
+            >
+        </activity>
     </application>
 
 </manifest>

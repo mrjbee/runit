@@ -1,0 +1,48 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.monroe.team.runit.app.ApplicationDrawerActivity"
+    android:orientation="vertical"
+    >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:background="@color/white.darkest"
+        android:id="@+id/drawer_root_layout"
+        >
+
+        <LinearLayout
+            android:id="@+id/drawer_synch_panel"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/blue.themed.lightest"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@color/black.almost"
+                android:padding="5dp"
+                android:text=" Cataloging is not done yet"/>
+        </LinearLayout>
+
+        <org.monroe.team.android.box.ui.PushToListView
+            android:layout_weight="2"
+            android:id="@+id/drawer_category_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="#00000000"
+            android:dividerHeight="0px"
+            android:listSelector="@android:color/transparent"/>
+    </LinearLayout>
+
+
+    <org.monroe.team.runit.app.views.PushActionView
+        android:id="@+id/drawer_push_action_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+
+</RelativeLayout>

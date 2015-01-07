@@ -14,4 +14,6 @@
     <color name="black.almost2">#ff3a3a3a</color>
     <color name="black.dark">#ff444444</color>
     <color name="black.light">#ff747474</color>
+    <color name="black.lightest">#ffa2a2a2</color>
+
 </resources>

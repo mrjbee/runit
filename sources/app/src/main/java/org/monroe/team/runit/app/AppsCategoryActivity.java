@@ -1,7 +1,6 @@
 package org.monroe.team.runit.app;
 
 import android.animation.Animator;
-import android.animation.TimeInterpolator;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -11,12 +10,10 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Interpolator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -34,7 +31,6 @@ import org.monroe.team.android.box.utils.DisplayUtils;
 import org.monroe.team.android.box.manager.BackgroundTaskManager;
 import org.monroe.team.android.box.support.ActivitySupport;
 import org.monroe.team.android.box.ui.animation.apperrance.AppearanceController;
-import org.monroe.team.android.box.utils.ResourceUtils;
 import org.monroe.team.runit.app.android.RunitApp;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;
 import org.monroe.team.android.box.ui.PushToListView;
@@ -228,7 +224,7 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
                         view(R.id.ac_category_label, TextView.class).setText(category.name);
                         categoryAppsAdapter.clear();
                         categoryAppsAdapter.notifyDataSetChanged();
-                        application().searchApplicationByCategory(v, category, new RunitApp.OnAppSearchCallback() {
+                        application().fetchApplicationByCategory(category, new RunitApp.OnAppSearchCallback() {
                             @Override
                             public void found(String searchQuery, List<RunitApp.AppSearchResult> searchResultList) {
                                 categoryAppsAdapter.clear();

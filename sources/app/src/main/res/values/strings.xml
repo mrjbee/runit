@@ -8,5 +8,6 @@
     <string name="add_widget">Add widget</string>
     <string name="title_activity_quick_search">Quick Search</string>
     <string name="title_activity_apps_category">Application Categories</string>
+    <string name="title_activity_application_drawer">Application Drawer</string>
 
 </resources>

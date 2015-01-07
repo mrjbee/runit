@@ -34,6 +34,7 @@ import org.monroe.team.android.box.manager.BackgroundTaskManager;
 import org.monroe.team.android.box.support.ActivitySupport;
 import org.monroe.team.android.box.ui.AppearanceControllerOld;
 import org.monroe.team.android.box.ui.animation.apperrance.AppearanceController;
+import org.monroe.team.runit.app.ApplicationDrawerActivity;
 import org.monroe.team.runit.app.AppsCategoryActivity;
 import org.monroe.team.runit.app.R;
 import org.monroe.team.runit.app.android.preneter.RefreshableListAdapter;
@@ -194,7 +195,7 @@ public class DashboardActivity extends ActivitySupport <RunitApp> {
         view(R.id.dashboard_app_categories_panel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(DashboardActivity.this, AppsCategoryActivity.class);
+                Intent intent = new Intent(DashboardActivity.this, ApplicationDrawerActivity.class);
                 int[] location = new int[2];
                 v.getLocationInWindow(location);
                 intent.putExtra("button_bounds", new float[]{
