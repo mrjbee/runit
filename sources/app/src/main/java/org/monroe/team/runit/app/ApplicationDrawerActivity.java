@@ -8,16 +8,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.monroe.team.android.box.Closure;
 import org.monroe.team.android.box.Lists;
+import org.monroe.team.android.box.Views;
 import org.monroe.team.android.box.support.ActivitySupport;
 import org.monroe.team.android.box.ui.PushToActionAdapter;
 import org.monroe.team.android.box.ui.PushToListView;
-import org.monroe.team.android.box.utils.DisplayUtils;
 import org.monroe.team.runit.app.android.RunitApp;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;
 import org.monroe.team.runit.app.views.PushActionView;
@@ -39,6 +38,10 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_application_drawer);
         constructor_adapterCategoryList();
+        construct_drawerCategoryList();
+    }
+
+    private void construct_drawerCategoryList() {
         view(R.id.drawer_category_list, PushToListView.class).setAdapter(categoriesAdapter);
         view(R.id.drawer_category_list, PushToListView.class).setPushListener(new PushToActionAdapter(150) {
             @Override
@@ -71,6 +74,45 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
     private void constructor_adapterCategoryList() {
         categoriesAdapter = new ArrayAdapter<CategoryData>(this, R.layout.item_drawer_category){
 
+            final int itemInRow = 3;
+
+            @Override
+            public int getCount() {
+                int realCount = super.getCount();
+                int answer = 0;
+                //TODO: move to resources
+                for (int i = 0; i<realCount; i++){
+                    //for header
+                    answer ++;
+                    CategoryData data = getItem(i);
+                    answer += data.apps.size()/itemInRow + ((data.apps.size() % itemInRow == 0) ? 0 : 1);
+                }
+                return answer;
+            }
+
+            private DisplayData getDataToDisplay(int requestedPosition) {
+                int realCount = super.getCount();
+                int elemIndex = -1;
+                for (int i = 0; i<realCount; i++) {
+                    //for header
+                    elemIndex++;
+
+                    CategoryData data = getItem(i);
+                    if (elemIndex == requestedPosition){
+                        return new DisplayData(data, -1);
+                    }
+
+                    //over rows
+                    for (int j=0; j < data.apps.size(); j+=itemInRow){
+                        elemIndex+=1;
+                        if (elemIndex == requestedPosition){
+                            return new DisplayData(data, j);
+                        }
+                    }
+                }
+                throw new IndexOutOfBoundsException("Requested elem = "+requestedPosition+" but last elem is "+elemIndex);
+            }
+
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 final CategoryItemHolder holder;
@@ -78,65 +120,113 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
                     LayoutInflater inflater = (LayoutInflater) getContext()
                             .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     convertView = inflater.inflate(R.layout.item_drawer_category, null);
-                    holder = new CategoryItemHolder(
-                            (TextView) convertView.findViewById(R.id.name),
-                            (GridLayout) convertView.findViewById(R.id.grid));
+                    holder = new CategoryItemHolder(convertView);
+                    for (int i = 0; i< itemInRow; i++){
+                        View viewToUse = inflater.inflate(R.layout.item_category_app, holder.categoryAppsGrid, false);
+                        viewToUse.setVisibility(View.INVISIBLE);
+                        holder.categoryAppsGrid.addView(viewToUse);
+                    }
                     convertView.setTag(holder);
                 } else {
                     holder = (CategoryItemHolder) convertView.getTag();
                 }
-                CategoryData data = categoriesAdapter.getItem(position);
-                holder.updateData(data);
-
+                DisplayData displayData = getDataToDisplay(position);
+                holder.updateData(position, displayData);
                 return convertView;
+            }
+
+            class DisplayData{
+
+                private final CategoryData data;
+                private final int appsStartIndex;
+
+                DisplayData(CategoryData data, int appsStartIndex) {
+                    this.data = data;
+                    this.appsStartIndex = appsStartIndex;
+                }
             }
 
             class CategoryItemHolder {
 
                 final TextView categoryCaptionLabel;
-                final GridLayout categoryAppsGrid;
+                final ViewGroup categoryAppsGrid;
+                final View header;
+
+                @Deprecated
                 CategoryData data;
+                DisplayData displayData;
 
-                CategoryItemHolder(TextView categoryCaptionLabel, GridLayout categoryAppsGrid) {
-                    this.categoryCaptionLabel = categoryCaptionLabel;
-                    this.categoryAppsGrid = categoryAppsGrid;
+                CategoryItemHolder(View convertView) {
+                    categoryCaptionLabel = (TextView) convertView.findViewById(R.id.item_name);
+                    categoryAppsGrid = (ViewGroup) convertView.findViewById(R.id.item_container);
+                    header = convertView.findViewById(R.id.item_header);
                 }
 
-                public void updateData(CategoryData data){
-                    if (this.data == data) return;
+                public void updateData(int position, DisplayData displayData){
+                    if (this.displayData == displayData) return;
+                    this.data = displayData.data;
+                    this.displayData = displayData;
 
-                    this.data = data;
-                    categoryAppsGrid.removeAllViews();
-                    categoryCaptionLabel.setText(data.category.name);
-                    int rowCount = data.apps.size()/3 + ((data.apps.size() % 3 == 0) ? 0 : 1);
-                    categoryAppsGrid.getLayoutParams().height = (int) (rowCount * DisplayUtils.dpToPx(100,getResources()));
-                    categoryAppsGrid.requestLayout();
-                    Iterator<RunitApp.AppSearchResult> appsIterator = data.apps.iterator();
-                    fetchIconAndAddItem(appsIterator, data);
 
+                    if (displayData.appsStartIndex == -1){
+                        //label only required
+                        categoryCaptionLabel.setText(displayData.data.category.name);
+                        categoryAppsGrid.setVisibility(View.GONE);
+                        header.setVisibility(View.VISIBLE);
+                    } else {
+                        //request application row
+                        Views.findChild(categoryAppsGrid,new Closure<Pair<Integer, View>, Boolean>() {
+                            @Override
+                            public Boolean execute(Pair<Integer, View> arg) {
+                                arg.second.setVisibility(View.INVISIBLE);
+                                return false;
+                            }
+                        });
+                        fetchIconAndAddItem(displayData, displayData.appsStartIndex, displayData.appsStartIndex + itemInRow - 1);
+                        categoryAppsGrid.setVisibility(View.VISIBLE);
+                        header.setVisibility(View.GONE);
+                    }
                 }
 
-                private void fetchIconAndAddItem(final Iterator<RunitApp.AppSearchResult> appsIterator, final CategoryData controlData) {
-                    application().loadApplicationIcon(appsIterator.next().applicationData,new RunitApp.OnLoadApplicationIconCallback() {
+                private void fetchIconAndAddItem(final DisplayData controlData, final int curAppIndex, final int lastItemIndex) {
+                    if ((curAppIndex >= controlData.data.apps.size()) ||
+                        (curAppIndex > lastItemIndex))
+                        return;
+
+
+
+                    application().loadApplicationIcon(controlData.data.apps.get(curAppIndex).applicationData,new RunitApp.OnLoadApplicationIconCallback() {
                         @Override
                         public void load(ApplicationData applicationData, Drawable drawable) {
-
-                            if (controlData != CategoryItemHolder.this.data) return;
-
-                            LayoutInflater inflater = (LayoutInflater) getContext()
-                                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                            View view = inflater.inflate(R.layout.item_category_app,categoryAppsGrid, false);
-                            ((TextView) view.findViewById(R.id.search_item_text)).setText(applicationData.name);
-                            ((ImageView) view.findViewById(R.id.search_item_image)).setImageDrawable(drawable);
-                            categoryAppsGrid.addView(view);
-
-                            if(appsIterator.hasNext()){
-                                fetchIconAndAddItem(appsIterator,controlData);
-                            }
+                            if (controlData != CategoryItemHolder.this.displayData) return;
+                            addAppView(applicationData, drawable);
+                            fetchIconAndAddItem(controlData, (curAppIndex+1), lastItemIndex);
                         }
+
                     });
+
                 }
 
+                private void addAppView(ApplicationData applicationData, Drawable drawable) {
+                    View viewToUse = Views.findChild(categoryAppsGrid,new Closure<Pair<Integer, View>, Boolean>() {
+                        @Override
+                        public Boolean execute(Pair<Integer, View> arg) {
+                            return arg.second.getVisibility() == View.INVISIBLE;
+                        }
+                    });
+                    if (viewToUse == null){
+                        throw new IllegalStateException("It`s now eager ignited");
+                        /*
+                        LayoutInflater inflater = (LayoutInflater) getContext()
+                                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                        viewToUse = inflater.inflate(R.layout.item_category_app, categoryAppsGrid, false);
+                        categoryAppsGrid.addView(viewToUse);
+                        */
+                    }
+                    ((TextView) viewToUse.findViewById(R.id.search_item_text)).setText(applicationData.name);
+                    ((ImageView) viewToUse.findViewById(R.id.search_item_image)).setImageDrawable(drawable);
+                    viewToUse.setVisibility(View.VISIBLE);
+                }
             }
         };
 
@@ -163,7 +253,7 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
                     Lists.iterateAndRemove(categoryDataList, new Closure<Iterator<CategoryData>, Boolean>() {
                         @Override
                         public Boolean execute(Iterator<CategoryData> it) {
-                            if (!categories.contains(it.next())) {
+                            if (!categories.contains(it.next().category)) {
                                 it.remove();
                             }
                             return false;
@@ -237,6 +327,23 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
             apps.clear();
             apps.addAll(applications);
             fetchRequired = false;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            CategoryData data = (CategoryData) o;
+
+            if (!category.equals(data.category)) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return category.hashCode();
         }
     }
 

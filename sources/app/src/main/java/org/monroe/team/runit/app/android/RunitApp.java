@@ -36,7 +36,7 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
 
     private BackgroundTaskManager.BackgroundTask<FindAppsByText.SearchResult> searchAppBackgroundTask;
     private BackgroundTaskManager.BackgroundTask<FindAppsByText.SearchResult> appCategoryBackgroundTask;
-    private LruCache<String, Drawable> launcherIconCache = new LruCache<String, Drawable>(20);
+    private LruCache<String, Drawable> launcherIconCache = new LruCache<String, Drawable>(1000);
     private BackgroundTaskManager.BackgroundTask<List<ApplicationData>> mostResentAppFetchTask;
     private BackgroundTaskManager.BackgroundTask<List<ApplicationData>> mostUsedAppFetchTask;
 

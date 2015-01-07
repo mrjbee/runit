@@ -44,6 +44,7 @@ import org.monroe.team.runit.app.views.PushActionView;
 
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 

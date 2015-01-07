@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="100dp"
-    android:layout_height="100dp"
+    android:layout_width="80dp"
+    android:layout_height="80dp"
+    android:padding="5dp"
     android:orientation="vertical"
+    android:layout_weight="1"
     >
     <Space
         android:id="@+id/header_space"
@@ -12,13 +14,13 @@
         android:background="@color/white.dark"
         android:orientation="horizontal"
         android:visibility="gone"/>
-    <org.monroe.team.runit.app.views.ShadowedImageView
+
+    <ImageView
         android:layout_gravity="center"
         android:id="@+id/search_item_image"
         android:layout_width="55dp"
         android:layout_height="55dp"
         android:visibility="visible"
-        android:layout_marginTop="10dp"
         android:padding="5dp"/>
     <TextView
         android:layout_gravity="center"
@@ -26,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="12sp"
-        android:padding="5dp"
-        android:textColor="@color/black.almost2"
+        android:singleLine="true"
+        android:textColor="@color/black.dark"
         android:text="Application Name"/>
 </LinearLayout>
