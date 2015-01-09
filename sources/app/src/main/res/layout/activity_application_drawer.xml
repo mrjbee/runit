@@ -48,8 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="@dimen/drawer_grid_landscape_margin"
-            android:orientation="horizontal"
-            android:background="@color/white.darkest">
+            android:orientation="horizontal">
 
             <LinearLayout
                 android:id="@+id/drawer_category_list_shadow"
@@ -65,7 +64,8 @@
                     android:layout_height="match_parent"
                     android:divider="#00000000"
                     android:dividerHeight="0px"
-                    android:listSelector="@android:color/transparent"/>
+                    android:listSelector="@android:color/transparent"
+                android:background="@color/white.darkest"/>
         </LinearLayout>
 
     </RelativeLayout>

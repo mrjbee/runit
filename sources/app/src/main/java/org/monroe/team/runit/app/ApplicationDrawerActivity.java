@@ -98,6 +98,7 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
         }
 
         headerAppearanceController.show();
+        appModPanelController.hideWithoutAnimation();
 
         if (isLandscape(R.bool.class)){
             listShowBtnAppearanceController.showWithoutAnimation();
@@ -121,7 +122,24 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
                 listShowBtnAppearanceController.showWithoutAnimation();
             }
         }
-        appModPanelController.hideWithoutAnimation();
+
+        if (isLandscape(R.bool.class)){
+            view(R.id.drawer_category_list_shadow).setVisibility(View.VISIBLE);
+        }
+
+        construct_modPanel();
+
+        view(R.id.drawer_touch_banner).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                boolean captureRequired = view(R.id.ac_app_mod_panel).getVisibility() == View.VISIBLE;
+                if (captureRequired) onBackPressed();
+                return captureRequired;
+            }
+        });
+    }
+
+    private void construct_modPanel() {
         view(R.id.ac_app_mod_close).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,15 +179,6 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 appModPanelController.hide();
-            }
-        });
-
-        view(R.id.drawer_touch_banner).setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                boolean captureRequired = view(R.id.ac_app_mod_panel).getVisibility() == View.VISIBLE;
-                if (captureRequired) onBackPressed();
-                return captureRequired;
             }
         });
     }
