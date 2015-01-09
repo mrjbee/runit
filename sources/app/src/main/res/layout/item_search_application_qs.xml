@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="10dp"
     >
 
+    <Space
+        android:id="@+id/item_space"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:visibility="gone"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
     <org.monroe.team.runit.app.views.ShadowedImageView
-        android:layout_below="@id/search_first_item_stub"
         android:id="@+id/search_item_image"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -20,6 +28,7 @@
         />
     <TextView
         android:layout_toRightOf="@id/search_item_image"
+        android:layout_alignTop="@+id/search_item_image"
         android:id="@+id/search_item_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -39,5 +48,6 @@
         android:textColor="@color/black.light"
         android:visibility="visible"
         android:text="category"/>
+    </RelativeLayout>
 
-</RelativeLayout>
+</LinearLayout>

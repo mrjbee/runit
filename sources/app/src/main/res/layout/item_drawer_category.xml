@@ -37,7 +37,6 @@
 
     </LinearLayout>
 
-
     <LinearLayout
         android:id="@+id/item_container"
         android:layout_width="fill_parent"

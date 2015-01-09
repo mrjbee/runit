@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.monroe.team.android.box.GenericListViewAdapter;
 import org.monroe.team.android.box.manager.BackgroundTaskManager;
 import org.monroe.team.android.box.support.ActivitySupport;
 import org.monroe.team.android.box.ui.AppearanceControllerOld;
@@ -49,7 +50,7 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
         application().requestRefreshApps();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quick_search);
-        view(R.id.qs_root).addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+        /*view(R.id.qs_root).addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom,
                                        int oldLeft, int oldTop, int oldRight, int oldBottom) {
@@ -60,97 +61,86 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
                     checkAndFinish();
                 }
             }
-        });
+        });*/
 
-        final int layout = R.layout.item_search_application_qs;
-        adapter = new ArrayAdapter<RunitApp.AppSearchResult>(this, layout){
+        adapter = new GenericListViewAdapter<>(this,R.layout.item_search_application_qs, new GenericListViewAdapter.GenericViewHolderFactory<RunitApp.AppSearchResult>() {
             @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                final SearchItemDetails holder;
-                if (convertView == null){
-                    LayoutInflater inflater = (LayoutInflater) getContext()
-                            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    convertView = inflater.inflate(layout, null);
-                    holder = new SearchItemDetails(
-                            convertView.findViewById(R.id.search_first_item_stub),
-                            (TextView) convertView.findViewById(R.id.search_item_text),
-                            (TextView) convertView.findViewById(R.id.search_item_sub_text),
-                            (ImageView) convertView.findViewById(R.id.search_item_image));
-                    convertView.setTag(holder);
-                } else {
-                    holder = (SearchItemDetails) convertView.getTag();
-                }
-                if (holder.drawableLoadingTask != null){
-                    holder.drawableLoadingTask.cancel();
-                }
-                if (holder.categoryLoadingTask != null){
-                    holder.categoryLoadingTask.cancel();
-                }
-                holder.textCategoryView.setText("");
+            public GenericListViewAdapter.GenericViewHolder<RunitApp.AppSearchResult> construct() {
+                return new GenericListViewAdapter.GenericViewHolder<RunitApp.AppSearchResult>() {
 
-                holder.foundApplicationItem = this.getItem(position);
-                final ApplicationData applicationData = holder.foundApplicationItem.applicationData;
-                SpannableString spannableString = new SpannableString(applicationData.name);
-                if (holder.foundApplicationItem.selectionStartIndex != null){
-                    spannableString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.blue_themed)),
-                            holder.foundApplicationItem.selectionStartIndex,
-                            holder.foundApplicationItem.selectionEndIndex,
-                            Spanned.SPAN_COMPOSING);
-                    spannableString.setSpan(new StyleSpan(Typeface.BOLD),
-                            holder.foundApplicationItem.selectionStartIndex,
-                            holder.foundApplicationItem.selectionEndIndex,
-                            Spanned.SPAN_COMPOSING);
-                }
-                holder.textView.setText(spannableString);
-                holder.imageView.setVisibility(View.INVISIBLE);
+                    View space;
+                    TextView textView;
+                    TextView textCategoryView;
+                    ImageView imageView;
 
-                holder.drawableLoadingTask =  application().loadApplicationIcon(applicationData, new RunitApp.OnLoadApplicationIconCallback() {
+                    RunitApp.AppSearchResult foundApplicationItem;
 
-                    SearchItemDetails forHolder = holder;
+                    BackgroundTaskManager.BackgroundTask<?> drawableLoadingTask;
+                    BackgroundTaskManager.BackgroundTask<?> categoryLoadingTask;
 
                     @Override
-                    public void load(ApplicationData applicationData, Drawable drawable) {
-                        if (forHolder.foundApplicationItem.applicationData == applicationData) {
-                            forHolder.imageView.setImageDrawable(drawable);
-                            forHolder.imageView.setVisibility(View.VISIBLE);
-                        }
+                    public void discoverUI() {
+                        space = _view(R.id.item_space,View.class);
+                        textView = _view(R.id.search_item_text,TextView.class);
+                        textCategoryView = _view(R.id.search_item_sub_text,TextView.class);
+                        imageView = _view(R.id.search_item_image, ImageView.class);
                     }
-                });
-
-                holder.categoryLoadingTask =  application().loadApplicationCategory(applicationData, new RunitApp.OnLoadCategoryCallback() {
-
-                    SearchItemDetails forHolder = holder;
 
                     @Override
-                    public void load(ApplicationData applicationData, RunitApp.Category category) {
-                        if (forHolder.foundApplicationItem.applicationData == applicationData) {
-                            forHolder.textCategoryView.setText(category.name);
+                    public void update(final RunitApp.AppSearchResult appSearchResult, int position) {
+                        space.setVisibility(position != 0 ? View.GONE : View.VISIBLE);
+                        textCategoryView.setText("");
+                        foundApplicationItem = appSearchResult;
+                        final ApplicationData applicationData = foundApplicationItem.applicationData;
+                        SpannableString spannableString = new SpannableString(applicationData.name);
+                        if (foundApplicationItem.selectionStartIndex != null){
+                            spannableString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.blue_themed)),
+                                    foundApplicationItem.selectionStartIndex,
+                                    foundApplicationItem.selectionEndIndex,
+                                    Spanned.SPAN_COMPOSING);
+                            spannableString.setSpan(new StyleSpan(Typeface.BOLD),
+                                    foundApplicationItem.selectionStartIndex,
+                                    foundApplicationItem.selectionEndIndex,
+                                    Spanned.SPAN_COMPOSING);
+                        }
+
+                        textView.setText(spannableString);
+                        imageView.setVisibility(View.INVISIBLE);
+
+                        drawableLoadingTask =  application().loadApplicationIcon(applicationData, new RunitApp.OnLoadApplicationIconCallback() {
+                            @Override
+                            public void load(ApplicationData applicationData, Drawable drawable) {
+                                if (appSearchResult.applicationData == applicationData) {
+                                    imageView.setImageDrawable(drawable);
+                                    imageView.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        });
+
+                        categoryLoadingTask =  application().loadApplicationCategory(applicationData, new RunitApp.OnLoadCategoryCallback() {
+                            @Override
+                            public void load(ApplicationData applicationData, RunitApp.Category category) {
+                                if (appSearchResult.applicationData == applicationData) {
+                                    textCategoryView.setText(category.name);
+                                }
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void cleanup() {
+
+                        if (drawableLoadingTask != null){
+                            drawableLoadingTask.cancel();
+                        }
+
+                        if (categoryLoadingTask != null){
+                            categoryLoadingTask.cancel();
                         }
                     }
-                });
-                return convertView;
+                };
             }
-
-            class SearchItemDetails {
-
-                final View firstItemMarginView;
-                final TextView textView;
-                final TextView textCategoryView;
-                final ImageView imageView;
-
-                RunitApp.AppSearchResult foundApplicationItem;
-
-                BackgroundTaskManager.BackgroundTask<?> drawableLoadingTask;
-                BackgroundTaskManager.BackgroundTask<?> categoryLoadingTask;
-
-                SearchItemDetails(View firstItemMarginView, TextView textView, TextView textCategoryView, ImageView imageView) {
-                    this.firstItemMarginView = firstItemMarginView;
-                    this.textView = textView;
-                    this.textCategoryView = textCategoryView;
-                    this.imageView = imageView;
-                }
-            }
-        };
+        });
         view(R.id.qs_search_result_list,ListView.class).setAdapter(adapter);
         view(R.id.qs_search_result_list,ListView.class).setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -216,20 +206,21 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
             private int lastVisibleFirstItem = -1;
 
             @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {}
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
                 if (totalItemCount == 0) return;
 
-                if (firstVisibleItem == 0 || lastVisibleFirstItem == -1){
+                if (firstVisibleItem == 0 || lastVisibleFirstItem == -1) {
                     searchHeaderAppearanceController.show();
                     lastVisibleFirstItem = firstVisibleItem;
-                } else if (firstVisibleItem-lastVisibleFirstItem > 1) {
+                } else if (firstVisibleItem - lastVisibleFirstItem > 1) {
                     searchHeaderAppearanceController.hide();
                     lastVisibleFirstItem = firstVisibleItem;
-                } else if (firstVisibleItem - lastVisibleFirstItem < -1){
+                } else if (firstVisibleItem - lastVisibleFirstItem < -1) {
                     searchHeaderAppearanceController.show();
                     lastVisibleFirstItem = firstVisibleItem;
                 }
@@ -291,8 +282,29 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
 
     private void checkAndFinish() {
         if (view(R.id.qs_search_edit,EditText.class).getText().toString().isEmpty()){
-            finish();
+            finishActivity();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        finishActivity();
+    }
+
+    private void finishActivity() {
+        view_list(R.id.qs_search_result_list).setOnScrollListener(null);
+        searchContentAppearanceController.hideAndCustomize(new AppearanceController.AnimatorCustomization(){
+            @Override
+            public void customize(Animator animator) {
+                animator.addListener(new AppearanceControllerOld.AnimatorListenerAdapter(){
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        finish();
+                    }
+                });
+            }
+        });
+        searchHeaderAppearanceController.hide();
     }
 
 }
