@@ -53,6 +53,8 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
     private AppearanceController shadowAppearanceController;
     private AppearanceController gridAppearanceController;
     private AppearanceController gridShowBtnAppearanceController;
+    private AppearanceController listShowBtnAppearanceController;
+
 
     private Closure<Integer,DisplayData> adapterDisplayDataToRealIndexConverted;
     private Closure<Integer,Integer> adapterRealIndexToDisplayIndexConverted;
@@ -63,6 +65,61 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_application_drawer);
+
+        constructor_appearance();
+        constructor_adapterCategoryList();
+        construct_drawerCategoryList();
+        construct_categoryQuickList();
+
+        if (isFirstRun(savedInstanceState)){
+            headerAppearanceController.hideWithoutAnimation();
+            rootAppearanceController.hideWithoutAnimation();
+            gridShowBtnAppearanceController.hideWithoutAnimation();
+        }
+
+        if (isFirstRun(savedInstanceState)) {
+            rootAppearanceController.showAndCustomize(new AppearanceController.AnimatorCustomization() {
+                @Override
+                public void customize(Animator animator) {
+                    animator.addListener(new AppearanceControllerOld.AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            reFetchCategories();
+                        }
+                    });
+                }
+            });
+        } else {
+            reFetchCategories();
+        }
+
+        headerAppearanceController.show();
+
+        if (isLandscape(R.bool.class)){
+            listShowBtnAppearanceController.showWithoutAnimation();
+            listShowBtnAppearanceController.hideAndCustomize(new AppearanceController.AnimatorCustomization() {
+                @Override
+                public void customize(Animator animator) {
+                    animator.setStartDelay(800);
+                }
+            });
+        }else{
+            construct_modeSwitchBtns();
+            if (!isFirstRun(savedInstanceState)){
+                listShowBtnAppearanceController.hideWithoutAnimation();
+                listShowBtnAppearanceController.showAndCustomize(new AppearanceController.AnimatorCustomization() {
+                    @Override
+                    public void customize(Animator animator) {
+                        animator.setStartDelay(800);
+                    }
+                });
+            }else{
+                listShowBtnAppearanceController.showWithoutAnimation();
+            }
+        }
+    }
+
+    private void constructor_appearance() {
         headerAppearanceController =
                 animateAppearance(
                         view(R.id.drawer_header_layout),
@@ -97,44 +154,24 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
                         .hideAndInvisible()
                         .build();
 
-        rootAppearanceController =
+        listShowBtnAppearanceController =
                 animateAppearance(
-                        view(R.id.drawer_root_layout),
-                        xSlide(0f,DisplayUtils.screenWidth(getResources())))
-                        .showAnimation(duration_constant(400), interpreter_accelerate_decelerate())
+                        view(R.id.drawer_category_quick_list_check),
+                        scale(1f,0f))
+                        .showAnimation(duration_constant(400), interpreter_overshot())
                         .hideAnimation(duration_constant(300), interpreter_accelerate(null))
                         .hideAndInvisible()
                         .build();
 
-        headerAppearanceController.hideWithoutAnimation();
-        rootAppearanceController.hideWithoutAnimation();
-        gridShowBtnAppearanceController.hideWithoutAnimation();
 
-        constructor_adapterCategoryList();
-        construct_drawerCategoryList();
-        construct_modeSwitchBtns();
-        construct_categoryQuickList();
 
-        headerAppearanceController.show();
-        rootAppearanceController.showAndCustomize(new AppearanceController.AnimatorCustomization() {
-            @Override
-            public void customize(Animator animator) {
-                animator.addListener(new AppearanceControllerOld.AnimatorListenerAdapter(){
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-                        view(R.id.drawer_category_list).setVisibility(View.INVISIBLE);
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        view(R.id.drawer_category_list).setAlpha(0f);
-                        view(R.id.drawer_category_list).setVisibility(View.VISIBLE);
-                        view(R.id.drawer_category_list).animate().alpha(1f);
-                    }
-                });
-            }
-        });
-
+        rootAppearanceController =
+                animateAppearance(
+                        view(R.id.drawer_root_layout),
+                        xSlide(0f, DisplayUtils.screenWidth(getResources())))
+                        .showAnimation(duration_constant(300))
+                        .hideAnimation(duration_constant(500))
+                        .build();
     }
 
     private void construct_categoryQuickList() {
@@ -172,7 +209,7 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
                     view_list(R.id.drawer_category_list).smoothScrollToPositionFromTop(
                             positionToSelect,
                             (int) DisplayUtils.dpToPx(70,getResources()),
-                            500);
+                            300);
                     if (dataPosition != 0){
                         disableDynamicHeaderForAWhile();
                     }
@@ -209,7 +246,6 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
                         animator.addListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationStart(final Animator animation) {
-                                view(R.id.drawer_category_quick_list).setVisibility(View.VISIBLE);
                                 view(R.id.drawer_category_list_shadow).setVisibility(View.VISIBLE);
                                 runLastOnUiThread(new Runnable() {
                                     @Override
@@ -246,6 +282,8 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
     private void closeQuickListMode(boolean showHeader) {
         if (showHeader) {
             headerAppearanceController.show();
+        }else{
+            headerAppearanceController.hide();
         }
         gridShowBtnAppearanceController.hide();
         gridAppearanceController.showAndCustomize(new AppearanceController.AnimatorCustomization() {
@@ -255,11 +293,6 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
                     @Override
                     public void onAnimationStart(Animator animation) {
                         view(R.id.drawer_category_list_shadow).setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        view(R.id.drawer_category_quick_list).setVisibility(View.INVISIBLE);
                     }
                 });
             }
@@ -438,7 +471,28 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
     @Override
     protected void onResume() {
         super.onResume();
-        reFetchCategories();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    private void closeActivity(final boolean completelly) {
+        disableDynamicHeaderForAWhile();
+        headerAppearanceController.hide();
+        rootAppearanceController.hideAndCustomize(new AppearanceController.AnimatorCustomization() {
+            @Override
+            public void customize(Animator animator) {
+                animator.addListener(new AppearanceControllerOld.AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        if (completelly) super_onBackPress();
+                    }
+                });
+
+            }
+        });
     }
 
     @Override
@@ -446,22 +500,11 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
         if (view(R.id.drawer_category_list_check).getVisibility()==View.VISIBLE){
             closeQuickListMode(true);
         }else {
-            headerAppearanceController.hide();
-            rootAppearanceController.hideAndCustomize(new AppearanceController.AnimatorCustomization() {
-                @Override
-                public void customize(Animator animator) {
-                    animator.addListener(new AppearanceControllerOld.AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            super_onBackPressed();
-                        }
-                    });
-                }
-            });
+            closeActivity(true);
         }
     }
 
-    public void super_onBackPressed(){
+    private void super_onBackPress(){
         super.onBackPressed();
     }
 

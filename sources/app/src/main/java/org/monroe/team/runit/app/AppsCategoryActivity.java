@@ -527,7 +527,7 @@ public class AppsCategoryActivity extends ActivitySupport<RunitApp> {
     }
 
     public static PendingIntent open(Context context) {
-            Intent intent = new Intent(context, AppsCategoryActivity.class)
+            Intent intent = new Intent(context, ApplicationDrawerActivity.class)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     .addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
                     .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)

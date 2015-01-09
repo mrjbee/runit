@@ -11,6 +11,7 @@
         android:background="@color/white.darkest"
         android:id="@+id/drawer_root_layout"
         >
+        <!-- Quick Category List -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -23,7 +24,6 @@
                 android:divider="#00000000"
                 android:dividerHeight="0px"
                 android:listSelector="@android:color/transparent"
-                android:visibility="invisible"
                 android:background="@color/black.almost2"/>
 
             <ImageView
@@ -40,12 +40,16 @@
                 android:checked="true"/>
 
         </RelativeLayout>
+
+        <!-- Category List-->
         <LinearLayout
             android:id="@+id/drawer_category_list_panel"
             android:layout_weight="2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_marginLeft="@dimen/drawer_grid_landscape_margin"
+            android:orientation="horizontal"
+            android:background="@color/white.darkest">
 
             <LinearLayout
                 android:id="@+id/drawer_category_list_shadow"
@@ -55,16 +59,18 @@
                 android:orientation="horizontal"
                 android:visibility="gone"/>
 
-                <org.monroe.team.android.box.ui.PushToListView
-                        android:id="@+id/drawer_category_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:divider="#00000000"
-                        android:dividerHeight="0px"
-                        android:listSelector="@android:color/transparent"/>
+            <org.monroe.team.android.box.ui.PushToListView
+                    android:id="@+id/drawer_category_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:divider="#00000000"
+                    android:dividerHeight="0px"
+                    android:listSelector="@android:color/transparent"/>
         </LinearLayout>
+
     </RelativeLayout>
 
+    <!-- Header -->
     <LinearLayout
         android:id="@+id/drawer_header_layout"
         android:layout_width="fill_parent"
