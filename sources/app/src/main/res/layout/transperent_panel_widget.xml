@@ -47,6 +47,7 @@
         />
 
     <ImageView
+        android:visibility="gone"
         android:id="@+id/bw_category_image"
         android:layout_alignParentRight="true"
         android:layout_width="50dp"
@@ -61,7 +62,6 @@
         android:layout_height="wrap_content"
         android:background="@drawable/line_in"
         android:layout_marginTop="5dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="55dp"/>
+        android:layout_marginLeft="40dp"/>
 
 </RelativeLayout>
