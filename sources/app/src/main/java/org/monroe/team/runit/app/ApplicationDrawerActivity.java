@@ -601,7 +601,9 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
     @Override
     protected void onResume() {
         super.onResume();
-        headerAppearanceController.show();
+        if (view(R.id.drawer_category_list_check).getVisibility() != View.VISIBLE) {
+            headerAppearanceController.show();
+        }
     }
 
     @Override

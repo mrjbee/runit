@@ -17,10 +17,40 @@
             android:windowSoftInputMode="stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ApplicationDrawerActivity"
+            android:label="Apps"
+            android:theme="@style/AppTheme.Translucent.NoAnimation"
+            android:excludeFromRecents="true"
+            android:icon="@drawable/drawer_ic_launcher"
+            android:taskAffinity=""
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+
+        <activity
+            android:name=".android.QuickSearchActivity"
+            android:label="@string/title_activity_quick_search"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@style/AppTheme.Translucent.NoAnimation" >
+        </activity>
+
+
+        <service
+            android:name=".ApplicationRefreshService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
 
         <receiver
             android:name=".android.BluePanelWidget"
@@ -45,35 +75,6 @@
                 android:resource="@xml/transperent_panel_widget_info" />
         </receiver>
 
-        <activity
-            android:name=".android.QuickSearchActivity"
-            android:label="@string/title_activity_quick_search"
-            android:excludeFromRecents="true"
-            android:noHistory="true"
-            android:taskAffinity=""
-            android:theme="@style/NoAnimation" >
-        </activity>
-        <activity
-            android:name=".AppsCategoryActivity"
-            android:label="@string/title_activity_apps_category"
-            android:noHistory="true"
-            android:taskAffinity=""
-            android:theme="@style/NoAnimation" >
-        </activity>
-
-        <service
-            android:name=".ApplicationRefreshService"
-            android:enabled="true"
-            android:exported="true" >
-        </service>
-
-        <activity
-            android:name=".ApplicationDrawerActivity"
-            android:label="@string/title_activity_application_drawer"
-            android:theme="@style/AppTheme.Translucent.NoAnimation"
-            android:excludeFromRecents="true"
-            >
-        </activity>
     </application>
 
 </manifest>
