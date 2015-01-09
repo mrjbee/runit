@@ -2,10 +2,13 @@ package org.monroe.team.runit.app;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Pair;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,7 +29,6 @@ import org.monroe.team.android.box.support.ActivitySupport;
 import org.monroe.team.android.box.ui.AppearanceControllerOld;
 import org.monroe.team.android.box.ui.PushToActionAdapter;
 import org.monroe.team.android.box.ui.PushToListView;
-import org.monroe.team.android.box.ui.animation.AnimatorListenerSupport;
 import org.monroe.team.android.box.ui.animation.apperrance.AppearanceController;
 import org.monroe.team.android.box.utils.DisplayUtils;
 import org.monroe.team.runit.app.android.QuickSearchActivity;
@@ -59,6 +61,8 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
     private AppearanceController gridShowBtnAppearanceController;
     private AppearanceController listShowBtnAppearanceController;
     private AppearanceController appModPanelController;
+    private AppearanceController synchBtnScaleAppearanceController;
+    private AppearanceController synchBtnRotateAppearanceController;
 
 
     private Closure<Integer,DisplayData> adapterDisplayDataToRealIndexConverted;
@@ -101,6 +105,8 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
 
         headerAppearanceController.show();
         appModPanelController.hideWithoutAnimation();
+        synchBtnRotateAppearanceController.hideWithoutAnimation();
+        synchBtnScaleAppearanceController.hideWithoutAnimation();
 
         if (isLandscape(R.bool.class)){
             listShowBtnAppearanceController.showWithoutAnimation();
@@ -150,6 +156,24 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
                         startActivity(QuickSearchActivity.openIntent(getApplicationContext(), true));
                     }
                 },200);
+            }
+        });
+
+        view(R.id.drawer_synch).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ApplicationDrawerActivity.this);
+                builder.setMessage("Apps cataloging consist of getting category from Google Play per each installed application. " +
+                        "This process may take some time which depends from your internet connection and count of installed applications." +
+                        "\n\n Please also note that in order to safe your mobile traffic, we design it to run only during WI-FI connection.")
+                        .setTitle("Apps Cataloging still in progress ...")
+                        .setPositiveButton("Got It", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // FIRE ZE MISSILES!
+                            }
+                        });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
     }
@@ -251,6 +275,21 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
                         .build();
 
 
+        synchBtnRotateAppearanceController = animateAppearance(
+                        view(R.id.drawer_synch),
+                        rotate(0,1080))
+                        .showAnimation(duration_constant(2000), interpreter_overshot())
+                        .hideAnimation(duration_constant(200), interpreter_accelerate(null)).build();
+
+        synchBtnScaleAppearanceController = animateAppearance(
+                view(R.id.drawer_synch),
+                scale(1f,0f))
+                .showAnimation(duration_constant(400), interpreter_overshot())
+                .hideAnimation(duration_constant(200), interpreter_accelerate(null))
+                .hideAndGone()
+                .build();
+
+
 
         rootAppearanceController =
                 animateAppearance(
@@ -326,35 +365,7 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
         view(R.id.drawer_category_quick_list_check).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                disableDynamicHeaderForAWhile();
-                gridAppearanceController.hideAndCustomize(new AppearanceController.AnimatorCustomization() {
-                    @Override
-                    public void customize(Animator animator) {
-                        animator.addListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationStart(final Animator animation) {
-                                view(R.id.drawer_category_list_shadow).setVisibility(View.VISIBLE);
-                                runLastOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        headerAppearanceController.hideAndCustomize(new AppearanceController.AnimatorCustomization() {
-                                            @Override
-                                            public void customize(Animator animator) {
-                                                animation.addListener(new AppearanceControllerOld.AnimatorListenerAdapter(){
-                                                    @Override
-                                                    public void onAnimationEnd(Animator animation) {
-                                                        gridShowBtnAppearanceController.show();
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
-
-                    }
-                });
+                showQuickListMode();
             }
         });
 
@@ -362,6 +373,38 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
             @Override
             public void onClick(View v) {
                 closeQuickListMode(true);
+            }
+        });
+    }
+
+    private void showQuickListMode() {
+        disableDynamicHeaderForAWhile();
+        gridAppearanceController.hideAndCustomize(new AppearanceController.AnimatorCustomization() {
+            @Override
+            public void customize(Animator animator) {
+                animator.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationStart(final Animator animation) {
+                        view(R.id.drawer_category_list_shadow).setVisibility(View.VISIBLE);
+                        runLastOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                headerAppearanceController.hideAndCustomize(new AppearanceController.AnimatorCustomization() {
+                                    @Override
+                                    public void customize(Animator animator) {
+                                        animation.addListener(new AppearanceControllerOld.AnimatorListenerAdapter(){
+                                            @Override
+                                            public void onAnimationEnd(Animator animation) {
+                                                gridShowBtnAppearanceController.show();
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+
             }
         });
     }
@@ -589,11 +632,24 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
             appModPanelController.hide();
             return;
         }
-        if (view(R.id.drawer_category_list_check).getVisibility()==View.VISIBLE){
+        if (view(R.id.drawer_category_list_check).getVisibility() == View.VISIBLE){
             closeQuickListMode(true);
         }else {
             closeActivity(true);
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_MENU && !isLandscape(R.bool.class)){
+            if (view(R.id.drawer_category_list_check).getVisibility() == View.VISIBLE){
+                closeQuickListMode(true);
+            } else {
+                showQuickListMode();
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     private void super_onBackPress(){
@@ -604,6 +660,20 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
         application().fetchApplicationCategories(new RunitApp.OnAppCategoriesCallback() {
             @Override
             public void fetched(final List<RunitApp.Category> categories, boolean syncInProgress) {
+                if (syncInProgress){
+                    synchBtnScaleAppearanceController.showAndCustomize(new AppearanceController.AnimatorCustomization() {
+                        @Override
+                        public void customize(Animator animator) {
+                            animator.setStartDelay(1000);
+                            animator.addListener(new AppearanceControllerOld.AnimatorListenerAdapter(){
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    synchBtnRotateAppearanceController.show();
+                                }
+                            });
+                        }
+                    });
+                }
                 //view(R.id.drawer_synch_panel).setVisibility(syncInProgress ? View.VISIBLE : View.GONE);
                 mergeCategoriesWithExisting(categories);
                 fetchApplicationsPerCategory();
