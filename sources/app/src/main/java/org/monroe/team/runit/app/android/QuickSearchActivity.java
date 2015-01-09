@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -29,8 +30,9 @@ import org.monroe.team.android.box.support.ActivitySupport;
 import org.monroe.team.android.box.ui.AppearanceControllerOld;
 import org.monroe.team.android.box.ui.animation.apperrance.AppearanceController;
 import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.*;
+
+import org.monroe.team.android.box.utils.DisplayUtils;
 import org.monroe.team.runit.app.R;
-import org.monroe.team.runit.app.service.ApplicationRegistry;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;
 
 import java.util.List;
@@ -38,8 +40,8 @@ import java.util.List;
 
 public class QuickSearchActivity extends ActivitySupport<RunitApp> {
 
-    private AppearanceController searchPanelAppearanceController;
-    private AppearanceController searchResultPanelAppearanceController;
+    private AppearanceController searchHeaderAppearanceController;
+    private AppearanceController searchContentAppearanceController;
     private ArrayAdapter<RunitApp.AppSearchResult> adapter;
 
     @Override
@@ -184,19 +186,19 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
             }
 
 
-            searchResultPanelAppearanceController = animateAppearance(view(R.id.qs_content_panel),
-                     alpha(1f,0f))
-                    .showAnimation(duration_constant(300), interpreter_decelerate(0.3f))
+            searchContentAppearanceController = animateAppearance(view(R.id.qs_content_panel),
+                     xSlide(0f,DisplayUtils.screenWidth(getResources())))
+                    .showAnimation(duration_constant(400), interpreter_accelerate(0.5f))
                     .build();
 
 
-            searchPanelAppearanceController = animateAppearance(view(R.id.qs_search_panel),
-                    ySlide(0, searchPanelAppearanceStartFrom))
-                    .showAnimation(duration_constant(400), interpreter_accelerate(0.8f))
+            searchHeaderAppearanceController = animateAppearance(view(R.id.qs_search_panel),
+                    ySlide(-DisplayUtils.dpToPx(10, getResources()), -DisplayUtils.dpToPx(90, getResources())))
+                    .showAnimation(duration_constant(500), interpreter_overshot())
                     .build();
 
-            searchPanelAppearanceController.hideWithoutAnimation();
-            searchResultPanelAppearanceController.hideWithoutAnimation();
+            searchHeaderAppearanceController.hideWithoutAnimation();
+            searchContentAppearanceController.hideWithoutAnimation();
             application().fetchMostRecentApplication(new RunitApp.OnApplicationFetchedCallback() {
                 @Override
                 public void fetched(List<ApplicationData> applicationDataList) {
@@ -209,6 +211,30 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
             });
         }
 
+        view_list(R.id.qs_search_result_list).setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            private int lastVisibleFirstItem = -1;
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {}
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+                if (totalItemCount == 0) return;
+
+                if (firstVisibleItem == 0 || lastVisibleFirstItem == -1){
+                    searchHeaderAppearanceController.show();
+                    lastVisibleFirstItem = firstVisibleItem;
+                } else if (firstVisibleItem-lastVisibleFirstItem > 1) {
+                    searchHeaderAppearanceController.hide();
+                    lastVisibleFirstItem = firstVisibleItem;
+                } else if (firstVisibleItem - lastVisibleFirstItem < -1){
+                    searchHeaderAppearanceController.show();
+                    lastVisibleFirstItem = firstVisibleItem;
+                }
+            }
+        });
 
     }
 
@@ -216,8 +242,8 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
     @Override
     protected void onResume() {
         super.onResume();
-        if (searchPanelAppearanceController != null) {
-            searchPanelAppearanceController.showAndCustomize(new AppearanceController.AnimatorCustomization() {
+        if (searchHeaderAppearanceController != null) {
+            searchHeaderAppearanceController.showAndCustomize(new AppearanceController.AnimatorCustomization() {
                 @Override
                 public void customize(Animator animator) {
                     animator.setStartDelay(100);
@@ -229,12 +255,7 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
                     });
                 }
             });
-            searchResultPanelAppearanceController.showAndCustomize(new AppearanceController.AnimatorCustomization() {
-                @Override
-                public void customize(Animator animator) {
-                    animator.setStartDelay(500);
-                }
-            });
+            searchContentAppearanceController.show();
         }
     }
 

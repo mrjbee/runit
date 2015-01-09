@@ -1,38 +1,11 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:id="@+id/qs_root"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="org.monroe.team.runit.app.android.QuickSearchActivity">
 
-    <LinearLayout
-        android:id="@+id/qs_search_panel"
-        android:layout_width="fill_parent"
-        android:layout_height="60dp"
-        android:background="@color/blue.themed"
-        android:orientation="horizontal">
-        <LinearLayout
-            android:layout_gravity="center"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@drawable/panel_round_white"
-            android:paddingLeft="20dp">
-            <EditText
-                android:id="@+id/qs_search_edit"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:textColor="@color/blue.themed.dark"
-                android:background="@android:color/transparent"
-                android:hint="What To Run ..."
-                android:focusableInTouchMode="true"
-                android:singleLine="true"
-                android:textColorHint="@color/white.most.darkest"
-                android:editable="true"
-                android:textSize="16sp"
-                android:imeOptions="flagNoExtractUi"/>
-        </LinearLayout>
-    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/qs_content_panel"
         android:layout_width="fill_parent"
@@ -40,7 +13,7 @@
         android:orientation="vertical"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:background="@color/white.dark">
+        android:background="@color/white.darkest">
         <ListView
             android:id="@+id/qs_search_result_list"
             android:layout_weight="2"
@@ -49,7 +22,52 @@
             android:divider="#00000000"
             android:dividerHeight="0px"
             android:listSelector="@android:color/transparent"/>
-
     </LinearLayout>
 
-</LinearLayout>
+    <LinearLayout
+        android:id="@+id/qs_search_panel"
+        android:layout_width="fill_parent"
+        android:layout_height="78dp"
+
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_weight="1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@color/white.darkest">
+
+            <ImageView
+                android:layout_marginLeft="15dp"
+                android:id="@+id/qs_search_icon"
+                android:layout_alignParentBottom="true"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:src="@drawable/action_bar_search"/>
+
+            <EditText
+                android:gravity="bottom"
+                android:paddingBottom="5dp"
+                android:layout_toRightOf="@+id/qs_search_icon"
+                android:layout_alignBottom="@id/qs_search_icon"
+                android:id="@+id/qs_search_edit"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:textColor="@color/blue.themed.dark"
+                android:background="@android:color/transparent"
+                android:hint="What To Run ..."
+                android:focusableInTouchMode="true"
+                android:singleLine="true"
+                android:textColorHint="@color/white.most.darkest"
+                android:editable="true"
+                android:textSize="20sp"
+                android:imeOptions="flagNoExtractUi"/>
+        </RelativeLayout>
+        <LinearLayout
+            android:id="@+id/qs_header_shadow"
+            android:layout_width="fill_parent"
+            android:layout_height="5dp"
+            android:background="@drawable/shadow_vert"
+            android:orientation="vertical"
+            android:alpha="0.5"/>
+    </LinearLayout>
+</RelativeLayout>
