@@ -2,47 +2,124 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="org.monroe.team.runit.app.ApplicationDrawerActivity"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical"
         android:background="@color/white.darkest"
         android:id="@+id/drawer_root_layout"
         >
-
-        <LinearLayout
-            android:id="@+id/drawer_synch_panel"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/blue.themed.lightest"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:textColor="@color/black.almost"
-                android:padding="5dp"
-                android:text=" Cataloging is not done yet"/>
-        </LinearLayout>
-
-        <org.monroe.team.android.box.ui.PushToListView
-            android:layout_weight="2"
-            android:id="@+id/drawer_category_list"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="#00000000"
-            android:dividerHeight="0px"
-            android:listSelector="@android:color/transparent"/>
+            android:orientation="vertical">
+
+            <ListView
+                android:id="@+id/drawer_category_quick_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="#00000000"
+                android:dividerHeight="0px"
+                android:listSelector="@android:color/transparent"
+                android:visibility="invisible"
+                android:background="@color/black.almost2"/>
+
+            <ImageView
+                android:layout_alignParentRight="true"
+                android:id="@+id/drawer_category_list_check"
+                android:padding="5dp"
+                android:layout_weight="0"
+                android:layout_gravity="center"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp"
+                android:src="@drawable/action_grid_white"
+                android:checked="true"/>
+
+        </RelativeLayout>
+        <LinearLayout
+            android:id="@+id/drawer_category_list_panel"
+            android:layout_weight="2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/drawer_category_list_shadow"
+                android:layout_width="10dp"
+                android:layout_height="fill_parent"
+                android:background="@drawable/shadow_hor"
+                android:orientation="horizontal"
+                android:visibility="gone"/>
+
+                <org.monroe.team.android.box.ui.PushToListView
+                        android:id="@+id/drawer_category_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:divider="#00000000"
+                        android:dividerHeight="0px"
+                        android:listSelector="@android:color/transparent"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/drawer_header_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="78dp"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@color/white.darkest"
+            android:orientation="horizontal"
+            >
+            <TextView
+                android:layout_weight="1"
+                android:layout_gravity="bottom"
+                android:id="@+id/drawer_header_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:layout_marginLeft="10dp"
+                android:text="Category Name"
+                android:textColor="@color/black.dark"
+                android:shadowColor="@android:color/white"
+                android:shadowRadius="3"
+                android:shadowDy="1"
+                android:shadowDx="1"
+                android:textSize="16sp"
+                />
+            <ImageView
+                android:id="@+id/drawer_category_quick_list_check"
+                android:padding="5dp"
+                android:layout_weight="0"
+                android:layout_gravity="center"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/action_list_dark"
+                android:checked="true"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/drawer_header_shadow"
+            android:layout_weight="0"
+            android:layout_width="fill_parent"
+            android:layout_height="5dp"
+            android:background="@drawable/shadow_vert"
+            android:orientation="vertical"
+            android:alpha="0.3"/>
     </LinearLayout>
 
-
     <org.monroe.team.runit.app.views.PushActionView
-        android:id="@+id/drawer_push_action_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"/>
+    android:id="@+id/drawer_push_action_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:visibility="gone"/>
 
 </RelativeLayout>

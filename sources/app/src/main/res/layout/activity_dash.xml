@@ -210,10 +210,11 @@
     <LinearLayout
         android:layout_below="@+id/dashboard_header_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="5dp"
         android:orientation="horizontal"
         android:layout_marginTop="-1dp"
-        android:background="@drawable/shadow_vert"/>
+        android:background="@drawable/shadow_vert"
+        android:alpha="0.8"/>
 
     <Button
         android:id="@+id/dashboard_search_button"

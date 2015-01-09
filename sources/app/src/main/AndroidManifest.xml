@@ -47,8 +47,8 @@
 
         <activity
             android:name=".android.QuickSearchActivity"
-            android:excludeFromRecents="true"
             android:label="@string/title_activity_quick_search"
+            android:excludeFromRecents="true"
             android:noHistory="true"
             android:taskAffinity=""
             android:theme="@style/NoAnimation" >
@@ -70,7 +70,8 @@
         <activity
             android:name=".ApplicationDrawerActivity"
             android:label="@string/title_activity_application_drawer"
-            android:theme="@style/AppTheme.Translucent"
+            android:theme="@style/AppTheme.Translucent.NoAnimation"
+            android:excludeFromRecents="true"
             >
         </activity>
     </application>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/black.almost2">
+
+    <TextView
+        android:id="@+id/item_space"
+        android:gravity="bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="70dp"
+        android:paddingBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:text="Apps Categories"
+        android:textColor="@color/black.light"
+        android:textStyle="bold"
+        android:shadowColor="@color/black.almost"
+        android:shadowRadius="2"
+        android:shadowDy="-2"
+        android:shadowDx="-1"
+        android:textSize="18sp"
+        android:layout_alignParentBottom="false"
+        />
+
+    <TextView
+        android:id="@+id/item_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:text="Application Name"
+        android:textColor="@color/white.dark"
+        android:shadowColor="@android:color/black"
+        android:shadowRadius="3"
+        android:shadowDy="1"
+        android:shadowDx="1"
+        android:textSize="16sp"
+        android:layout_alignParentBottom="false"
+        />
+
+
+</LinearLayout>
