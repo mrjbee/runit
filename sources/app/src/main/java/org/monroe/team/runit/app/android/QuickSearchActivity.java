@@ -1,11 +1,13 @@
 package org.monroe.team.runit.app.android;
 
 import android.animation.Animator;
+import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.SpannableString;
@@ -62,6 +64,9 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
                 }
             }
         });*/
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            updateTrayColor();
+        }
         construct_list();
 
         if (getFromIntent("from_bottom", false)){
@@ -122,6 +127,11 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
             }
         });
 
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void updateTrayColor() {
+        getWindow().setStatusBarColor(getResources().getColor(R.color.gray));
     }
 
     private void construct_list() {

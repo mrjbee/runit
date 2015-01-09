@@ -2,10 +2,12 @@ package org.monroe.team.runit.app;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -75,6 +77,9 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_application_drawer);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            updateTrayColor();
+        }
 
         constructor_appearance();
         constructor_adapterCategoryList();
@@ -176,6 +181,12 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
                 dialog.show();
             }
         });
+    }
+
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void updateTrayColor() {
+        getWindow().setStatusBarColor(getResources().getColor(R.color.gray));
     }
 
     private void construct_modPanel() {

@@ -2,10 +2,11 @@
 
     <style name="AppTheme" parent="android:Theme.Material.Light.NoActionBar"></style>
 
-    <style name="NoAnimation" parent="android:Theme.Material.NoActionBar">
+    <style name="AppTheme.Translucent.NoAnimation" parent="AppTheme">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@null</item>
     </style>
+
 </resources>
