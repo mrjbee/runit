@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -14,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Space;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.monroe.team.android.box.Closure;
@@ -54,12 +56,14 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
     private AppearanceController gridAppearanceController;
     private AppearanceController gridShowBtnAppearanceController;
     private AppearanceController listShowBtnAppearanceController;
+    private AppearanceController appModPanelController;
 
 
     private Closure<Integer,DisplayData> adapterDisplayDataToRealIndexConverted;
     private Closure<Integer,Integer> adapterRealIndexToDisplayIndexConverted;
     private boolean dynamicHeaderEnabled = true;
     private Timer dynamicHeaderEnableTimer = null;
+    private ApplicationData appUnderMod;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,9 +121,68 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
                 listShowBtnAppearanceController.showWithoutAnimation();
             }
         }
+        appModPanelController.hideWithoutAnimation();
+        view(R.id.ac_app_mod_close).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                appModPanelController.hide();
+            }
+        });
+        final ArrayAdapter<RunitApp.Category> spinnerCategoryAddapter = new ArrayAdapter<RunitApp.Category>(this,R.layout.item_category_drop);
+        spinnerCategoryAddapter.addAll(application().supportedCategories());
+        view(R.id.ac_app_mod_category_spinner, Spinner.class).setAdapter(spinnerCategoryAddapter);
+        view(R.id.ac_app_mod_category_spinner, Spinner.class).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (appUnderMod == null) {
+                    return;
+                }
+                RunitApp.Category category = (RunitApp.Category) view(R.id.ac_app_mod_category_spinner, Spinner.class).getAdapter().getItem(position);
+                application().updateAppCategory(appUnderMod, category);
+                appUnderMod = null;
+                appModPanelController.hideAndCustomize(new AppearanceController.AnimatorCustomization() {
+                    @Override
+                    public void customize(Animator animator) {
+                        animator.addListener(new AppearanceControllerOld.AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                categoriesAdapter.clear();
+                                categoriesQuickAdapter.clear();
+                                categoryDataList.clear();
+                                categoriesQuickAdapter.notifyDataSetChanged();
+                                categoriesAdapter.notifyDataSetChanged();
+                                reFetchCategories();
+                            }
+                        });
+                    }
+                });
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                appModPanelController.hide();
+            }
+        });
+
+        view(R.id.drawer_touch_banner).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                boolean captureRequired = view(R.id.ac_app_mod_panel).getVisibility() == View.VISIBLE;
+                if (captureRequired) onBackPressed();
+                return captureRequired;
+            }
+        });
     }
 
     private void constructor_appearance() {
+        appModPanelController = animateAppearance(
+                view(R.id.ac_app_mod_panel),
+                ySlide(0, DisplayUtils.screenHeight(getResources())))
+                .showAnimation(duration_constant(400), interpreter_overshot())
+                .hideAnimation(duration_constant(200), interpreter_accelerate_decelerate())
+                .hideAndGone()
+                .build();
+
         headerAppearanceController =
                 animateAppearance(
                         view(R.id.drawer_header_layout),
@@ -497,6 +560,10 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
 
     @Override
     public void onBackPressed() {
+        if (view(R.id.ac_app_mod_panel).getVisibility() == View.VISIBLE){
+            appModPanelController.hide();
+            return;
+        }
         if (view(R.id.drawer_category_list_check).getVisibility()==View.VISIBLE){
             closeQuickListMode(true);
         }else {
@@ -722,6 +789,37 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
                 @Override
                 public void onClick(View v) {
                     application().launchApplication(applicationData);
+                }
+            });
+            viewToUse.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    view(R.id.ac_app_mod_name,TextView.class).setText(applicationData.name);
+                    appUnderMod = null;
+                    Spinner spinner = view(R.id.ac_app_mod_category_spinner, Spinner.class);
+                    int position = ((ArrayAdapter<RunitApp.Category>)spinner.getAdapter()).getPosition(displayData.data.category);
+                    if (position < 0){
+                        position = 0;
+                    }
+                    spinner.setSelection(position,false);
+                    application().loadApplicationIcon(applicationData, new RunitApp.OnLoadApplicationIconCallback() {
+                        @Override
+                        public void load(ApplicationData applicationData, Drawable drawable) {
+                            view(R.id.ac_app_mod_icon, ImageView.class).setImageDrawable(drawable);
+                        }
+                    });
+                    appModPanelController.showAndCustomize(new AppearanceController.AnimatorCustomization() {
+                        @Override
+                        public void customize(Animator animator) {
+                            animator.addListener(new AppearanceControllerOld.AnimatorListenerAdapter(){
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    appUnderMod = applicationData;
+                                }
+                            });
+                        }
+                    });
+                    return true;
                 }
             });
         }

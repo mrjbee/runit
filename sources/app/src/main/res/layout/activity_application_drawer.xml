@@ -122,6 +122,61 @@
             android:alpha="0.3"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/drawer_touch_banner"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" />
+
+    <!-- Apps Mod-->
+    <RelativeLayout
+            android:id="@+id/ac_app_mod_panel"
+            android:layout_centerInParent="true"
+            android:layout_weight="1"
+            android:layout_width="400dp"
+            android:layout_height="150dp"
+            android:padding="10dp"
+            android:background="@drawable/search_panel">
+
+            <ImageView
+                android:id="@+id/ac_app_mod_close"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:padding="5dp"
+                android:src="@drawable/close"
+                android:layout_alignParentRight="true"/>
+
+            <org.monroe.team.runit.app.views.ShadowedImageView
+                android:id="@+id/ac_app_mod_icon"
+                android:layout_centerVertical="true"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:padding="5dp"
+                android:layout_margin="5dp"/>
+            <TextView
+                android:id="@+id/ac_app_mod_name"
+                android:layout_toRightOf="@+id/ac_app_mod_icon"
+                android:layout_alignBaseline="@id/ac_app_mod_icon"
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="Application Name"
+                android:textColor="@color/white.dark"
+                android:textSize="16sp"
+                />
+
+            <Spinner
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:id="@+id/ac_app_mod_category_spinner"
+                android:layout_below="@+id/ac_app_mod_name"
+                android:layout_alignLeft="@+id/ac_app_mod_name"
+                android:layout_alignStart="@+id/ac_app_mod_name" />
+
+        </RelativeLayout>
+
     <org.monroe.team.runit.app.views.PushActionView
     android:id="@+id/drawer_push_action_view"
     android:layout_width="wrap_content"
