@@ -62,8 +62,70 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
                 }
             }
         });*/
+        construct_list();
 
-        adapter = new GenericListViewAdapter<>(this,R.layout.item_search_application_qs, new GenericListViewAdapter.GenericViewHolderFactory<RunitApp.AppSearchResult>() {
+        if (getFromIntent("from_bottom", false)){
+            searchContentAppearanceController = animateAppearance(view(R.id.qs_content_panel),
+                    ySlide(0f,DisplayUtils.screenHeight(getResources())))
+                    .showAnimation(duration_constant(400), interpreter_accelerate(0.5f))
+                    .build();
+        }else{
+            searchContentAppearanceController = animateAppearance(view(R.id.qs_content_panel),
+                    xSlide(0f,DisplayUtils.screenWidth(getResources())))
+                    .showAnimation(duration_constant(400), interpreter_accelerate(0.5f))
+                    .build();
+        }
+
+        searchHeaderAppearanceController = animateAppearance(view(R.id.qs_search_panel),
+                ySlide(-DisplayUtils.dpToPx(10, getResources()), -DisplayUtils.dpToPx(90, getResources())))
+                .showAnimation(duration_constant(500), interpreter_overshot())
+                .build();
+
+        if (isFirstRun(savedInstanceState)) {
+            searchHeaderAppearanceController.hideWithoutAnimation();
+            searchContentAppearanceController.hideWithoutAnimation();
+            application().fetchMostRecentApplication(new RunitApp.OnApplicationFetchedCallback() {
+                @Override
+                public void fetched(List<ApplicationData> applicationDataList) {
+                    adapter.clear();
+                    for (ApplicationData data : applicationDataList) {
+                        adapter.add(new RunitApp.AppSearchResult(data,0,0));
+                    }
+                    adapter.notifyDataSetChanged();
+                }
+            });
+        }
+
+        view_list(R.id.qs_search_result_list).setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            private int lastVisibleFirstItem = -1;
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+                if (totalItemCount == 0) return;
+
+                if (firstVisibleItem == 0 || lastVisibleFirstItem == -1) {
+                    searchHeaderAppearanceController.show();
+                    lastVisibleFirstItem = firstVisibleItem;
+                } else if (firstVisibleItem - lastVisibleFirstItem > 1) {
+                    searchHeaderAppearanceController.hide();
+                    lastVisibleFirstItem = firstVisibleItem;
+                } else if (firstVisibleItem - lastVisibleFirstItem < -1) {
+                    searchHeaderAppearanceController.show();
+                    lastVisibleFirstItem = firstVisibleItem;
+                }
+            }
+        });
+
+    }
+
+    private void construct_list() {
+        adapter = new GenericListViewAdapter<>(this, R.layout.item_search_application_qs, new GenericListViewAdapter.GenericViewHolderFactory<RunitApp.AppSearchResult>() {
             @Override
             public GenericListViewAdapter.GenericViewHolder<RunitApp.AppSearchResult> construct() {
                 return new GenericListViewAdapter.GenericViewHolder<RunitApp.AppSearchResult>() {
@@ -164,69 +226,6 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
                 initiateAppsSearch();
             }
         });
-
-
-        if (savedInstanceState == null) {
-
-            float searchPanelAppearanceStartFrom = 0;
-            if (getIntent() != null && getIntent().getSourceBounds() != null) {
-                searchPanelAppearanceStartFrom = getIntent().getSourceBounds().top;
-            } else {
-                searchPanelAppearanceStartFrom = getResources().getDisplayMetrics().heightPixels * 0.8f;
-            }
-
-
-            searchContentAppearanceController = animateAppearance(view(R.id.qs_content_panel),
-                     xSlide(0f,DisplayUtils.screenWidth(getResources())))
-                    .showAnimation(duration_constant(400), interpreter_accelerate(0.5f))
-                    .build();
-
-
-            searchHeaderAppearanceController = animateAppearance(view(R.id.qs_search_panel),
-                    ySlide(-DisplayUtils.dpToPx(10, getResources()), -DisplayUtils.dpToPx(90, getResources())))
-                    .showAnimation(duration_constant(500), interpreter_overshot())
-                    .build();
-
-            searchHeaderAppearanceController.hideWithoutAnimation();
-            searchContentAppearanceController.hideWithoutAnimation();
-            application().fetchMostRecentApplication(new RunitApp.OnApplicationFetchedCallback() {
-                @Override
-                public void fetched(List<ApplicationData> applicationDataList) {
-                    adapter.clear();
-                    for (ApplicationData data : applicationDataList) {
-                        adapter.add(new RunitApp.AppSearchResult(data,0,0));
-                    }
-                    adapter.notifyDataSetChanged();
-                }
-            });
-        }
-
-        view_list(R.id.qs_search_result_list).setOnScrollListener(new AbsListView.OnScrollListener() {
-
-            private int lastVisibleFirstItem = -1;
-
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-                if (totalItemCount == 0) return;
-
-                if (firstVisibleItem == 0 || lastVisibleFirstItem == -1) {
-                    searchHeaderAppearanceController.show();
-                    lastVisibleFirstItem = firstVisibleItem;
-                } else if (firstVisibleItem - lastVisibleFirstItem > 1) {
-                    searchHeaderAppearanceController.hide();
-                    lastVisibleFirstItem = firstVisibleItem;
-                } else if (firstVisibleItem - lastVisibleFirstItem < -1) {
-                    searchHeaderAppearanceController.show();
-                    lastVisibleFirstItem = firstVisibleItem;
-                }
-            }
-        });
-
     }
 
 
@@ -272,12 +271,17 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
 
 
     public static PendingIntent open(Context context) {
-        Intent intent = new Intent(context, QuickSearchActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                .addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED)
-                .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        Intent intent = openIntent(context, false);
         return PendingIntent.getActivity(context, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    public static  Intent openIntent(Context context, boolean fromBottom) {
+        return new Intent(context, QuickSearchActivity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    .addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED)
+                    .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                .putExtra("from_bottom",fromBottom);
     }
 
     private void checkAndFinish() {
@@ -293,10 +297,10 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
 
     private void finishActivity() {
         view_list(R.id.qs_search_result_list).setOnScrollListener(null);
-        searchContentAppearanceController.hideAndCustomize(new AppearanceController.AnimatorCustomization(){
+        searchContentAppearanceController.hideAndCustomize(new AppearanceController.AnimatorCustomization() {
             @Override
             public void customize(Animator animator) {
-                animator.addListener(new AppearanceControllerOld.AnimatorListenerAdapter(){
+                animator.addListener(new AppearanceControllerOld.AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         finish();

@@ -38,15 +38,16 @@
 
             <ImageView
                 android:layout_marginLeft="15dp"
+                android:padding="5dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:id="@+id/qs_search_icon"
                 android:layout_alignParentBottom="true"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
                 android:src="@drawable/action_bar_search"/>
 
             <EditText
                 android:gravity="bottom"
-                android:paddingBottom="5dp"
+                android:paddingBottom="7dp"
                 android:layout_toRightOf="@+id/qs_search_icon"
                 android:layout_alignBottom="@id/qs_search_icon"
                 android:id="@+id/qs_search_edit"
@@ -59,7 +60,7 @@
                 android:singleLine="true"
                 android:textColorHint="@color/white.most.darkest"
                 android:editable="true"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:imeOptions="flagNoExtractUi"/>
         </RelativeLayout>
         <LinearLayout

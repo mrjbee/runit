@@ -26,8 +26,10 @@ import org.monroe.team.android.box.support.ActivitySupport;
 import org.monroe.team.android.box.ui.AppearanceControllerOld;
 import org.monroe.team.android.box.ui.PushToActionAdapter;
 import org.monroe.team.android.box.ui.PushToListView;
+import org.monroe.team.android.box.ui.animation.AnimatorListenerSupport;
 import org.monroe.team.android.box.ui.animation.apperrance.AppearanceController;
 import org.monroe.team.android.box.utils.DisplayUtils;
+import org.monroe.team.runit.app.android.QuickSearchActivity;
 import org.monroe.team.runit.app.android.RunitApp;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;
 import org.monroe.team.runit.app.views.PushActionView;
@@ -137,6 +139,19 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
                 return captureRequired;
             }
         });
+
+        view(R.id.drawer_search).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                headerAppearanceController.hide();
+                runLastOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        startActivity(QuickSearchActivity.openIntent(getApplicationContext(), true));
+                    }
+                },200);
+            }
+        });
     }
 
     private void construct_modPanel() {
@@ -223,7 +238,7 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
                         scale(1f,0f))
                         .showAnimation(duration_constant(400), interpreter_overshot())
                         .hideAnimation(duration_constant(300), interpreter_accelerate(null))
-                        .hideAndInvisible()
+                        .hideAndGone()
                         .build();
 
         listShowBtnAppearanceController =
@@ -232,7 +247,7 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
                         scale(1f,0f))
                         .showAnimation(duration_constant(400), interpreter_overshot())
                         .hideAnimation(duration_constant(300), interpreter_accelerate(null))
-                        .hideAndInvisible()
+                        .hideAndGone()
                         .build();
 
 
@@ -543,6 +558,7 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
     @Override
     protected void onResume() {
         super.onResume();
+        headerAppearanceController.show();
     }
 
     @Override

@@ -101,6 +101,16 @@
                 android:textSize="16sp"
                 />
             <ImageView
+                android:id="@+id/drawer_search"
+                android:layout_weight="0"
+                android:layout_gravity="center"
+                android:padding="5dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/action_bar_search"
+                android:checked="true"/>
+
+            <ImageView
                 android:id="@+id/drawer_category_quick_list_check"
                 android:padding="5dp"
                 android:layout_weight="0"
