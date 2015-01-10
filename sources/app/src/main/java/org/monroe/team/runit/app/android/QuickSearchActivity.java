@@ -49,6 +49,7 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        requestNoAnimation();
         application().requestRefreshApps();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quick_search);

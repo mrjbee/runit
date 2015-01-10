@@ -75,6 +75,7 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        requestNoAnimation();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_application_drawer);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -187,6 +188,11 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void updateTrayColor() {
         getWindow().setStatusBarColor(getResources().getColor(R.color.gray));
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     private void construct_modPanel() {
