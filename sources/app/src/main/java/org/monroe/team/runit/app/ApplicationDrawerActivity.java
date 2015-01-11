@@ -168,20 +168,24 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
         view(R.id.drawer_synch).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(ApplicationDrawerActivity.this);
-                builder.setMessage("Apps cataloging consist of getting category from Google Play per each installed application. " +
-                        "This process may take some time which depends from your internet connection and count of installed applications." +
-                        "\n\n Please also note that in order to safe your mobile traffic, we design it to run only during WI-FI connection.")
-                        .setTitle("Apps Cataloging still in progress ...")
-                        .setPositiveButton("Got It", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // FIRE ZE MISSILES!
-                            }
-                        });
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                showCataloginProgressDialog();
             }
         });
+    }
+
+    private void showCataloginProgressDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Apps cataloging consist of getting category from Google Play per each installed application. " +
+                "This process may take some time which depends from your internet connection and count of installed applications." +
+                "\n\n Please also note that in order to safe your mobile traffic, we design it to run only during WI-FI connection.")
+                .setTitle("Apps Cataloging still in progress ...")
+                .setPositiveButton("Got It", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // FIRE ZE MISSILES!
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
 
@@ -727,8 +731,20 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
 
             @Override
             public void noData() {
-                view(R.id.ac_synch_panel).setVisibility(View.VISIBLE);
-                categoryDataList.clear();
+                synchBtnScaleAppearanceController.showAndCustomize(new AppearanceController.AnimatorCustomization() {
+                    @Override
+                    public void customize(Animator animator) {
+                        animator.setStartDelay(1000);
+                        animator.addListener(new AppearanceControllerOld.AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                showCataloginProgressDialog();
+                                synchBtnRotateAppearanceController.show();
+                            }
+                        });
+                    }
+                });
+
             }
         });
     }
