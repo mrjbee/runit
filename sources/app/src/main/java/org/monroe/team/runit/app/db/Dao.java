@@ -4,7 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import org.monroe.team.android.box.Closure;
+import org.monroe.team.corebox.utils.Closure;
 import org.monroe.team.android.box.db.DAOSupport;
 import org.monroe.team.android.box.db.Schema;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;

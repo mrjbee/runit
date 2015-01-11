@@ -4,22 +4,22 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 
+import org.monroe.team.android.box.app.AndroidModel;
 import org.monroe.team.android.box.db.DAOFactory;
 import org.monroe.team.android.box.db.DAOSupport;
 import org.monroe.team.android.box.db.DBHelper;
-import org.monroe.team.android.box.db.Schema;
 import org.monroe.team.android.box.db.TransactionManager;
-import org.monroe.team.android.box.manager.NetworkManager;
-import org.monroe.team.android.box.manager.ServiceRegistry;
-import org.monroe.team.android.box.manager.Model;
-import org.monroe.team.android.box.manager.SettingManager;
+import org.monroe.team.android.box.services.AndroidServiceRegistry;
+import org.monroe.team.android.box.services.NetworkManager;
+import org.monroe.team.android.box.services.SettingManager;
+import org.monroe.team.corebox.services.ServiceRegistry;
 import org.monroe.team.runit.app.db.Dao;
 import org.monroe.team.runit.app.db.RunitSchema;
 import org.monroe.team.runit.app.service.ApplicationRegistry;
 import org.monroe.team.runit.app.service.CategoryNameResolver;
 import org.monroe.team.runit.app.service.PlayMarketDetailsProvider;
 
-public class RunItModel extends Model {
+public class RunItModel extends AndroidModel {
 
     public final static SettingManager.SettingItem<Boolean> SETTING_SYNC_IN_PROGRESS = new SettingManager.SettingItem<>("sync_in_progress",Boolean.class, Boolean.TRUE);
 

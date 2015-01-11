@@ -1,7 +1,8 @@
 package org.monroe.team.runit.app.uc;
 
-import org.monroe.team.android.box.manager.ServiceRegistry;
-import org.monroe.team.android.box.uc.UserCaseSupport;
+import org.monroe.team.android.box.services.AndroidServiceRegistry;
+import org.monroe.team.corebox.services.ServiceRegistry;
+import org.monroe.team.corebox.uc.UserCaseSupport;
 import org.monroe.team.runit.app.service.ApplicationRegistry;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;
 

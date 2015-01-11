@@ -23,32 +23,32 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import org.monroe.team.android.box.Closure;
-import org.monroe.team.android.box.ui.AppearanceControllerOld;
-import org.monroe.team.android.box.ui.PushToActionAdapter;
-import org.monroe.team.android.box.ui.PushToGridView;
+import org.monroe.team.corebox.utils.Closure;
+import org.monroe.team.android.box.app.ui.AppearanceControllerOld;
+import org.monroe.team.android.box.app.ui.PushToActionAdapter;
+import org.monroe.team.android.box.app.ui.PushToGridView;
 import org.monroe.team.android.box.utils.DisplayUtils;
-import org.monroe.team.android.box.manager.BackgroundTaskManager;
-import org.monroe.team.android.box.support.ActivitySupport;
-import org.monroe.team.android.box.ui.animation.apperrance.AppearanceController;
+import org.monroe.team.corebox.services.BackgroundTaskManager;
+import org.monroe.team.android.box.app.ActivitySupport;
+import org.monroe.team.android.box.app.ui.animation.apperrance.AppearanceController;
 import org.monroe.team.runit.app.android.RunitApp;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;
-import org.monroe.team.android.box.ui.PushToListView;
+import org.monroe.team.android.box.app.ui.PushToListView;
 import org.monroe.team.runit.app.views.PushActionView;
 
 import java.util.List;
 
-import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.alpha;
-import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.animateAppearance;
-import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.combine;
-import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.duration_constant;
-import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.heightSlide;
-import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.interpreter_accelerate_decelerate;
-import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.interpreter_decelerate;
-import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.interpreter_overshot;
-import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.widthSlide;
-import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.xSlide;
-import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.ySlide;
+import static org.monroe.team.android.box.app.ui.animation.apperrance.AppearanceControllerBuilder.alpha;
+import static org.monroe.team.android.box.app.ui.animation.apperrance.AppearanceControllerBuilder.animateAppearance;
+import static org.monroe.team.android.box.app.ui.animation.apperrance.AppearanceControllerBuilder.combine;
+import static org.monroe.team.android.box.app.ui.animation.apperrance.AppearanceControllerBuilder.duration_constant;
+import static org.monroe.team.android.box.app.ui.animation.apperrance.AppearanceControllerBuilder.heightSlide;
+import static org.monroe.team.android.box.app.ui.animation.apperrance.AppearanceControllerBuilder.interpreter_accelerate_decelerate;
+import static org.monroe.team.android.box.app.ui.animation.apperrance.AppearanceControllerBuilder.interpreter_decelerate;
+import static org.monroe.team.android.box.app.ui.animation.apperrance.AppearanceControllerBuilder.interpreter_overshot;
+import static org.monroe.team.android.box.app.ui.animation.apperrance.AppearanceControllerBuilder.widthSlide;
+import static org.monroe.team.android.box.app.ui.animation.apperrance.AppearanceControllerBuilder.xSlide;
+import static org.monroe.team.android.box.app.ui.animation.apperrance.AppearanceControllerBuilder.ySlide;
 
 
 public class AppsCategoryActivity extends ActivitySupport<RunitApp> {

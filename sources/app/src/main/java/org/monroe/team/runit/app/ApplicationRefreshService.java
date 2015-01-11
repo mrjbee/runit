@@ -4,9 +4,9 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import org.monroe.team.android.box.manager.Model;
-import org.monroe.team.android.box.manager.NetworkManager;
-import org.monroe.team.android.box.manager.SettingManager;
+import org.monroe.team.android.box.app.AndroidModel;
+import org.monroe.team.android.box.services.NetworkManager;
+import org.monroe.team.android.box.services.SettingManager;
 import org.monroe.team.runit.app.android.RunitApp;
 import org.monroe.team.runit.app.service.ApplicationRegistry;
 import org.monroe.team.runit.app.uc.RefreshApplicationCategory;
@@ -23,7 +23,7 @@ public class ApplicationRefreshService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         startCategoryRefreshThread();
         RunitApp app = (RunitApp) getApplication();
-        app.model().execute(RemoveUninstalledApplications.class, null, new Model.BackgroundResultCallback<Void>() {
+        app.model().execute(RemoveUninstalledApplications.class, null, new AndroidModel.BackgroundResultCallback<Void>() {
             @Override
             public void onResult(Void response) {}
         });

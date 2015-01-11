@@ -58,7 +58,7 @@
                 android:orientation="horizontal"
                 android:visibility="gone"/>
 
-            <org.monroe.team.android.box.ui.PushToListView
+            <org.monroe.team.android.box.app.ui.PushToListView
                     android:id="@+id/drawer_category_list"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

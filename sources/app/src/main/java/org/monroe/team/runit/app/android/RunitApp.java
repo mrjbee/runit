@@ -4,13 +4,11 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.util.LruCache;
 import android.util.Pair;
-import android.view.View;
-import android.widget.ListView;
 
-import org.monroe.team.android.box.manager.BackgroundTaskManager;
-import org.monroe.team.android.box.manager.Model;
-import org.monroe.team.android.box.manager.SettingManager;
-import org.monroe.team.android.box.support.ApplicationSupport;
+import org.monroe.team.android.box.app.AndroidModel;
+import org.monroe.team.corebox.services.BackgroundTaskManager;
+import org.monroe.team.android.box.services.SettingManager;
+import org.monroe.team.android.box.app.ApplicationSupport;
 import org.monroe.team.runit.app.ApplicationRefreshService;
 import org.monroe.team.runit.app.RunItModel;
 import org.monroe.team.runit.app.service.ApplicationRegistry;
@@ -28,7 +26,6 @@ import org.monroe.team.runit.app.uc.UpdateApplicationCategory;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -54,7 +51,7 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
 
     public synchronized void searchApplicationByName(final String searchQuery, final OnAppSearchCallback callback){
         cancelSearchApplicationByName();
-        searchAppBackgroundTask = model().execute(FindAppsByText.class,new FindAppsByText.SearchRequest(searchQuery),new Model.BackgroundResultCallback<FindAppsByText.SearchResult>() {
+        searchAppBackgroundTask = model().execute(FindAppsByText.class,new FindAppsByText.SearchRequest(searchQuery),new AndroidModel.BackgroundResultCallback<FindAppsByText.SearchResult>() {
             @Override
             public void onResult(FindAppsByText.SearchResult response) {
                 List<AppSearchResult> appSearchResultList = new ArrayList<AppSearchResult>(response.applicationDataList.size());
@@ -78,7 +75,7 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
 
     public void fetchApplicationByCategory(Category item, final OnAppSearchCallback callback) {
         if (appCategoryBackgroundTask != null) appCategoryBackgroundTask.cancel();
-        appCategoryBackgroundTask = model().execute(FindAppsByCategory.class, item.categoryId, new Model.BackgroundResultCallback<FindAppsByText.SearchResult>() {
+        appCategoryBackgroundTask = model().execute(FindAppsByCategory.class, item.categoryId, new AndroidModel.BackgroundResultCallback<FindAppsByText.SearchResult>() {
             @Override
             public void onResult(FindAppsByText.SearchResult response) {
                 List<AppSearchResult> appSearchResultList = new ArrayList<AppSearchResult>(response.applicationDataList.size());
@@ -101,7 +98,7 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
             callback.load(data,drawable);
             return null;
         }
-        BackgroundTaskManager.BackgroundTask<Drawable> loadTask = model().execute(LoadApplicationImage.class, data, new Model.BackgroundResultCallback<Drawable>() {
+        BackgroundTaskManager.BackgroundTask<Drawable> loadTask = model().execute(LoadApplicationImage.class, data, new AndroidModel.BackgroundResultCallback<Drawable>() {
             @Override
             public void onResult(Drawable response) {
                 launcherIconCache.put(data.getUniqueName(),response);
@@ -114,7 +111,7 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
 
     public BackgroundTaskManager.BackgroundTask<?> loadApplicationCategory(final ApplicationData data, final OnLoadCategoryCallback callback) {
 
-        BackgroundTaskManager.BackgroundTask<Long> loadTask = model().execute(LoadApplicationCategory.class, data, new Model.BackgroundResultCallback<Long>() {
+        BackgroundTaskManager.BackgroundTask<Long> loadTask = model().execute(LoadApplicationCategory.class, data, new AndroidModel.BackgroundResultCallback<Long>() {
             @Override
             public void onResult(Long response) {
                 callback.load(data,new Category(
@@ -130,7 +127,7 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
 
 
     public void launchApplication(ApplicationData data){
-        model().execute(LaunchApplication.class,data,new Model.BackgroundResultCallback<Void>() {
+        model().execute(LaunchApplication.class,data,new AndroidModel.BackgroundResultCallback<Void>() {
             @Override
             public void onResult(Void response) {
 
@@ -140,7 +137,7 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
 
     public void fetchMostRecentApplication(final OnApplicationFetchedCallback callback){
         cancelMostResentApplicationFetch();
-        mostResentAppFetchTask = model().execute(FindRecentApplications.class, null, new Model.BackgroundResultCallback<List<ApplicationData>>() {
+        mostResentAppFetchTask = model().execute(FindRecentApplications.class, null, new AndroidModel.BackgroundResultCallback<List<ApplicationData>>() {
             @Override
             public void onResult(List<ApplicationData> response) {
                 callback.fetched(response);
@@ -150,7 +147,7 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
 
     public void fetchMostUsedApplication(final OnApplicationFetchedCallback callback){
         cancelMostUsedApplicationFetch();
-        mostUsedAppFetchTask = model().execute(FindMostUsedApplications.class, null, new Model.BackgroundResultCallback<List<ApplicationData>>() {
+        mostUsedAppFetchTask = model().execute(FindMostUsedApplications.class, null, new AndroidModel.BackgroundResultCallback<List<ApplicationData>>() {
             @Override
             public void onResult(List<ApplicationData> response) {
                 callback.fetched(response);
@@ -179,7 +176,7 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
     }
 
     public void fetchApplicationCategories(final OnAppCategoriesCallback categoriesCallback) {
-        model().execute(GetApplicationCategories.class,null, new Model.BackgroundResultCallback<List<GetApplicationCategories.ApplicationCategory>>() {
+        model().execute(GetApplicationCategories.class,null, new AndroidModel.BackgroundResultCallback<List<GetApplicationCategories.ApplicationCategory>>() {
             @Override
             public void onResult(List<GetApplicationCategories.ApplicationCategory> response) {
                 if (response.isEmpty() || (response.size() ==1 && response.get(0).categoryId == null)){

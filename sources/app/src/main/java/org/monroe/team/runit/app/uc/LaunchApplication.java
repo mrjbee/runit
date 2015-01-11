@@ -6,10 +6,11 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ResolveInfo;
 
-import org.monroe.team.android.box.utils.DateUtils;
+import org.monroe.team.android.box.services.AndroidServiceRegistry;
+import org.monroe.team.corebox.services.ServiceRegistry;
+import org.monroe.team.corebox.utils.DateUtils;
 import org.monroe.team.android.box.db.DAOSupport;
-import org.monroe.team.android.box.manager.ServiceRegistry;
-import org.monroe.team.android.box.uc.TransactionUserCase;
+import org.monroe.team.android.box.db.TransactionUserCase;
 import org.monroe.team.runit.app.db.Dao;
 import org.monroe.team.runit.app.service.ApplicationRegistry;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;

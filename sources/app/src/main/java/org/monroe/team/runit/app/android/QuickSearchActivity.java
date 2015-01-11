@@ -15,9 +15,7 @@ import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -27,12 +25,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.monroe.team.android.box.GenericListViewAdapter;
-import org.monroe.team.android.box.manager.BackgroundTaskManager;
-import org.monroe.team.android.box.support.ActivitySupport;
-import org.monroe.team.android.box.ui.AppearanceControllerOld;
-import org.monroe.team.android.box.ui.animation.apperrance.AppearanceController;
-import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.*;
+import org.monroe.team.android.box.app.ui.GenericListViewAdapter;
+import org.monroe.team.corebox.services.BackgroundTaskManager;
+import org.monroe.team.android.box.app.ActivitySupport;
+import org.monroe.team.android.box.app.ui.AppearanceControllerOld;
+import org.monroe.team.android.box.app.ui.animation.apperrance.AppearanceController;
+import static org.monroe.team.android.box.app.ui.animation.apperrance.AppearanceControllerBuilder.*;
 
 import org.monroe.team.android.box.utils.DisplayUtils;
 import org.monroe.team.runit.app.R;

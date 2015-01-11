@@ -27,24 +27,21 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.monroe.team.android.box.ui.PushToActionAdapter;
-import org.monroe.team.android.box.ui.PushToListView;
+import org.monroe.team.android.box.app.ui.PushToActionAdapter;
+import org.monroe.team.android.box.app.ui.PushToListView;
 import org.monroe.team.android.box.utils.DisplayUtils;
-import org.monroe.team.android.box.manager.BackgroundTaskManager;
-import org.monroe.team.android.box.support.ActivitySupport;
-import org.monroe.team.android.box.ui.AppearanceControllerOld;
-import org.monroe.team.android.box.ui.animation.apperrance.AppearanceController;
+import org.monroe.team.corebox.services.BackgroundTaskManager;
+import org.monroe.team.android.box.app.ActivitySupport;
+import org.monroe.team.android.box.app.ui.AppearanceControllerOld;
+import org.monroe.team.android.box.app.ui.animation.apperrance.AppearanceController;
 import org.monroe.team.runit.app.ApplicationDrawerActivity;
-import org.monroe.team.runit.app.AppsCategoryActivity;
 import org.monroe.team.runit.app.R;
 import org.monroe.team.runit.app.android.preneter.RefreshableListAdapter;
-import org.monroe.team.runit.app.service.ApplicationRegistry;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;
 import org.monroe.team.runit.app.views.PushActionView;
 
-import static org.monroe.team.android.box.ui.animation.apperrance.AppearanceControllerBuilder.*;
+import static org.monroe.team.android.box.app.ui.animation.apperrance.AppearanceControllerBuilder.*;
 
-import java.util.HashMap;
 import java.util.List;
 
 

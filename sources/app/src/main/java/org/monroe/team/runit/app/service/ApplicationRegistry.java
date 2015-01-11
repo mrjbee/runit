@@ -6,8 +6,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 
-import org.monroe.team.android.box.Closure;
-import org.monroe.team.android.box.Lists;
+import org.monroe.team.corebox.utils.Closure;
+import org.monroe.team.corebox.utils.Lists;
 import org.monroe.team.runit.app.RunItModel;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;
 

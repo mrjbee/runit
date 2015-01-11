@@ -35,7 +35,7 @@
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
-                <org.monroe.team.android.box.ui.PushToListView
+                <org.monroe.team.android.box.app.ui.PushToListView
                     android:layout_weight="2"
                     android:id="@+id/ac_category_list"
                     android:layout_width="match_parent"
@@ -51,7 +51,7 @@
                     android:layout_height="200dp"
                     android:background="@color/black.almost2"
                     >
-                    <org.monroe.team.android.box.ui.PushToGridView
+                    <org.monroe.team.android.box.app.ui.PushToGridView
                         android:id="@+id/ac_apps_grid"
                         android:numColumns="3"
                         android:layout_width="fill_parent"
@@ -61,7 +61,7 @@
                         android:overScrollMode="always"
                         android:background="@android:color/transparent"
                         android:listSelector="@android:color/transparent">
-                    </org.monroe.team.android.box.ui.PushToGridView>
+                    </org.monroe.team.android.box.app.ui.PushToGridView>
 
                     <RelativeLayout
                         android:id="@+id/ac_category_panel"
