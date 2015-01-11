@@ -1,1 +1,1 @@
-include ':app', ':androidbox'
+include ':app', ':beebox:androidbox',':beebox:corebox'
