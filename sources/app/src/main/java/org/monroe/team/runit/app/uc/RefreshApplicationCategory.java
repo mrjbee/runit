@@ -21,7 +21,7 @@ public class RefreshApplicationCategory extends UserCaseSupport<ApplicationData,
 
 
     @Override
-    public RefreshStatus execute(final ApplicationData request) {
+    public RefreshStatus executeImpl(final ApplicationData request) {
         RefreshStatus answer = using(TransactionManager.class).execute(new TransactionManager.TransactionAction<RefreshStatus>() {
             @Override
             public RefreshStatus execute(DAOSupport dao) {

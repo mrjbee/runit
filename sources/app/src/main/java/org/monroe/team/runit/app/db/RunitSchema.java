@@ -12,11 +12,11 @@ public class RunitSchema extends Schema {
 
         public final String TABLE_NAME = "application";
 
-        public final String _ID = "id";
-        public final String _TITLE = "title";
-        public final String _PACKAGE = "package";
-        public final String _LAST_LAUNCH_DATE = "last_run";
-        public final String _LAUNCH_TIMES = "launch_times";
+        public final ColumnID<String> _ID = column("id", String.class);
+        public final ColumnID<String> _TITLE = column("title", String.class);
+        public final ColumnID<String> _PACKAGE = column("package", String.class);
+        public final ColumnID<Long> _LAST_LAUNCH_DATE = column("last_run", Long.class);
+        public final ColumnID<Integer> _LAUNCH_TIMES = column("launch_times", Integer.class);
 
         public Application_v2() {
             define(2,TABLE_NAME)
@@ -29,7 +29,7 @@ public class RunitSchema extends Schema {
     }
 
     public static class Application extends Application_v2{
-        public final String _CATEGORY = "category";
+        public final ColumnID<Integer> _CATEGORY = column("category", Integer.class);;
         public Application() {
             define(3)
                 .column(_CATEGORY, "INTEGER");

@@ -15,7 +15,7 @@ public class LoadApplicationImage extends UserCaseSupport<ApplicationData,Drawab
     }
 
     @Override
-    public Drawable execute(ApplicationData request) {
+    public Drawable executeImpl(ApplicationData request) {
         Drawable answer = using(ApplicationRegistry.class).loadIconFor(request);
         return answer;
     }

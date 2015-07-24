@@ -23,6 +23,7 @@ import android.widget.Space;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import org.monroe.team.android.box.app.ui.GetViewImplementation;
 import org.monroe.team.corebox.utils.Closure;
 import org.monroe.team.android.box.app.ui.GenericListViewAdapter;
 import org.monroe.team.corebox.utils.Lists;
@@ -76,7 +77,7 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        requestNoAnimation();
+        crunch_requestNoAnimation();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_application_drawer);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -323,19 +324,12 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
     }
 
     private void construct_categoryQuickList() {
-        categoriesQuickAdapter = new GenericListViewAdapter<>(this, R.layout.item_drawer_category_quick,new GenericListViewAdapter.GenericViewHolderFactory<CategoryData>(){
+        categoriesQuickAdapter = new GenericListViewAdapter<CategoryData, GetViewImplementation.ViewHolder<CategoryData>>(this,  new GetViewImplementation.ViewHolderFactory<GetViewImplementation.ViewHolder<CategoryData>>() {
             @Override
-            public GenericListViewAdapter.GenericViewHolder<CategoryData> construct() {
-                return new GenericListViewAdapter.GenericViewHolder<CategoryData>() {
-
-                    View space;
-                    TextView nameView;
-
-                    @Override
-                    public void discoverUI() {
-                        space = _view(R.id.item_space, Space.class);
-                        nameView = _view(R.id.item_name, TextView.class);
-                    }
+            public GetViewImplementation.ViewHolder<CategoryData> create(final View convertView) {
+                return new GetViewImplementation.GenericViewHolder<CategoryData>() {
+                    View space = convertView.findViewById(R.id.item_space);
+                    TextView nameView = (TextView) convertView.findViewById(R.id.item_name);
 
                     @Override
                     public void update(CategoryData data, int position) {
@@ -344,7 +338,7 @@ public class ApplicationDrawerActivity extends ActivitySupport<RunitApp> {
                     }
                 };
             }
-        });
+        },R.layout.item_drawer_category_quick);
 
         view_list(R.id.drawer_category_quick_list).setAdapter(categoriesQuickAdapter);
         view_list(R.id.drawer_category_quick_list).setOnItemClickListener(new AdapterView.OnItemClickListener() {

@@ -26,6 +26,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.monroe.team.android.box.app.ui.GenericListViewAdapter;
+import org.monroe.team.android.box.app.ui.GetViewImplementation;
 import org.monroe.team.corebox.services.BackgroundTaskManager;
 import org.monroe.team.android.box.app.ActivitySupport;
 import org.monroe.team.android.box.app.ui.AppearanceControllerOld;
@@ -47,7 +48,7 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        requestNoAnimation();
+        crunch_requestNoAnimation();
         application().requestRefreshApps();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quick_search);
@@ -134,10 +135,10 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
     }
 
     private void construct_list() {
-        adapter = new GenericListViewAdapter<>(this, R.layout.item_search_application_qs, new GenericListViewAdapter.GenericViewHolderFactory<RunitApp.AppSearchResult>() {
+        adapter = new GenericListViewAdapter<RunitApp.AppSearchResult, GetViewImplementation.ViewHolder<RunitApp.AppSearchResult>>(this, new GetViewImplementation.ViewHolderFactory<GetViewImplementation.ViewHolder<RunitApp.AppSearchResult>>() {
             @Override
-            public GenericListViewAdapter.GenericViewHolder<RunitApp.AppSearchResult> construct() {
-                return new GenericListViewAdapter.GenericViewHolder<RunitApp.AppSearchResult>() {
+            public GetViewImplementation.ViewHolder<RunitApp.AppSearchResult> create(View convertView) {
+                GetViewImplementation.GenericViewHolder<RunitApp.AppSearchResult> answer = new GetViewImplementation.GenericViewHolder<RunitApp.AppSearchResult>() {
 
                     View space;
                     TextView textView;
@@ -151,9 +152,9 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
 
                     @Override
                     public void discoverUI() {
-                        space = _view(R.id.item_space,View.class);
-                        textView = _view(R.id.search_item_text,TextView.class);
-                        textCategoryView = _view(R.id.search_item_sub_text,TextView.class);
+                        space = _view(R.id.item_space, View.class);
+                        textView = _view(R.id.search_item_text, TextView.class);
+                        textCategoryView = _view(R.id.search_item_sub_text, TextView.class);
                         imageView = _view(R.id.search_item_image, ImageView.class);
                     }
 
@@ -164,7 +165,7 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
                         foundApplicationItem = appSearchResult;
                         final ApplicationData applicationData = foundApplicationItem.applicationData;
                         SpannableString spannableString = new SpannableString(applicationData.name);
-                        if (foundApplicationItem.selectionStartIndex != null){
+                        if (foundApplicationItem.selectionStartIndex != null) {
                             spannableString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.blue_themed)),
                                     foundApplicationItem.selectionStartIndex,
                                     foundApplicationItem.selectionEndIndex,
@@ -178,7 +179,7 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
                         textView.setText(spannableString);
                         imageView.setVisibility(View.INVISIBLE);
 
-                        drawableLoadingTask =  application().loadApplicationIcon(applicationData, new RunitApp.OnLoadApplicationIconCallback() {
+                        drawableLoadingTask = application().loadApplicationIcon(applicationData, new RunitApp.OnLoadApplicationIconCallback() {
                             @Override
                             public void load(ApplicationData applicationData, Drawable drawable) {
                                 if (appSearchResult.applicationData == applicationData) {
@@ -188,7 +189,7 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
                             }
                         });
 
-                        categoryLoadingTask =  application().loadApplicationCategory(applicationData, new RunitApp.OnLoadCategoryCallback() {
+                        categoryLoadingTask = application().loadApplicationCategory(applicationData, new RunitApp.OnLoadCategoryCallback() {
                             @Override
                             public void load(ApplicationData applicationData, RunitApp.Category category) {
                                 if (appSearchResult.applicationData == applicationData) {
@@ -201,17 +202,20 @@ public class QuickSearchActivity extends ActivitySupport<RunitApp> {
                     @Override
                     public void cleanup() {
 
-                        if (drawableLoadingTask != null){
+                        if (drawableLoadingTask != null) {
                             drawableLoadingTask.cancel();
                         }
 
-                        if (categoryLoadingTask != null){
+                        if (categoryLoadingTask != null) {
                             categoryLoadingTask.cancel();
                         }
                     }
                 };
+                answer.initialize(convertView);
+                return answer;
             }
-        });
+        },R.layout.item_search_application_qs);
+
         view(R.id.qs_search_result_list,ListView.class).setAdapter(adapter);
         view(R.id.qs_search_result_list,ListView.class).setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

@@ -19,7 +19,7 @@ public class FindAppsByText extends UserCaseSupport<FindAppsByText.SearchRequest
     }
 
     @Override
-    public SearchResult execute(SearchRequest request) {
+    public SearchResult executeImpl(SearchRequest request) {
         SearchResult result = new SearchResult();
         if (!request.searchString.isEmpty()){
             List<ApplicationData> descriptions = using(ApplicationRegistry.class).getApplicationsWithLauncherActivity();
@@ -43,6 +43,7 @@ public class FindAppsByText extends UserCaseSupport<FindAppsByText.SearchRequest
         });
         return result;
     }
+
 
     public static class SearchRequest{
 

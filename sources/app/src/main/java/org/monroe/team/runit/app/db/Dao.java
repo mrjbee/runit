@@ -23,11 +23,11 @@ public class Dao  extends DAOSupport{
     public List<Result> getMostUsedApplications() {
         Cursor cursor = db.query(table(RunitSchema.Application.class).TABLE_NAME,
                 allApplicationFields(),
-                table(RunitSchema.Application.class)._LAUNCH_TIMES +" not null",
+                table(RunitSchema.Application.class)._LAUNCH_TIMES.name() +" not null",
                 null,
                 null,
                 null,
-                table(RunitSchema.Application.class)._LAUNCH_TIMES + " DESC",
+                table(RunitSchema.Application.class)._LAUNCH_TIMES.name() + " DESC",
                 "20");
 
         return bakeMany(cursor,new Closure<Cursor, Result>() {
@@ -41,11 +41,11 @@ public class Dao  extends DAOSupport{
     public List<Result> getLastLaunchedApplications() {
         Cursor cursor = db.query(table(RunitSchema.Application.class).TABLE_NAME,
                 allApplicationFields(),
-                table(RunitSchema.Application.class)._LAST_LAUNCH_DATE +" not null",
+                table(RunitSchema.Application.class)._LAST_LAUNCH_DATE.name() +" not null",
                 null,
                 null,
                 null,
-                table(RunitSchema.Application.class)._LAST_LAUNCH_DATE + " DESC",
+                table(RunitSchema.Application.class)._LAST_LAUNCH_DATE.name() + " DESC",
                 "20");
 
         return bakeMany(cursor,new Closure<Cursor, Result>() {
@@ -59,7 +59,7 @@ public class Dao  extends DAOSupport{
     public Result getAppById(int appDbId) {
         final Cursor cursor = db.query(table(RunitSchema.Application.class).TABLE_NAME,
                 allApplicationFields(),
-                table(RunitSchema.Application.class)._ID +" == ?",
+                table(RunitSchema.Application.class)._ID.name() +" == ?",
                 strs(appDbId),
                 null,
                 null,
@@ -79,7 +79,7 @@ public class Dao  extends DAOSupport{
         if (category != null) {
             cursor = db.query(table(RunitSchema.Application.class).TABLE_NAME,
                     allApplicationFields(),
-                    table(RunitSchema.Application.class)._CATEGORY + " == ?",
+                    table(RunitSchema.Application.class)._CATEGORY.name() + " == ?",
                     strs(category),
                     null,
                     null,
@@ -87,7 +87,7 @@ public class Dao  extends DAOSupport{
         } else {
             cursor = db.query(table(RunitSchema.Application.class).TABLE_NAME,
                     allApplicationFields(),
-                    table(RunitSchema.Application.class)._CATEGORY + " is NULL",
+                    table(RunitSchema.Application.class)._CATEGORY.name() + " is NULL",
                     null,
                     null,
                     null,
@@ -102,12 +102,12 @@ public class Dao  extends DAOSupport{
     }
 
     private String[] allApplicationFields() {
-        return strs(table(RunitSchema.Application.class)._ID,
-                table(RunitSchema.Application.class)._TITLE,
-                table(RunitSchema.Application.class)._PACKAGE,
-                table(RunitSchema.Application.class)._LAST_LAUNCH_DATE,
-                table(RunitSchema.Application.class)._LAUNCH_TIMES,
-                table(RunitSchema.Application.class)._CATEGORY);
+        return strs(table(RunitSchema.Application.class)._ID.name(),
+                table(RunitSchema.Application.class)._TITLE.name(),
+                table(RunitSchema.Application.class)._PACKAGE.name(),
+                table(RunitSchema.Application.class)._LAST_LAUNCH_DATE.name(),
+                table(RunitSchema.Application.class)._LAUNCH_TIMES.name(),
+                table(RunitSchema.Application.class)._CATEGORY.name());
     }
 
     private Result extractAppResult(Cursor cursor) {
@@ -136,16 +136,16 @@ public class Dao  extends DAOSupport{
         }
 
         ContentValues appContentValue = new ContentValues(5);
-        appContentValue.put(table(RunitSchema.Application.class)._ID, generateAppId(packageName, title));
-        appContentValue.put(table(RunitSchema.Application.class)._PACKAGE, packageName);
-        appContentValue.put(table(RunitSchema.Application.class)._TITLE, title);
-        appContentValue.put(table(RunitSchema.Application.class)._LAST_LAUNCH_DATE, lastLaunchDate.getTime());
-        appContentValue.put(table(RunitSchema.Application.class)._LAUNCH_TIMES, launchTimes);
+        appContentValue.put(table(RunitSchema.Application.class)._ID.name(), generateAppId(packageName, title));
+        appContentValue.put(table(RunitSchema.Application.class)._PACKAGE.name(), packageName);
+        appContentValue.put(table(RunitSchema.Application.class)._TITLE.name(), title);
+        appContentValue.put(table(RunitSchema.Application.class)._LAST_LAUNCH_DATE.name(), lastLaunchDate.getTime());
+        appContentValue.put(table(RunitSchema.Application.class)._LAUNCH_TIMES.name(), launchTimes);
 
         return  1 == db.update(
                 table(RunitSchema.Application.class).TABLE_NAME,
                 appContentValue,
-                table(RunitSchema.Application.class)._ID +" == ?",
+                table(RunitSchema.Application.class)._ID.name() +" == ?",
                 strs(generateAppId(packageName,title))
         );
     }
@@ -153,9 +153,9 @@ public class Dao  extends DAOSupport{
     public boolean insertApplication(String packageName, String title) {
 
         ContentValues appContentValue = new ContentValues(5);
-        appContentValue.put(table(RunitSchema.Application.class)._ID, generateAppId(packageName, title));
-        appContentValue.put(table(RunitSchema.Application.class)._PACKAGE, packageName);
-        appContentValue.put(table(RunitSchema.Application.class)._TITLE, title);
+        appContentValue.put(table(RunitSchema.Application.class)._ID.name(), generateAppId(packageName, title));
+        appContentValue.put(table(RunitSchema.Application.class)._PACKAGE.name(), packageName);
+        appContentValue.put(table(RunitSchema.Application.class)._TITLE.name(), title);
 
         return -1 != db.insert(table(RunitSchema.Application.class).TABLE_NAME,
                 null,
@@ -165,10 +165,10 @@ public class Dao  extends DAOSupport{
     public boolean insertApplicationWithCategory(String packageName, String title, int category) {
 
         ContentValues appContentValue = new ContentValues(5);
-        appContentValue.put(table(RunitSchema.Application.class)._ID, generateAppId(packageName, title));
-        appContentValue.put(table(RunitSchema.Application.class)._PACKAGE, packageName);
-        appContentValue.put(table(RunitSchema.Application.class)._TITLE, title);
-        appContentValue.put(table(RunitSchema.Application.class)._CATEGORY, category);
+        appContentValue.put(table(RunitSchema.Application.class)._ID.name(), generateAppId(packageName, title));
+        appContentValue.put(table(RunitSchema.Application.class)._PACKAGE.name(), packageName);
+        appContentValue.put(table(RunitSchema.Application.class)._TITLE.name(), title);
+        appContentValue.put(table(RunitSchema.Application.class)._CATEGORY.name(), category);
 
         return -1 != db.insert(table(RunitSchema.Application.class).TABLE_NAME,
                 null,
@@ -182,13 +182,13 @@ public class Dao  extends DAOSupport{
         }
 
         ContentValues appContentValue = new ContentValues(5);
-        appContentValue.put(table(RunitSchema.Application.class)._ID, generateAppId(packageName, title));
-        appContentValue.put(table(RunitSchema.Application.class)._CATEGORY, category);
+        appContentValue.put(table(RunitSchema.Application.class)._ID.name(), generateAppId(packageName, title));
+        appContentValue.put(table(RunitSchema.Application.class)._CATEGORY.name(), category);
 
         return  1 == db.update(
                 table(RunitSchema.Application.class).TABLE_NAME,
                 appContentValue,
-                table(RunitSchema.Application.class)._ID +" == ?",
+                table(RunitSchema.Application.class)._ID.name() +" == ?",
                 strs(generateAppId(packageName,title))
         );
     }
@@ -197,10 +197,10 @@ public class Dao  extends DAOSupport{
     public List<Result> appsCountPerCategory() {
         //SELECT strftime('%Y-%m-%d', date / 1000, 'unixepoch'), count(*) FROM smoke GROUP BY strftime('%Y-%m-%d', date / 1000, 'unixepoch');
         Cursor cursor = db.query(table(RunitSchema.Application.class).TABLE_NAME,
-                strs(table(RunitSchema.Application.class)._CATEGORY, "count(*)"),
+                strs(table(RunitSchema.Application.class)._CATEGORY.name(), "count(*)"),
                 null,
                 null,
-                table(RunitSchema.Application.class)._CATEGORY,
+                table(RunitSchema.Application.class)._CATEGORY.name(),
                 null,
                 null);
 
@@ -223,7 +223,7 @@ public class Dao  extends DAOSupport{
         builder.deleteCharAt(builder.length()-1);
         return db.delete(
                 table(RunitSchema.Application.class).TABLE_NAME,
-                table(RunitSchema.Application.class)._ID +" NOT IN ("+builder.toString()+")",
+                table(RunitSchema.Application.class)._ID.name() +" NOT IN ("+builder.toString()+")",
                 null);
     }
 
