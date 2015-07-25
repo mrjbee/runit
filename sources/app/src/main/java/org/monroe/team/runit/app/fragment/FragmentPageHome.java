@@ -1,6 +1,7 @@
 package org.monroe.team.runit.app.fragment;
 
 import android.os.Bundle;
+import android.widget.ScrollView;
 
 import org.monroe.team.runit.app.R;
 import org.monroe.team.runit.app.views.TransperentDataBitmapBackgroundLayout;
@@ -24,5 +25,6 @@ public class FragmentPageHome extends FragmentAbstractBodyPage {
         super.onActivityCreated(savedInstanceState);
         mPanelPageContent = view(R.id.panel_page_content, TransperentDataBitmapBackgroundLayout.class);
         mPanelPageContent.setBlurredBackground(application().data_blurredBackground);
+
     }
 }

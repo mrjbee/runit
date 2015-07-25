@@ -5,11 +5,13 @@
     android:layout_height="match_parent"
     >
 
-    <ScrollView
+    <org.monroe.team.runit.app.views.MyScrollView
+        android:id="@+id/scroll_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:fillViewport="true"
-        android:scrollbars="none">
+        android:scrollbars="none"
+        android:overScrollMode="never">
         <LinearLayout
             android:paddingTop="150dp"
             android:layout_width="fill_parent"
@@ -18,7 +20,7 @@
                 android:id="@+id/panel_page_content"
                 android:layout_above="@+id/shadow_bottom"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="700dp"
                 android:background="#5affffff">
                 <TextView
                     android:layout_width="wrap_content"
@@ -26,6 +28,6 @@
                     android:text="ExampleText"/>
             </org.monroe.team.runit.app.views.TransperentDataBitmapBackgroundLayout>
         </LinearLayout>
-    </ScrollView>
+    </org.monroe.team.runit.app.views.MyScrollView>
 
 </org.monroe.team.runit.app.views.ViewPagerPageRelativeLayout>

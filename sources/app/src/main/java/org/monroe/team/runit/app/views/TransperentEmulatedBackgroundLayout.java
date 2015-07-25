@@ -36,11 +36,7 @@ public abstract class TransperentEmulatedBackgroundLayout extends BackgroundLayo
     }
 
     private static void updateViewPosition(Point point, View view) {
-        if (view instanceof ViewPagerPageRelativeLayout){
-          ((ViewPagerPageRelativeLayout) view).updatePosition(point);
-        }else {
-          point.offset((int)view.getX(), (int)view.getY());
-        }
+        point.offset((int)view.getX() - view.getScrollX(), (int)view.getY() - view.getScrollY());
         L.DEBUG.d(" -- position increased ["+point.x+":"+point.y +"] = "+view);
         updateViewParentPosition(point, view.getParent());
     }
