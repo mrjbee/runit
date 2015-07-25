@@ -1,8 +1,7 @@
 package org.monroe.team.runit.app;
 
-import android.graphics.Rect;
+import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -16,6 +15,7 @@ import org.monroe.team.android.box.app.ui.animation.apperrance.SceneDirector;
 import org.monroe.team.android.box.utils.DisplayUtils;
 import org.monroe.team.runit.app.android.RunitApp;
 import org.monroe.team.runit.app.fragment.FragmentHeader;
+import org.monroe.team.runit.app.views.StaticBackgroundLayout;
 
 public class MainActivity extends ActivitySupport<RunitApp>{
 
@@ -23,7 +23,8 @@ public class MainActivity extends ActivitySupport<RunitApp>{
     private AppearanceController ac_shadowLayer;
     private AppearanceController ac_mainContentLayer;
     private float mScreenWidth;
-    private View mImageCover;
+    private StaticBackgroundLayout mPanelPageContent;
+    private AppearanceController ac_fragHeader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,13 +32,13 @@ public class MainActivity extends ActivitySupport<RunitApp>{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mImageCover = view(R.id.image_background_cover);
+        mPanelPageContent = view(R.id.panel_page_content, StaticBackgroundLayout.class);
         application().function_updateBackgroundSize(0,0,0,0);
-        mImageCover.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        mPanelPageContent.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                mImageCover.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                application().function_updateBackgroundSize(0,0, mImageCover.getWidth(), mImageCover.getHeight());
+                mPanelPageContent.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                application().function_updateBackgroundSize(0, 0, mPanelPageContent.getWidth(), mPanelPageContent.getHeight());
             }
         });
 
@@ -55,6 +56,19 @@ public class MainActivity extends ActivitySupport<RunitApp>{
                 .showAnimation(duration_constant(300), interpreter_decelerate(0.5f))
                 .hideAnimation(duration_constant(200), interpreter_accelerate(0.3f))
                 .build();
+
+
+        ac_fragHeader = animateAppearance(view(R.id.frag_header),ySlide(0f, -DisplayUtils.dpToPx(100f, getResources())))
+                .showAnimation(duration_constant(200), interpreter_decelerate(0.6f))
+                .hideAnimation(duration_constant(400), interpreter_accelerate(0.3f))
+                .hideAndGone()
+                .build();
+        mPanelPageContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                visibility_Header(!visibility_isHeader());
+            }
+        });
 
         if (isFirstRun()) {
             ac_shadowLayer.hideWithoutAnimation();
@@ -84,13 +98,25 @@ public class MainActivity extends ActivitySupport<RunitApp>{
         });
     }
 
+    private void visibility_Header(boolean visible) {
+        if (visible){
+           ac_fragHeader.show();
+        }else {
+            ac_fragHeader.hide();
+        }
+    }
+
+    private boolean visibility_isHeader() {
+        return view(R.id.frag_header).getVisibility() != View.GONE;
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
         application().data_configuration.fetch(true, observe_data(new OnValue<RunitApp.Configuration>() {
             @Override
             public void action(final RunitApp.Configuration configuration) {
-                view(R.id.image_background_cover, ImageView.class).setImageBitmap(configuration.background);
+                mPanelPageContent.setBitmapBackground(configuration.background);
                 if (isFirstRun()){
                     ac_shadowLayer.show();
                     ac_mainContentLayer.show();

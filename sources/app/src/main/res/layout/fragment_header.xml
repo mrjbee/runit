@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<org.monroe.team.runit.app.views.TranslationSensitiveRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
 
-    <org.monroe.team.runit.app.views.BlurredBackgroundRelativeLayout
+    <org.monroe.team.runit.app.views.TransperentDataBitmapBackgroundLayout
+        android:id="@+id/panel_header_content"
+        android:layout_above="@+id/shadow_bottom"
         android:layout_width="fill_parent"
         android:layout_height="80dp"
         android:background="#5affffff">
 
-    </org.monroe.team.runit.app.views.BlurredBackgroundRelativeLayout>
+    </org.monroe.team.runit.app.views.TransperentDataBitmapBackgroundLayout>
 
     <LinearLayout
+        android:id="@+id/shadow_bottom"
+        android:layout_alignParentBottom="true"
         android:layout_marginTop="-1dp"
         android:layout_width="fill_parent"
         android:layout_height="10dp"
         android:alpha="0.5"
         android:background="@drawable/shadow_vert_darken"
-        />
+        android:orientation="vertical" />
 
-</LinearLayout>
+</org.monroe.team.runit.app.views.TranslationSensitiveRelativeLayout>

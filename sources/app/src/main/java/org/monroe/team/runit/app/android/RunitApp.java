@@ -100,7 +100,7 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
             protected Bitmap provideData() {
                 try {
                     Configuration configuration = data_configuration.fetch();
-                    return BitmapUtils.fastblur(configuration.background,10);
+                    return BitmapUtils.fastblur(configuration.background,40);
                 } catch (FetchException e) {
                     throw new RuntimeException(e);
                 }

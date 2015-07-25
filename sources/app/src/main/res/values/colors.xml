@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="transperent">#ffffff</color>
     <color name="white.transperent">#eeffffff</color>
     <color name="white.dark">#fff7f7f7</color>
     <color name="white.darkest">#ffededed</color>
