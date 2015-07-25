@@ -11,7 +11,9 @@ import android.util.Pair;
 import org.monroe.team.android.box.BitmapUtils;
 import org.monroe.team.android.box.app.AndroidModel;
 import org.monroe.team.android.box.data.Data;
+import org.monroe.team.android.box.utils.AndroidLogImplementation;
 import org.monroe.team.android.box.utils.DisplayUtils;
+import org.monroe.team.corebox.log.L;
 import org.monroe.team.corebox.services.BackgroundTaskManager;
 import org.monroe.team.android.box.services.SettingManager;
 import org.monroe.team.android.box.app.ApplicationSupport;
@@ -48,6 +50,9 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
     public Data<Bitmap> data_Background;
     private final Rect mBackgroundSizeRect = new Rect();
 
+    static {
+        L.setup(new AndroidLogImplementation());
+    }
 
     @Override
     public void onCreate() {

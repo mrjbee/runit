@@ -30,7 +30,7 @@
             android:layout_height="fill_parent"
             android:background="@color/transperent">
 
-            <FrameLayout
+            <org.monroe.team.runit.app.views.TranslationSensitiveRelativeLayout
                 android:id="@+id/frag_body"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"

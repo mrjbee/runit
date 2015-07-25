@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-public class TranslationSensitiveRelativeLayout extends RelativeLayout{
+public class TranslationSensitiveRelativeLayout extends AbstractChangeSensitiveRelativeLayout{
 
     public TranslationSensitiveRelativeLayout(Context context) {
         super(context);
@@ -40,19 +40,4 @@ public class TranslationSensitiveRelativeLayout extends RelativeLayout{
         notifyViewChildren(this);
     }
 
-    private void notifyViewChildren(ViewGroup view) {
-        for (int i=0; i< view.getChildCount();i++){
-            View child = view.getChildAt(i);
-            if (child instanceof ParentTranslationAware){
-                ((ParentTranslationAware) child).onParentTranslationChanged();
-            }
-            if (child instanceof ViewGroup){
-                notifyViewChildren((ViewGroup) child);
-            }
-        }
-    }
-
-    public static interface ParentTranslationAware {
-        public void onParentTranslationChanged();
-    }
 }

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.monroe.team.runit.app.views.ViewPagerPageRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:fillViewport="true"
+        android:scrollbars="none">
+        <LinearLayout
+            android:paddingTop="150dp"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+            <org.monroe.team.runit.app.views.TransperentDataBitmapBackgroundLayout
+                android:id="@+id/panel_page_content"
+                android:layout_above="@+id/shadow_bottom"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="#5affffff">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ExampleText"/>
+            </org.monroe.team.runit.app.views.TransperentDataBitmapBackgroundLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</org.monroe.team.runit.app.views.ViewPagerPageRelativeLayout>

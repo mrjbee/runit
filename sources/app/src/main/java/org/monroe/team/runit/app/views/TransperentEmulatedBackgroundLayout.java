@@ -2,11 +2,13 @@ package org.monroe.team.runit.app.views;
 
 import android.content.Context;
 import android.graphics.Point;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewParent;
 
 import org.monroe.team.android.box.utils.DisplayUtils;
+import org.monroe.team.corebox.log.L;
 
 public abstract class TransperentEmulatedBackgroundLayout extends BackgroundLayout {
     public TransperentEmulatedBackgroundLayout(Context context) {
@@ -29,19 +31,23 @@ public abstract class TransperentEmulatedBackgroundLayout extends BackgroundLayo
     final protected Point getBackgroundDrawPosition() {
         Point answer = new Point(0,0);
         updateViewPosition(answer, this);
+        L.DEBUG.i("Background position ["+answer.x+":"+answer.y +"] = "+this);
         return answer;
     }
 
     private static void updateViewPosition(Point point, View view) {
-        point.offset((int)view.getX(), (int)view.getY());
+        if (view instanceof ViewPagerPageRelativeLayout){
+          ((ViewPagerPageRelativeLayout) view).updatePosition(point);
+        }else {
+          point.offset((int)view.getX(), (int)view.getY());
+        }
+        L.DEBUG.d(" -- position increased ["+point.x+":"+point.y +"] = "+view);
         updateViewParentPosition(point, view.getParent());
     }
 
     private static void updateViewParentPosition(Point point, ViewParent view) {
-
         if (view == null) return;
         if (view instanceof StaticBackgroundLayout) return;
-
         if (view instanceof View){
             updateViewPosition(point, (View) view);
         }else {

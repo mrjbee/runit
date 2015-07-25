@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 
 import org.monroe.team.android.box.data.Data;
 
-public class TransperentDataBitmapBackgroundLayout extends TransperentEmulatedBackgroundLayout implements TranslationSensitiveRelativeLayout.ParentTranslationAware {
+public class TransperentDataBitmapBackgroundLayout extends TransperentEmulatedBackgroundLayout implements AbstractChangeSensitiveRelativeLayout.PositionSensitiveChild {
 
     private Data<Bitmap> mBlurredBackgroundProvider;
     private Bitmap mBlurredBitmap;
@@ -87,7 +87,7 @@ public class TransperentDataBitmapBackgroundLayout extends TransperentEmulatedBa
     }
 
     @Override
-    public void onParentTranslationChanged() {
+    public void onPositionChanged() {
         invalidate();
     }
 }

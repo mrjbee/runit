@@ -14,6 +14,7 @@ import org.monroe.team.android.box.app.ui.animation.apperrance.AppearanceControl
 import org.monroe.team.android.box.app.ui.animation.apperrance.SceneDirector;
 import org.monroe.team.android.box.utils.DisplayUtils;
 import org.monroe.team.runit.app.android.RunitApp;
+import org.monroe.team.runit.app.fragment.FragmentBody;
 import org.monroe.team.runit.app.fragment.FragmentHeader;
 import org.monroe.team.runit.app.views.StaticBackgroundLayout;
 
@@ -25,6 +26,7 @@ public class MainActivity extends ActivitySupport<RunitApp>{
     private float mScreenWidth;
     private StaticBackgroundLayout mPanelPageContent;
     private AppearanceController ac_fragHeader;
+    private AppearanceController ac_fragBody;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +61,11 @@ public class MainActivity extends ActivitySupport<RunitApp>{
                 .hideAnimation(duration_constant(400), interpreter_accelerate(0.3f))
                 .hideAndGone()
                 .build();
+        ac_fragBody = animateAppearance(view(R.id.frag_body),ySlide(0f, DisplayUtils.screenHeight(getResources())))
+                .showAnimation(duration_constant(300), interpreter_decelerate(0.6f))
+                .hideAnimation(duration_constant(400), interpreter_accelerate(0.3f))
+                .hideAndGone()
+                .build();
         mPanelPageContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,10 +74,15 @@ public class MainActivity extends ActivitySupport<RunitApp>{
         });
 
         if (isFirstRun()){
-            getFragmentManager().beginTransaction().add(R.id.frag_header, new FragmentHeader()).commit();
+            getFragmentManager()
+                    .beginTransaction()
+                        .add(R.id.frag_header, new FragmentHeader())
+                        .add(R.id.frag_body, new FragmentBody())
+                    .commit();
         }
 
         ac_fragHeader.hideWithoutAnimation();
+        ac_fragBody.hideWithoutAnimation();
 
         if (isFirstRun()) {
             ac_shadowLayer.hideWithoutAnimation();
@@ -129,6 +141,7 @@ public class MainActivity extends ActivitySupport<RunitApp>{
             @Override
             public void action(Bitmap bitmap) {
                 ac_fragHeader.show();
+                ac_fragBody.show();
             }
         }));
     }
@@ -143,5 +156,9 @@ public class MainActivity extends ActivitySupport<RunitApp>{
                 MainActivity.super.onBackPressed();
             }
         }).play();
+    }
+
+    public void onBodyPageChanged(int position) {
+
     }
 }
