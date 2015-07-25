@@ -9,15 +9,15 @@
         android:id="@+id/panel_header_content"
         android:layout_above="@+id/shadow_bottom"
         android:layout_width="fill_parent"
-        android:layout_height="80dp"
+        android:layout_height="fill_parent"
         android:background="#5affffff">
 
     </org.monroe.team.runit.app.views.TransperentDataBitmapBackgroundLayout>
 
     <LinearLayout
         android:id="@+id/shadow_bottom"
-        android:layout_alignParentBottom="true"
         android:layout_marginTop="-1dp"
+        android:layout_alignParentBottom="true"
         android:layout_width="fill_parent"
         android:layout_height="10dp"
         android:alpha="0.5"

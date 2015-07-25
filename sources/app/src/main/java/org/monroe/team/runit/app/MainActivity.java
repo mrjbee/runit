@@ -42,10 +42,6 @@ public class MainActivity extends ActivitySupport<RunitApp>{
             }
         });
 
-        if (isFirstRun()){
-            getFragmentManager().beginTransaction().add(R.id.frag_header, new FragmentHeader()).commit();
-        }
-
         ac_shadowLayer = animateAppearance(view(R.id.layer_shadow),alpha(1f,0f))
                 .showAnimation(duration_constant(300), interpreter_decelerate(0.6f))
                 .hideAnimation(duration_constant(400), interpreter_accelerate(0.3f))
@@ -69,6 +65,12 @@ public class MainActivity extends ActivitySupport<RunitApp>{
                 visibility_Header(!visibility_isHeader());
             }
         });
+
+        if (isFirstRun()){
+            getFragmentManager().beginTransaction().add(R.id.frag_header, new FragmentHeader()).commit();
+        }
+
+        ac_fragHeader.hideWithoutAnimation();
 
         if (isFirstRun()) {
             ac_shadowLayer.hideWithoutAnimation();
@@ -121,6 +123,12 @@ public class MainActivity extends ActivitySupport<RunitApp>{
                     ac_shadowLayer.show();
                     ac_mainContentLayer.show();
                 }
+            }
+        }));
+        application().data_blurredBackground.fetch(true, observe_data(new OnValue<Bitmap>() {
+            @Override
+            public void action(Bitmap bitmap) {
+                ac_fragHeader.show();
             }
         }));
     }
