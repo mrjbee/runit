@@ -15,9 +15,7 @@
             android:name=".MainActivity"
             android:label="Apps"
             android:theme="@style/AppTheme.Translucent.NoAnimation"
-            android:excludeFromRecents="true"
             android:icon="@drawable/drawer_ic_launcher"
-            android:taskAffinity=""
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,8 +1,11 @@
 package org.monroe.team.runit.app;
 
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 
 import org.monroe.team.android.box.app.ActivitySupport;
 import static org.monroe.team.android.box.app.ui.animation.apperrance.AppearanceControllerBuilder.*;
@@ -12,6 +15,7 @@ import org.monroe.team.android.box.app.ui.animation.apperrance.AppearanceControl
 import org.monroe.team.android.box.app.ui.animation.apperrance.SceneDirector;
 import org.monroe.team.android.box.utils.DisplayUtils;
 import org.monroe.team.runit.app.android.RunitApp;
+import org.monroe.team.runit.app.fragment.FragmentHeader;
 
 public class MainActivity extends ActivitySupport<RunitApp>{
 
@@ -19,12 +23,28 @@ public class MainActivity extends ActivitySupport<RunitApp>{
     private AppearanceController ac_shadowLayer;
     private AppearanceController ac_mainContentLayer;
     private float mScreenWidth;
+    private View mImageCover;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         crunch_requestNoAnimation();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mImageCover = view(R.id.image_background_cover);
+        application().function_updateBackgroundSize(0,0,0,0);
+        mImageCover.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mImageCover.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                application().function_updateBackgroundSize(0,0, mImageCover.getWidth(), mImageCover.getHeight());
+            }
+        });
+
+        if (isFirstRun()){
+            getFragmentManager().beginTransaction().add(R.id.frag_header, new FragmentHeader()).commit();
+        }
+
         ac_shadowLayer = animateAppearance(view(R.id.layer_shadow),alpha(1f,0f))
                 .showAnimation(duration_constant(300), interpreter_decelerate(0.6f))
                 .hideAnimation(duration_constant(400), interpreter_accelerate(0.3f))
@@ -67,10 +87,16 @@ public class MainActivity extends ActivitySupport<RunitApp>{
     @Override
     protected void onStart() {
         super.onStart();
-        if (isFirstRun()){
-            ac_shadowLayer.show();
-            ac_mainContentLayer.show();
-        }
+        application().data_configuration.fetch(true, observe_data(new OnValue<RunitApp.Configuration>() {
+            @Override
+            public void action(final RunitApp.Configuration configuration) {
+                view(R.id.image_background_cover, ImageView.class).setImageBitmap(configuration.background);
+                if (isFirstRun()){
+                    ac_shadowLayer.show();
+                    ac_mainContentLayer.show();
+                }
+            }
+        }));
     }
 
     @Override

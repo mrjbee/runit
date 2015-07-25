@@ -1,15 +1,22 @@
 package org.monroe.team.runit.app.android;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.LruCache;
 import android.util.Pair;
 
+import org.monroe.team.android.box.BitmapUtils;
 import org.monroe.team.android.box.app.AndroidModel;
+import org.monroe.team.android.box.data.Data;
+import org.monroe.team.android.box.utils.DisplayUtils;
 import org.monroe.team.corebox.services.BackgroundTaskManager;
 import org.monroe.team.android.box.services.SettingManager;
 import org.monroe.team.android.box.app.ApplicationSupport;
 import org.monroe.team.runit.app.ApplicationRefreshService;
+import org.monroe.team.runit.app.R;
 import org.monroe.team.runit.app.RunItModel;
 import org.monroe.team.runit.app.service.ApplicationRegistry;
 import org.monroe.team.runit.app.service.CategoryNameResolver;
@@ -31,11 +38,16 @@ import java.util.concurrent.Callable;
 
 public class RunitApp extends ApplicationSupport<RunItModel> {
 
+    private LruCache<String, Drawable> launcherIconCache = new LruCache<String, Drawable>(1000);
     private BackgroundTaskManager.BackgroundTask<FindAppsByText.SearchResult> searchAppBackgroundTask;
     private BackgroundTaskManager.BackgroundTask<FindAppsByText.SearchResult> appCategoryBackgroundTask;
-    private LruCache<String, Drawable> launcherIconCache = new LruCache<String, Drawable>(1000);
     private BackgroundTaskManager.BackgroundTask<List<ApplicationData>> mostResentAppFetchTask;
     private BackgroundTaskManager.BackgroundTask<List<ApplicationData>> mostUsedAppFetchTask;
+    public Data<Configuration> data_configuration;
+    public Data<Bitmap> data_blurredBackground;
+    public Data<Bitmap> data_Background;
+    private final Rect mBackgroundSizeRect = new Rect();
+
 
     @Override
     public void onCreate() {
@@ -47,6 +59,54 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
     @Override
     protected RunItModel createModel() {
         return new RunItModel("RunIt",getApplicationContext());
+    }
+
+    @Override
+    protected void onPostCreate() {
+        super.onPostCreate();
+
+        data_Background = new Data<Bitmap>(model()) {
+            @Override
+            protected Bitmap provideData() {
+                Bitmap srcBmp = BitmapFactory.decodeResource(getResources(), R.drawable.default_cover);
+                return srcBmp;
+            }
+        };
+
+        data_configuration = new Data<Configuration>(model()) {
+            @Override
+            protected Configuration provideData() {
+
+                synchronized (mBackgroundSizeRect){
+                    while (mBackgroundSizeRect.isEmpty()){
+                        try {
+                            mBackgroundSizeRect.wait();
+                        } catch (InterruptedException e) {}
+                    }
+                }
+                Bitmap srcBmp = null;
+                try {
+                    srcBmp = data_Background.fetch();
+                } catch (FetchException e) {
+                    throw new RuntimeException(e);
+                }
+                Bitmap dst = BitmapUtils.scaleCenterCrop(srcBmp, mBackgroundSizeRect.height(), mBackgroundSizeRect.width());
+                return new Configuration(dst);
+            }
+        };
+
+        data_blurredBackground = new Data<Bitmap>(model()) {
+            @Override
+            protected Bitmap provideData() {
+                try {
+                    Configuration configuration = data_configuration.fetch();
+                    return BitmapUtils.fastblur(configuration.background,10);
+                } catch (FetchException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+
     }
 
     public synchronized void searchApplicationByName(final String searchQuery, final OnAppSearchCallback callback){
@@ -223,6 +283,17 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
         });
     }
 
+    public void function_updateBackgroundSize(int x, int y, int width, int height) {
+        synchronized (mBackgroundSizeRect){
+            mBackgroundSizeRect.set(x, y, x + width, y + height);
+            data_configuration.invalidate();
+            data_blurredBackground.invalidate();
+            if (width != 0 && height != 0){
+                mBackgroundSizeRect.notify();
+            }
+        }
+    }
+
 
     public interface OnAppCategoriesCallback {
         public void fetched(List<Category> fetchData, boolean syncInProgress);
@@ -301,5 +372,13 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
         }
     }
 
+    public static class Configuration{
+        public final Bitmap background;
 
+        public Configuration(Bitmap background) {
+            this.background = background;
+        }
+
+
+    }
 }

@@ -15,6 +15,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         >
+
         <LinearLayout
             android:id="@+id/layer_shadow_left"
             android:layout_alignParentLeft="true"
@@ -30,7 +31,20 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:src="@drawable/default_cover"
-            android:scaleType="centerCrop"/>
+            />
+
+        <FrameLayout
+            android:id="@+id/frag_body"
+            android:layout_toRightOf="@+id/layer_shadow_left"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            />
+
+        <FrameLayout
+            android:id="@+id/frag_header"
+            android:layout_toRightOf="@+id/layer_shadow_left"
+            android:layout_width="fill_parent"
+            android:layout_height="90dp"/>
 
     </RelativeLayout>
 
