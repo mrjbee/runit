@@ -10,6 +10,8 @@ import android.widget.ScrollView;
 
 public class MyScrollView extends android.widget.ScrollView{
 
+    private OnScrollListener mScrollListener;
+
     public MyScrollView(Context context) {
         super(context);
     }
@@ -31,6 +33,9 @@ public class MyScrollView extends android.widget.ScrollView{
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);
         notifyViewChildren(this);
+        if (mScrollListener != null) {
+            mScrollListener.onScrollChanged(l, t);
+        }
     }
 
     protected void notifyViewChildren(ViewGroup view) {
@@ -43,5 +48,17 @@ public class MyScrollView extends android.widget.ScrollView{
                 notifyViewChildren((ViewGroup) child);
             }
         }
+    }
+
+    public OnScrollListener getScrollListener() {
+        return mScrollListener;
+    }
+
+    public void setScrollListener(OnScrollListener mScrollListener) {
+        this.mScrollListener = mScrollListener;
+    }
+
+    public static interface OnScrollListener{
+        void onScrollChanged(int left, int top);
     }
 }

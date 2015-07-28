@@ -58,12 +58,12 @@ public class MainActivity extends ActivitySupport<RunitApp>{
 
         ac_fragHeader = animateAppearance(view(R.id.frag_header),ySlide(0f, -DisplayUtils.dpToPx(100f, getResources())))
                 .showAnimation(duration_constant(200), interpreter_decelerate(0.6f))
-                .hideAnimation(duration_constant(400), interpreter_accelerate(0.3f))
+                .hideAnimation(duration_constant(200), interpreter_accelerate(0.3f))
                 .hideAndGone()
                 .build();
         ac_fragBody = animateAppearance(view(R.id.frag_body),ySlide(0f, DisplayUtils.screenHeight(getResources())))
-                .showAnimation(duration_constant(300), interpreter_decelerate(0.6f))
-                .hideAnimation(duration_constant(400), interpreter_accelerate(0.3f))
+                .showAnimation(duration_constant(200), interpreter_decelerate(0.6f))
+                .hideAnimation(duration_constant(200), interpreter_accelerate(0.3f))
                 .hideAndGone()
                 .build();
         mPanelPageContent.setOnClickListener(new View.OnClickListener() {
@@ -112,7 +112,7 @@ public class MainActivity extends ActivitySupport<RunitApp>{
         });
     }
 
-    private void visibility_Header(boolean visible) {
+    public void visibility_Header(boolean visible) {
         if (visible){
            ac_fragHeader.show();
         }else {

@@ -15,17 +15,20 @@
         <LinearLayout
             android:paddingTop="150dp"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="wrap_content">
             <org.monroe.team.runit.app.views.TransperentDataBitmapBackgroundLayout
                 android:id="@+id/panel_page_content"
                 android:layout_above="@+id/shadow_bottom"
                 android:layout_width="fill_parent"
-                android:layout_height="700dp"
+                android:layout_height="wrap_content"
                 android:background="#5affffff">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="ExampleText"/>
+                <Space
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent" />
             </org.monroe.team.runit.app.views.TransperentDataBitmapBackgroundLayout>
         </LinearLayout>
     </org.monroe.team.runit.app.views.MyScrollView>

@@ -6,4 +6,5 @@ import org.monroe.team.runit.app.android.RunitApp;
 public abstract class FragmentAbstractBodyPage extends FragmentAbstractMain {
 
     public abstract void onSelect();
+    public abstract void setOnPageScroll();
 }

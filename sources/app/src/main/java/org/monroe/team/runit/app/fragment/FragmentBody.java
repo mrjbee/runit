@@ -59,6 +59,10 @@ public class FragmentBody extends FragmentAbstractMain implements ContractBackBu
         mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                getPage(position).setOnPageScroll();
+                if (position < mFragmentPagerAdapter.getCount() -1){
+                    getPage(position + 1).setOnPageScroll();
+                }
             }
 
             @Override
