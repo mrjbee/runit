@@ -12,7 +12,6 @@ import org.monroe.team.android.box.BitmapUtils;
 import org.monroe.team.android.box.app.AndroidModel;
 import org.monroe.team.android.box.data.Data;
 import org.monroe.team.android.box.utils.AndroidLogImplementation;
-import org.monroe.team.android.box.utils.DisplayUtils;
 import org.monroe.team.corebox.log.L;
 import org.monroe.team.corebox.services.BackgroundTaskManager;
 import org.monroe.team.android.box.services.SettingManager;
@@ -20,6 +19,7 @@ import org.monroe.team.android.box.app.ApplicationSupport;
 import org.monroe.team.runit.app.ApplicationRefreshService;
 import org.monroe.team.runit.app.R;
 import org.monroe.team.runit.app.RunItModel;
+import org.monroe.team.runit.app.db.RunitSchema;
 import org.monroe.team.runit.app.service.ApplicationRegistry;
 import org.monroe.team.runit.app.service.CategoryNameResolver;
 import org.monroe.team.runit.app.service.PlayMarketDetailsProvider;
@@ -34,6 +34,9 @@ import org.monroe.team.runit.app.uc.LoadApplicationImage;
 import org.monroe.team.runit.app.uc.UpdateApplicationCategory;
 import org.monroe.team.runit.app.uc.entity.ApplicationData;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -96,22 +99,49 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
                     throw new RuntimeException(e);
                 }
                 Bitmap dst = BitmapUtils.scaleCenterCrop(srcBmp, mBackgroundSizeRect.height(), mBackgroundSizeRect.width());
-                return new Configuration(dst);
+                return new Configuration(dst, new Rect(mBackgroundSizeRect));
             }
         };
 
         data_blurredBackground = new Data<Bitmap>(model()) {
             @Override
             protected Bitmap provideData() {
+                    File cacheDir = RunitApp.this.getCacheDir();
+                    File blurredBackgroundFile = new File(cacheDir, "blurred");
+                    Bitmap blurredBitmap = null;
+                    if (blurredBackgroundFile.exists()){
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        blurredBitmap = BitmapUtils.fromFile(blurredBackgroundFile).decode(options);
+                    }else {
+                        try {
+                            blurredBitmap = data_Background.fetch();
+                        } catch (FetchException e) {
+                            throw new RuntimeException(e);
+                        }
+                        blurredBitmap = BitmapUtils.fastblur(blurredBitmap, 20);
+                        FileOutputStream out = null;
+                        try {
+                            out = new FileOutputStream(blurredBackgroundFile);
+                            blurredBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        } finally {
+                            try {
+                                if (out != null) {
+                                    out.close();
+                                }
+                            } catch (IOException e) {
+                            }
+                        }
+                    }
                 try {
                     Configuration configuration = data_configuration.fetch();
-                    return BitmapUtils.fastblur(configuration.background,40);
+                    return BitmapUtils.scaleCenterCrop(blurredBitmap, configuration.workSize.height(), configuration.workSize.width());
                 } catch (FetchException e) {
                     throw new RuntimeException(e);
                 }
             }
         };
-
     }
 
     public synchronized void searchApplicationByName(final String searchQuery, final OnAppSearchCallback callback){
@@ -379,9 +409,11 @@ public class RunitApp extends ApplicationSupport<RunItModel> {
 
     public static class Configuration{
         public final Bitmap background;
+        public final Rect workSize;
 
-        public Configuration(Bitmap background) {
+        public Configuration(Bitmap background, Rect workSize) {
             this.background = background;
+            this.workSize = workSize;
         }
 
 
